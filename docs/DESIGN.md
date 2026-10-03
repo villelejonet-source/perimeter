@@ -56,18 +56,16 @@ maps → `src/data/maps.ts`.
 | 9 | Revive / rewarded-ad prompts | none | none | missing |
 | 10 | App icon, launch screen, store screenshots | none | none | missing |
 
-## Open questions (decide before applying)
-1. **Art rule.** The unit SVGs are meant to be loaded as assets (`this.load.svg`, packed into an atlas).
-   CLAUDE.md currently says "no external art assets, draw with Phaser Graphics". Should the rule change?
-2. **Coordinate system.** Designs and maps use a 390 × 844 logical screen. The game currently uses a
-   360 × 780 world (rendered at 720 × 1560). Matching the designs means moving the world to 390 × 844.
-3. **Fonts.** Designs use Oxanium + Barlow Semi Condensed from Google Fonts. These need bundling
-   locally so the iOS app works offline.
-4. **Names.** `screens/meta/README.md` uses placeholder tower names (Mass Driver, Frost Coil, …).
-   The GDD names (Railgun, Cryo Projector, …) are kept unless told otherwise. The unit files already use them.
-5. **Map geometry.** The path in `HANDOFF.md` differs from the three map JSONs. The JSONs are treated
-   as the source of truth for maps.
-6. **Placeholder numbers.** Costs, stats and rewards in the mockups are mock values. Real values come from `src/data/`.
+## Decisions and open questions
+Full audit: `design/INVENTORY.md` (what's found, missing, and requests for Claude Design).
+
+Decided 2026-10-04:
+- Designs are visual reference. The sim stays pure TS.
+- Units are baked into textures from the SVGs in `units/`, with glow via additive blending and no per-sprite filters.
+- The world moves to the designs' 390 × 844 logical space. Map 1 is loaded from its JSON.
+- GDD names win over placeholder names in the mockups.
+
+Open: the Phase 2 blockers listed in `design/INVENTORY.md` §1, and HUD as DOM overlay vs Phaser UI (to be proposed before HUD work).
 
 ## Applied
 Log when a design has been implemented, so drift is visible later.

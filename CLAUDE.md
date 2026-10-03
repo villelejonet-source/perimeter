@@ -6,7 +6,9 @@ roguelite artifact picks, meta progression (research lab), capped offline income
 monetized with rewarded ads + IAP.
 
 Full design: `docs/GDD.md`. Build order and acceptance criteria: `docs/ROADMAP.md`.
-Visual designs (Claude Design) are indexed in `docs/DESIGN.md`.
+Visual designs (Claude Design) live in `docs/design/`: design system, in-run and meta screens,
+unit SVGs and map JSONs. `docs/DESIGN.md` maps each design to its phase, and
+`docs/design/INVENTORY.md` lists what exists, what's missing and known issues.
 Always check ROADMAP.md for the current phase before starting work, and DESIGN.md before building any UI.
 
 ## Stack
@@ -57,9 +59,16 @@ docs/
 ```
 
 ## Art approach
-
-No external art assets at first. Draw everything with Phaser Graphics as neon vector
-shapes (glow via additive blending). This keeps iteration fast and the look coherent.
+Designs in `docs/design/` are **visual reference, not code to drop in**. The `.dc.html` screens
+are layout specs (390 × 844 logical px). Rebuild them; never ship their markup.
+- **Design system:** `docs/design/design-system/` (README rules + `tokens.json`) is the source of
+  truth for colour, type, spacing, chamfers, strokes and glow.
+- **Units:** textures are baked at boot from the unit SVGs in `docs/design/units/` and packed into
+  one atlas. Glow comes from additive blending of the baked art. **No per-sprite filters or
+  preFX/postFX.** The 60 fps device budget still applies.
+- **Maps:** loaded from the map JSONs (spawn, base, path control points, path width, build buffer,
+  play area).
+- **Anything else** (paths, grid, panels, UI chrome) is drawn with Phaser Graphics or text.
 
 ## Working conventions
 
