@@ -1,0 +1,8 @@
+node_modules
+dist
+tools/out
+.DS_Store
+ios/App/App/public
+ios/App/build
+ios/DerivedData
+xcuserdata

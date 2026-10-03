@@ -1,0 +1,6 @@
+dist
+ios
+tools/out
+docs
+package-lock.json
+.claude
