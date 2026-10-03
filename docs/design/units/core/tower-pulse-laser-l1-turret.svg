@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+<title>tower-pulse-laser-l1-turret</title>
+<g id="body">
+<path d="M39 29 L54 29 L54 35 L39 35 Z" fill="#06080d" stroke="#ff4fd8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill-opacity="1"/>
+<path d="M24 32 A8 8 0 1 0 40 32 A8 8 0 1 0 24 32 Z" fill="#06080d" stroke="#ff4fd8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill-opacity="1"/>
+</g>
+</svg>

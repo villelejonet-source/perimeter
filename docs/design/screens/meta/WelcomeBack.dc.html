@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Welcome back</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600;700&amp;family=Oxanium:wght@500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;background:#0a0e17}
+a{color:#c6ff3d}a:hover{color:#eaf0fa}
+*{box-sizing:border-box}
+.d{font-family:"Oxanium","Chakra Petch",system-ui,sans-serif;font-variant-numeric:tabular-nums}
+.u{font-family:"Barlow Semi Condensed","Barlow",system-ui,sans-serif}
+.lbl{font-family:"Barlow Semi Condensed","Barlow",system-ui,sans-serif;font-size:13px;line-height:16px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.c2s{clip-path:polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px)}
+.c2m{clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px)}
+.c2l{clip-path:polygon(16px 0,100% 0,100% calc(100% - 16px),calc(100% - 16px) 100%,0 100%,0 16px)}
+button{font:inherit;cursor:pointer;border:0;padding:0;color:inherit;background:none}
+button:focus-visible,a:focus-visible{outline:2px solid #c6ff3d;outline-offset:3px}
+</style>
+</helmet>
+<div class="u" style="width:390px;height:844px;position:relative;overflow:hidden;background:#0a0e17;color:#eaf0fa;display:flex;flex-direction:column;padding:56px 16px 34px;gap:24px">
+
+  <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;text-align:center">
+    <span class="lbl" style="color:#a3afc6">The perimeter held</span>
+    <h1 class="d" style="margin:-12px 0 0;font-size:40px;line-height:44px;font-weight:800;letter-spacing:.04em;text-transform:uppercase">Welcome back</h1>
+
+    <!-- Time away dial -->
+    <div style="position:relative;width:200px;height:200px">
+      <svg viewBox="0 0 200 200" width="200" height="200" aria-hidden="true" style="position:absolute;inset:0;fill:none">
+        <circle cx="100" cy="100" r="86" style="stroke:#1a2236;stroke-width:10"></circle>
+        <circle cx="100" cy="100" r="86" style="stroke:#eaf0fa;stroke-width:10;stroke-dasharray:540.4 540.4;transform:rotate(-90deg);transform-origin:100px 100px"></circle>
+        <path d="M100 4v20M196 100h-12M100 196v-12M4 100h12" style="stroke:#5d6e94;stroke-width:2"></path>
+        <path d="M100 2v24" style="stroke:#0a0e17;stroke-width:6"></path>
+        <path d="M100 4v20" style="stroke:#c6ff3d;stroke-width:3"></path>
+      </svg>
+      <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px">
+        <span class="lbl" style="color:#a3afc6">Time counted</span>
+        <span class="d" style="font-size:40px;line-height:44px;font-weight:800">8h 00m</span>
+        <span class="c2s" style="display:flex;align-items:center;gap:4px;padding:2px 8px;background:#1a2236">
+          <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" style="fill:none;stroke:#eaf0fa;stroke-width:2.5;stroke-linecap:round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+          <span class="lbl">Cap reached</span>
+        </span>
+      </div>
+    </div>
+    <span style="font-size:14px;line-height:18px;color:#a3afc6">Away <span class="d" style="color:#eaf0fa;font-weight:600">11h 42m</span> · offline cap is 8 h · <a href="ResearchBase.dc.html">raise it in Research Lab</a></span>
+
+    <!-- Earnings -->
+    <div class="c2m" style="width:100%;display:flex;flex-direction:column;background:#111726;padding:4px 16px">
+      <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #2a3550">
+        <svg viewBox="0 0 24 24" width="32" height="32" aria-hidden="true" style="flex:none;fill:none;stroke:#b48cff;stroke-width:2;stroke-linejoin:round;stroke-linecap:round;filter:drop-shadow(0 0 4px rgba(180,140,255,.5))"><path d="M12 2.5l8.5 4.9v9.2L12 21.5l-8.5-4.9V7.4z"></path><path d="M12 12v9.5M12 12l8.5-4.6M12 12L3.5 7.4"></path></svg>
+        <span style="display:flex;flex-direction:column;align-items:flex-start;flex:1">
+          <span style="font-size:19px;line-height:24px;font-weight:700">Cores</span>
+          <span style="font-size:14px;line-height:18px;color:#a3afc6">310 per hour</span>
+        </span>
+        <span class="d" style="font-size:28px;line-height:30px;font-weight:700">+2,480</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;padding:12px 0">
+        <svg viewBox="0 0 24 24" width="32" height="32" aria-hidden="true" style="flex:none;fill:none;stroke:#5cf2c8;stroke-width:2;stroke-linejoin:round;stroke-linecap:round;filter:drop-shadow(0 0 4px rgba(92,242,200,.5))"><path d="M12 2l6 8-6 12-6-12z"></path><path d="M6 10h12M10 10l2-8 2 8"></path></svg>
+        <span style="display:flex;flex-direction:column;align-items:flex-start;flex:1">
+          <span style="font-size:19px;line-height:24px;font-weight:700">Shards</span>
+          <span style="font-size:14px;line-height:18px;color:#a3afc6">1.5 per hour</span>
+        </span>
+        <span class="d" style="font-size:28px;line-height:30px;font-weight:700">+12</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Thumb zone -->
+  <div style="display:flex;flex-direction:column;gap:12px">
+    <button class="c2m" style="width:100%;background:#ffd84d;padding:2px">
+      <span class="c2m" style="display:flex;align-items:center;gap:12px;min-height:60px;padding:8px 16px;background:#0a0e17;text-align:left">
+        <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true" style="flex:none;fill:none;stroke:#ffd84d;stroke-width:2"><circle cx="12" cy="12" r="9.5"></circle><path d="M10 8v8l6.5-4z" style="fill:#ffd84d;stroke-linejoin:round"></path></svg>
+        <span style="flex:1;display:flex;flex-direction:column">
+          <span style="font-size:18px;line-height:20px;font-weight:700;letter-spacing:.06em;text-transform:uppercase">Double with ad</span>
+          <span style="font-size:14px;line-height:18px;color:#a3afc6">Optional · 30 s video · 4,960 Cores, 24 Shards</span>
+        </span>
+        <span class="d" style="font-size:20px;line-height:24px;font-weight:700;color:#ffd84d">×2</span>
+      </span>
+    </button>
+    <div style="filter:drop-shadow(0 0 8px rgba(198,255,61,.35)) drop-shadow(0 0 16px rgba(198,255,61,.12))">
+      <button class="c2m" style="width:100%;height:56px;background:#c6ff3d;color:#06080d;font-size:18px;line-height:20px;font-weight:700;letter-spacing:.06em;text-transform:uppercase">Collect</button>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

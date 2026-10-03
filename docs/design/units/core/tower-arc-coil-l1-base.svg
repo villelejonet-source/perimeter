@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+<title>tower-arc-coil-l1-base</title>
+<g id="body">
+<path d="M32 10 L54 32 L32 54 L10 32 Z" fill="#06080d" stroke="#ff4fd8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill-opacity="1"/>
+<path d="M28.5 10 A3.5 3.5 0 1 0 35.5 10 A3.5 3.5 0 1 0 28.5 10 Z" fill="#06080d" stroke="#ff4fd8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill-opacity="1"/>
+<path d="M50.5 32 A3.5 3.5 0 1 0 57.5 32 A3.5 3.5 0 1 0 50.5 32 Z" fill="#06080d" stroke="#ff4fd8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill-opacity="1"/>
+<path d="M28.5 54 A3.5 3.5 0 1 0 35.5 54 A3.5 3.5 0 1 0 28.5 54 Z" fill="#06080d" stroke="#ff4fd8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill-opacity="1"/>
+<path d="M6.5 32 A3.5 3.5 0 1 0 13.5 32 A3.5 3.5 0 1 0 6.5 32 Z" fill="#06080d" stroke="#ff4fd8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill-opacity="1"/>
+</g>
+</svg>

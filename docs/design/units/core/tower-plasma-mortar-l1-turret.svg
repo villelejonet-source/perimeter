@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+<title>tower-plasma-mortar-l1-turret</title>
+<g id="body">
+<path d="M20 32 A11 11 0 1 0 42 32 A11 11 0 1 0 20 32 Z" fill="#06080d" stroke="#ff4fd8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill-opacity="1"/>
+<path d="M29.5 32 A5.5 5.5 0 1 0 40.5 32 A5.5 5.5 0 1 0 29.5 32 Z" fill="none" stroke="#ff4fd8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+</svg>

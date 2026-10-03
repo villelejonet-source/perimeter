@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Research Lab, base and idle</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600;700&amp;family=Oxanium:wght@500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;background:#0a0e17}
+a{color:#c6ff3d}a:hover{color:#eaf0fa}
+*{box-sizing:border-box}
+.d{font-family:"Oxanium","Chakra Petch",system-ui,sans-serif;font-variant-numeric:tabular-nums}
+.u{font-family:"Barlow Semi Condensed","Barlow",system-ui,sans-serif}
+.lbl{font-family:"Barlow Semi Condensed","Barlow",system-ui,sans-serif;font-size:13px;line-height:16px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.c2s{clip-path:polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px)}
+.c2m{clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px)}
+.c2l{clip-path:polygon(16px 0,100% 0,100% 100%,0 100%,0 16px)}
+.hatch{background-color:#111726;background-image:repeating-linear-gradient(135deg,rgba(111,124,150,.3) 0 2px,transparent 2px 9px)}
+button{font:inherit;cursor:pointer;border:0;padding:0;color:inherit;background:none}
+button:disabled{cursor:not-allowed}
+button:focus-visible,a:focus-visible{outline:2px solid #c6ff3d;outline-offset:3px}
+</style>
+</helmet>
+<div class="u" style="width:390px;height:844px;position:relative;overflow:hidden;background:#0a0e17;color:#eaf0fa;display:flex;flex-direction:column">
+  <div style="flex:1;display:flex;flex-direction:column;gap:12px;padding:56px 16px 16px">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:4px">
+      <div style="display:flex;flex-direction:column">
+        <h1 class="d" style="margin:0;font-size:28px;line-height:32px;font-weight:700;letter-spacing:.04em;text-transform:uppercase">Research Lab</h1>
+        <span style="font-size:14px;line-height:18px;color:#a3afc6">Permanent. Kept between runs.</span>
+      </div>
+      <div class="c2s" style="display:flex;align-items:center;gap:6px;height:40px;padding:0 12px 0 10px;background:#111726">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" style="fill:none;stroke:#b48cff;stroke-width:2;stroke-linejoin:round;stroke-linecap:round;filter:drop-shadow(0 0 4px rgba(180,140,255,.45))"><path d="M12 2.5l8.5 4.9v9.2L12 21.5l-8.5-4.9V7.4z"></path><path d="M12 12v9.5M12 12l8.5-4.6M12 12L3.5 7.4"></path></svg>
+        <span class="d" style="font-size:20px;line-height:24px;font-weight:700">12,480</span>
+      </div>
+    </div>
+
+    <span class="lbl" style="color:#a3afc6">Base · every run</span>
+    <div style="display:flex;flex-direction:column;gap:8px">
+
+      <div class="c2m" style="display:flex;align-items:center;gap:12px;padding:8px 8px 8px 12px;background:#1a2236">
+        <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px">
+          <div style="display:flex;align-items:baseline;gap:8px"><span style="font-size:19px;line-height:24px;font-weight:700">Starting Credits</span><span class="d" style="margin-left:auto;font-size:15px;line-height:18px;font-weight:600;color:#a3afc6">LV 6/20</span></div>
+          <span style="font-size:14px;line-height:18px;color:#a3afc6">300 → <span style="color:#eaf0fa">350</span> Credits</span>
+        </div>
+        <button aria-label="Upgrade starting Credits for 900 Cores" class="c2s" style="flex:none;width:104px;height:48px;background:#5d6e94;padding:2px">
+          <span class="c2s" style="display:flex;align-items:center;justify-content:center;gap:6px;height:100%;background:#111726">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" style="fill:none;stroke:#b48cff;stroke-width:2;stroke-linejoin:round"><path d="M12 2.5l8.5 4.9v9.2L12 21.5l-8.5-4.9V7.4z"></path><path d="M12 12v9.5M12 12l8.5-4.6M12 12L3.5 7.4"></path></svg>
+            <span class="d" style="font-size:15px;line-height:18px;font-weight:700">900</span>
+          </span>
+        </button>
+      </div>
+
+      <div class="c2m" style="display:flex;align-items:center;gap:12px;padding:8px 8px 8px 12px;background:#1a2236">
+        <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px">
+          <div style="display:flex;align-items:baseline;gap:8px"><span style="font-size:19px;line-height:24px;font-weight:700">Base HP</span><span class="d" style="margin-left:auto;font-size:15px;line-height:18px;font-weight:600;color:#a3afc6">LV 10/25</span></div>
+          <span style="font-size:14px;line-height:18px;color:#a3afc6">40 → <span style="color:#eaf0fa">42</span> · need 1,520</span>
+        </div>
+        <button disabled="" aria-label="Base HP costs 14,000 Cores, need 1,520 more" class="c2s" style="flex:none;width:104px;height:48px;background:#2a3550;padding:2px">
+          <span class="c2s hatch" style="display:flex;align-items:center;justify-content:center;gap:6px;height:100%;color:#6f7c96">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" style="fill:none;stroke:#6f7c96;stroke-width:2;stroke-linejoin:round"><path d="M12 2.5l8.5 4.9v9.2L12 21.5l-8.5-4.9V7.4z"></path><path d="M12 12v9.5M12 12l8.5-4.6M12 12L3.5 7.4"></path></svg>
+            <span class="d" style="font-size:15px;line-height:18px;font-weight:700">14,000</span>
+          </span>
+        </button>
+      </div>
+
+      <div class="c2m" style="display:flex;align-items:center;gap:12px;padding:8px 8px 8px 12px;background:#1a2236">
+        <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px">
+          <div style="display:flex;align-items:baseline;gap:8px"><span style="font-size:19px;line-height:24px;font-weight:700">Wave timer</span><span class="d" style="margin-left:auto;font-size:15px;line-height:18px;font-weight:600;color:#a3afc6">LV 4/10</span></div>
+          <span style="font-size:14px;line-height:18px;color:#a3afc6">30 s → <span style="color:#eaf0fa">32 s</span> · need 4,020</span>
+        </div>
+        <button disabled="" aria-label="Wave timer costs 16,500 Cores, need 4,020 more" class="c2s" style="flex:none;width:104px;height:48px;background:#2a3550;padding:2px">
+          <span class="c2s hatch" style="display:flex;align-items:center;justify-content:center;gap:6px;height:100%;color:#6f7c96">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" style="fill:none;stroke:#6f7c96;stroke-width:2;stroke-linejoin:round"><path d="M12 2.5l8.5 4.9v9.2L12 21.5l-8.5-4.9V7.4z"></path><path d="M12 12v9.5M12 12l8.5-4.6M12 12L3.5 7.4"></path></svg>
+            <span class="d" style="font-size:15px;line-height:18px;font-weight:700">16,500</span>
+          </span>
+        </button>
+      </div>
+
+      <div class="c2m" style="display:flex;align-items:center;gap:12px;padding:8px 8px 8px 12px;background:#1a2236">
+        <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px">
+          <div style="display:flex;align-items:baseline;gap:8px"><span style="font-size:19px;line-height:24px;font-weight:700">Credit bounty</span><span class="d" style="margin-left:auto;font-size:15px;line-height:18px;font-weight:600;color:#a3afc6">LV 7/25</span></div>
+          <span style="font-size:14px;line-height:18px;color:#a3afc6">+14% → <span style="color:#eaf0fa">+16%</span> · need 720</span>
+        </div>
+        <button disabled="" aria-label="Credit bounty costs 13,200 Cores, need 720 more" class="c2s" style="flex:none;width:104px;height:48px;background:#2a3550;padding:2px">
+          <span class="c2s hatch" style="display:flex;align-items:center;justify-content:center;gap:6px;height:100%;color:#6f7c96">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" style="fill:none;stroke:#6f7c96;stroke-width:2;stroke-linejoin:round"><path d="M12 2.5l8.5 4.9v9.2L12 21.5l-8.5-4.9V7.4z"></path><path d="M12 12v9.5M12 12l8.5-4.6M12 12L3.5 7.4"></path></svg>
+            <span class="d" style="font-size:15px;line-height:18px;font-weight:700">13,200</span>
+          </span>
+        </button>
+      </div>
+
+      <div class="c2m" style="display:flex;align-items:center;gap:12px;padding:8px 8px 8px 12px;background:#1a2236">
+        <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px">
+          <div style="display:flex;align-items:baseline;gap:8px"><span style="font-size:19px;line-height:24px;font-weight:700;color:#a3afc6">Call-early bonus</span><span class="d" style="margin-left:auto;font-size:15px;line-height:18px;font-weight:600;color:#6f7c96">LV 0/10</span></div>
+          <span style="font-size:14px;line-height:18px;color:#a3afc6">Reach wave 50 to research</span>
+        </div>
+        <button disabled="" aria-label="Call-early bonus locked until wave 50" class="c2s" style="flex:none;width:104px;height:48px;background:#2a3550;padding:2px">
+          <span class="c2s hatch" style="display:flex;align-items:center;justify-content:center;gap:6px;height:100%;color:#6f7c96">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" style="fill:none;stroke:#6f7c96;stroke-width:2;stroke-linejoin:round"><rect x="5" y="11" width="14" height="10"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>
+            <span class="lbl">Locked</span>
+          </span>
+        </button>
+      </div>
+    </div>
+
+    <span class="lbl" style="color:#a3afc6;margin-top:4px">Idle · while you're away</span>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div class="c2m" style="display:flex;align-items:center;gap:12px;padding:8px 8px 8px 12px;background:#1a2236">
+        <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px">
+          <div style="display:flex;align-items:baseline;gap:8px"><span style="font-size:19px;line-height:24px;font-weight:700">Offline income</span><span class="d" style="margin-left:auto;font-size:15px;line-height:18px;font-weight:600;color:#a3afc6">LV 5/20</span></div>
+          <span style="font-size:14px;line-height:18px;color:#a3afc6">310 → <span style="color:#eaf0fa">340</span> Cores/h · need 7,520</span>
+        </div>
+        <button disabled="" aria-label="Offline income costs 20,000 Cores, need 7,520 more" class="c2s" style="flex:none;width:104px;height:48px;background:#2a3550;padding:2px">
+          <span class="c2s hatch" style="display:flex;align-items:center;justify-content:center;gap:6px;height:100%;color:#6f7c96">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" style="fill:none;stroke:#6f7c96;stroke-width:2;stroke-linejoin:round"><path d="M12 2.5l8.5 4.9v9.2L12 21.5l-8.5-4.9V7.4z"></path><path d="M12 12v9.5M12 12l8.5-4.6M12 12L3.5 7.4"></path></svg>
+            <span class="d" style="font-size:15px;line-height:18px;font-weight:700">20,000</span>
+          </span>
+        </button>
+      </div>
+
+      <div class="c2m" style="display:flex;align-items:center;gap:12px;padding:8px 8px 8px 12px;background:#1a2236">
+        <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px">
+          <div style="display:flex;align-items:baseline;gap:8px"><span style="font-size:19px;line-height:24px;font-weight:700">Offline cap</span><span class="d" style="margin-left:auto;font-size:15px;line-height:18px;font-weight:600;color:#a3afc6">8 h / 12 h</span></div>
+          <span style="font-size:14px;line-height:18px;color:#a3afc6">8 h → <span style="color:#eaf0fa">9 h</span> · need 12,520</span>
+        </div>
+        <button disabled="" aria-label="Offline cap costs 25,000 Cores, need 12,520 more" class="c2s" style="flex:none;width:104px;height:48px;background:#2a3550;padding:2px">
+          <span class="c2s hatch" style="display:flex;align-items:center;justify-content:center;gap:6px;height:100%;color:#6f7c96">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" style="fill:none;stroke:#6f7c96;stroke-width:2;stroke-linejoin:round"><path d="M12 2.5l8.5 4.9v9.2L12 21.5l-8.5-4.9V7.4z"></path><path d="M12 12v9.5M12 12l8.5-4.6M12 12L3.5 7.4"></path></svg>
+            <span class="d" style="font-size:15px;line-height:18px;font-weight:700">25,000</span>
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="c2l" style="background:#111726;padding:8px 16px 34px;border-top:1px solid #2a3550">
+    <div style="display:flex;gap:8px;align-items:stretch">
+      <a href="Main.dc.html" aria-label="Back to menu" class="c2s" style="flex:none;display:block;width:48px;height:48px;background:#5d6e94;padding:2px">
+        <span class="c2s" style="display:flex;width:100%;height:100%;align-items:center;justify-content:center;background:#1a2236">
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" style="fill:none;stroke:#eaf0fa;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M15 5l-7 7 7 7"></path></svg>
+        </span>
+      </a>
+      <div role="tablist" style="flex:1;display:grid;grid-template-columns:repeat(3, minmax(0, 1fr));gap:4px">
+        <a href="ResearchTowers.dc.html" role="tab" aria-selected="false" style="display:flex;align-items:center;justify-content:center;gap:6px;height:48px;color:#a3afc6;text-decoration:none;font-size:16px;font-weight:700;letter-spacing:.06em;text-transform:uppercase">Towers<span class="d c2s" style="padding:0 5px;background:#c6ff3d;color:#06080d;font-size:13px;line-height:16px">2</span></a>
+        <a href="ResearchBase.dc.html" role="tab" aria-selected="true" style="display:flex;align-items:center;justify-content:center;height:48px;background:#1a2236;border-bottom:3px solid #c6ff3d;color:#eaf0fa;text-decoration:none;font-size:16px;font-weight:700;letter-spacing:.06em;text-transform:uppercase">Base</a>
+        <a href="ResearchUnlocks.dc.html" role="tab" aria-selected="false" style="display:flex;align-items:center;justify-content:center;gap:6px;height:48px;color:#a3afc6;text-decoration:none;font-size:16px;font-weight:700;letter-spacing:.06em;text-transform:uppercase">Unlocks<span class="d c2s" style="padding:0 5px;background:#c6ff3d;color:#06080d;font-size:13px;line-height:16px">1</span></a>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

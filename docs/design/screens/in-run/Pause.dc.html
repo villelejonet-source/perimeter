@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Pause menu</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@600;700;800&amp;family=Barlow+Semi+Condensed:wght@500;600;700&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}</style>
+</helmet>
+<div style="position: relative; width: 390px; height: 844px; overflow: hidden; background: #06080d; font-family: 'Barlow Semi Condensed', 'Barlow', system-ui, sans-serif; color: #eaf0fa">
+<div style="position: absolute; left: 0; top: 0; width: 390px; height: 844px"><dc-import name="Battlefield" show-fx="{{ false }}" hint-size="390px,844px"></dc-import></div>
+<div style="position: absolute; left: 0; top: 48px; width: 390px; height: 56px"><dc-import name="Hud" hint-size="390px,56px"></dc-import></div>
+<div style="position: absolute; left: 0; top: 0; width: 390px; height: 844px; background: rgba(6, 8, 13, 0.82)"></div>
+
+<div style="position: absolute; left: 16px; top: 132px; width: 358px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center">
+<h1 style="margin: 0; font-family: 'Oxanium', 'Chakra Petch', system-ui, sans-serif; font-size: 40px; line-height: 44px; font-weight: 800; letter-spacing: 0.04em">PAUSED</h1>
+<span style="font-size: 16px; line-height: 22px; font-weight: 500; color: #a3afc6">Wave 14 · Base 17/20</span>
+</div>
+
+<div style="position: absolute; left: 16px; top: 236px; width: 358px; box-sizing: border-box; padding: 16px; display: flex; flex-direction: column; gap: 12px; background: #111726; border: 1px solid #2a3550">
+<span style="font-size: 13px; line-height: 16px; font-weight: 700; letter-spacing: 0.08em; color: #a3afc6">EARNED THIS RUN</span>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+<div style="padding: 10px 12px; background: #1a2236; display: flex; align-items: center; gap: 8px">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#b48cff" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.5l8.5 4.75v9.5L12 21.5l-8.5-4.75v-9.5z"></path><path d="M12 12l8.5-4.75M12 12L3.5 7.25M12 12v9.5"></path></svg>
+<span style="font-family: 'Oxanium', 'Chakra Petch', system-ui, sans-serif; font-size: 20px; line-height: 24px; font-weight: 700; font-variant-numeric: tabular-nums">38</span>
+<span style="font-size: 14px; line-height: 18px; color: #a3afc6">Cores</span>
+</div>
+<div style="padding: 10px 12px; background: #1a2236; display: flex; align-items: center; gap: 8px">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5cf2c8" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l6 8-6 12-6-12z"></path><path d="M6 10h12"></path></svg>
+<span style="font-family: 'Oxanium', 'Chakra Petch', system-ui, sans-serif; font-size: 20px; line-height: 24px; font-weight: 700; font-variant-numeric: tabular-nums">1</span>
+<span style="font-size: 14px; line-height: 18px; color: #a3afc6">Shard</span>
+</div>
+</div>
+</div>
+
+<div style="position: absolute; left: 0; bottom: 0; width: 390px; box-sizing: border-box; padding: 20px 16px 34px; display: flex; flex-direction: column; gap: 12px; background: #111726; border-top: 1px solid #2a3550; clip-path: polygon(16px 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 0 100%, 0 16px)">
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+<button style="height: 48px; border: 0; padding: 2px; background: #5d6e94; clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px); cursor: pointer">
+<span style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; background: #111726; color: #eaf0fa; font-family: 'Barlow Semi Condensed', 'Barlow', system-ui, sans-serif; font-size: 16px; font-weight: 700; letter-spacing: 0.06em; clip-path: polygon(9px 0, 100% 0, 100% calc(100% - 9px), calc(100% - 9px) 100%, 0 100%, 0 9px)">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#eaf0fa" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="3.5"></circle><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"></path></svg>SETTINGS
+</span>
+</button>
+<button style="height: 48px; border: 0; padding: 2px; background: #5d6e94; clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px); cursor: pointer">
+<span style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; background: #111726; color: #eaf0fa; font-family: 'Barlow Semi Condensed', 'Barlow', system-ui, sans-serif; font-size: 16px; font-weight: 700; letter-spacing: 0.06em; clip-path: polygon(9px 0, 100% 0, 100% calc(100% - 9px), calc(100% - 9px) 100%, 0 100%, 0 9px)">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#eaf0fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V4M5 4h11l-2 4 2 4H5"></path></svg>RETREAT
+</span>
+</button>
+</div>
+<span style="font-size: 14px; line-height: 18px; font-weight: 500; color: #a3afc6; text-align: center">Retreat ends the run now. You keep everything earned so far.</span>
+<button style="height: 56px; border: 0; background: #c6ff3d; color: #06080d; clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px); display: flex; align-items: center; justify-content: center; gap: 8px; font-family: 'Barlow Semi Condensed', 'Barlow', system-ui, sans-serif; font-size: 18px; font-weight: 700; letter-spacing: 0.06em; cursor: pointer">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="#06080d" stroke="#06080d" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M8 5l11 7-11 7z"></path></svg>RESUME
+</button>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

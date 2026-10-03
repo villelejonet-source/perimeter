@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+<title>tower-railgun-l5-turret</title>
+<g id="body">
+<path d="M28 26 L60 26" fill="none" stroke="#ff7a33" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M28 38 L60 38" fill="none" stroke="#ff7a33" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M38 22 L38 42" fill="none" stroke="#ff7a33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M46 22 L46 42" fill="none" stroke="#ff7a33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M54 22 L54 42" fill="none" stroke="#ff7a33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M13 21 L30 21 L30 43 L13 43 Z" fill="#06080d" stroke="#ff7a33" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill-opacity="1"/>
+</g>
+</svg>

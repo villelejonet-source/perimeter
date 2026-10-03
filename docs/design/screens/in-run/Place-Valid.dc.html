@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Placement — valid spot</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@600;700;800&amp;family=Barlow+Semi+Condensed:wght@500;600;700&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}</style>
+</helmet>
+<div style="position: relative; width: 390px; height: 844px; overflow: hidden; background: #06080d; font-family: 'Barlow Semi Condensed', 'Barlow', system-ui, sans-serif; color: #eaf0fa">
+<div style="position: absolute; left: 0; top: 0; width: 390px; height: 844px"><dc-import name="Battlefield" show-buffer="{{ true }}" hint-size="390px,844px"></dc-import></div>
+<div style="position: absolute; left: 0; top: 48px; width: 390px; height: 56px"><dc-import name="Hud" hint-size="390px,56px"></dc-import></div>
+
+<svg width="96" height="96" viewBox="0 0 96 96" style="position: absolute; left: 192px; top: 416px" aria-hidden="true"><path d="M0 0V96M16 0V96M32 0V96M48 0V96M64 0V96M80 0V96M96 0V96M0 0H96M0 16H96M0 32H96M0 48H96M0 64H96M0 80H96M0 96H96" fill="none" stroke="#2a3550" stroke-width="1"></path></svg>
+<div style="position: absolute; left: 160px; top: 384px; width: 160px; height: 160px; box-sizing: border-box; border-radius: 50%; border: 2px solid #c6ff3d; background: rgba(198, 255, 61, 0.07)"></div>
+<div style="position: absolute; left: 224px; top: 448px; width: 32px; height: 32px; box-sizing: border-box; border: 2px solid #c6ff3d"></div>
+<img src="../units/glow/tower-pulse-laser-l1-base.svg" alt="Pulse Laser ghost" style="position: absolute; left: 219px; top: 443px; width: 42px; height: 42px; opacity: 0.85">
+<img src="../units/glow/tower-pulse-laser-l1-turret.svg" alt="" style="position: absolute; left: 219px; top: 443px; width: 42px; height: 42px; opacity: 0.85">
+
+<div style="position: absolute; left: 150px; top: 344px; height: 32px; padding: 0 10px; display: flex; align-items: center; gap: 6px; background: #111726; border: 2px solid #c6ff3d; clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px)">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c6ff3d" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M8 12.5l2.8 2.8L16 9.8"></path></svg>
+<span style="font-size: 14px; line-height: 18px; font-weight: 700; letter-spacing: 0.06em">PULSE LASER</span>
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffd84d" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7.5v9"></path></svg>
+<span style="font-family: 'Oxanium', 'Chakra Petch', system-ui, sans-serif; font-size: 15px; font-weight: 700">100</span>
+</div>
+
+<svg width="4" height="44" viewBox="0 0 4 44" style="position: absolute; left: 238px; top: 486px" aria-hidden="true"><path d="M2 0V44" stroke="#6f7c96" stroke-width="2" stroke-dasharray="2 4"></path></svg>
+<div style="position: absolute; left: 218px; top: 530px; width: 44px; height: 44px; box-sizing: border-box; border-radius: 50%; border: 2px solid rgba(234, 240, 250, 0.5); background: rgba(234, 240, 250, 0.12)"></div>
+
+<div style="position: absolute; left: 0; top: 654px; width: 390px; height: 190px"><dc-import name="Controls" variant="drag" hint-size="390px,190px"></dc-import></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="84" height="84" viewBox="-10 -10 84 84">
+<title>tower-plasma-mortar-l1-turret</title>
+<g id="halo-far">
+<path d="M20 32 A11 11 0 1 0 42 32 A11 11 0 1 0 20 32 Z" fill="none" stroke="#ff4fd8" stroke-width="19" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.12"/>
+<path d="M29.5 32 A5.5 5.5 0 1 0 40.5 32 A5.5 5.5 0 1 0 29.5 32 Z" fill="none" stroke="#ff4fd8" stroke-width="19" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.12"/>
+</g>
+<g id="halo-near">
+<path d="M20 32 A11 11 0 1 0 42 32 A11 11 0 1 0 20 32 Z" fill="none" stroke="#ff4fd8" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.35"/>
+<path d="M29.5 32 A5.5 5.5 0 1 0 40.5 32 A5.5 5.5 0 1 0 29.5 32 Z" fill="none" stroke="#ff4fd8" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.35"/>
+</g>
+<g id="body">
+<path d="M20 32 A11 11 0 1 0 42 32 A11 11 0 1 0 20 32 Z" fill="#06080d" stroke="#ff4fd8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill-opacity="1"/>
+<path d="M29.5 32 A5.5 5.5 0 1 0 40.5 32 A5.5 5.5 0 1 0 29.5 32 Z" fill="none" stroke="#ff4fd8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+<g id="hot-core">
+<path d="M20 32 A11 11 0 1 0 42 32 A11 11 0 1 0 20 32 Z" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.55"/>
+<path d="M29.5 32 A5.5 5.5 0 1 0 40.5 32 A5.5 5.5 0 1 0 29.5 32 Z" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.55"/>
+</g>
+</svg>

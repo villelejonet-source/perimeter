@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="52" height="52" viewBox="-10 -10 52 52">
+<title>enemy-warden</title>
+<g id="halo-far">
+<path d="M17.5 16 L14.25 21.63 L7.75 21.63 L4.5 16 L7.75 10.37 L14.25 10.37 Z" fill="none" stroke="#eaf0fa" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.12"/>
+<path d="M17.57 3.64 A14 14 0 0 1 23.79 10.31" fill="none" stroke="#5b8cff" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.12"/>
+<path d="M24.39 11.91 A14 14 0 0 1 24.39 20.09" fill="none" stroke="#5b8cff" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.12"/>
+<path d="M23.79 21.69 A14 14 0 0 1 17.57 28.36" fill="none" stroke="#5b8cff" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.12"/>
+</g>
+<g id="halo-near">
+<path d="M17.5 16 L14.25 21.63 L7.75 21.63 L4.5 16 L7.75 10.37 L14.25 10.37 Z" fill="none" stroke="#eaf0fa" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.35"/>
+<path d="M17.57 3.64 A14 14 0 0 1 23.79 10.31" fill="none" stroke="#5b8cff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.35"/>
+<path d="M24.39 11.91 A14 14 0 0 1 24.39 20.09" fill="none" stroke="#5b8cff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.35"/>
+<path d="M23.79 21.69 A14 14 0 0 1 17.57 28.36" fill="none" stroke="#5b8cff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.35"/>
+</g>
+<g id="body">
+<path d="M17.5 16 L14.25 21.63 L7.75 21.63 L4.5 16 L7.75 10.37 L14.25 10.37 Z" fill="#06080d" stroke="#eaf0fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill-opacity="1"/>
+<path d="M17.57 3.64 A14 14 0 0 1 23.79 10.31" fill="none" stroke="#5b8cff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M24.39 11.91 A14 14 0 0 1 24.39 20.09" fill="none" stroke="#5b8cff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M23.79 21.69 A14 14 0 0 1 17.57 28.36" fill="none" stroke="#5b8cff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+</svg>

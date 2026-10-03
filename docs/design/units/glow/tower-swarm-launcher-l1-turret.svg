@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="84" height="84" viewBox="-10 -10 84 84">
+<title>tower-swarm-launcher-l1-turret</title>
+<g id="halo-far">
+<path d="M19 22 L41 22 L48 32 L41 42 L19 42 Z" fill="none" stroke="#ff7a33" stroke-width="19" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.12"/>
+<path d="M23 28 A3 3 0 1 0 29 28 A3 3 0 1 0 23 28 Z" fill="none" stroke="#ff7a33" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.12"/>
+<path d="M33 28 A3 3 0 1 0 39 28 A3 3 0 1 0 33 28 Z" fill="none" stroke="#ff7a33" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.12"/>
+<path d="M23 36 A3 3 0 1 0 29 36 A3 3 0 1 0 23 36 Z" fill="none" stroke="#ff7a33" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.12"/>
+<path d="M33 36 A3 3 0 1 0 39 36 A3 3 0 1 0 33 36 Z" fill="none" stroke="#ff7a33" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.12"/>
+</g>
+<g id="halo-near">
+<path d="M19 22 L41 22 L48 32 L41 42 L19 42 Z" fill="none" stroke="#ff7a33" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.35"/>
+<path d="M23 28 A3 3 0 1 0 29 28 A3 3 0 1 0 23 28 Z" fill="none" stroke="#ff7a33" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.35"/>
+<path d="M33 28 A3 3 0 1 0 39 28 A3 3 0 1 0 33 28 Z" fill="none" stroke="#ff7a33" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.35"/>
+<path d="M23 36 A3 3 0 1 0 29 36 A3 3 0 1 0 23 36 Z" fill="none" stroke="#ff7a33" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.35"/>
+<path d="M33 36 A3 3 0 1 0 39 36 A3 3 0 1 0 33 36 Z" fill="none" stroke="#ff7a33" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.35"/>
+</g>
+<g id="body">
+<path d="M19 22 L41 22 L48 32 L41 42 L19 42 Z" fill="#06080d" stroke="#ff7a33" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill-opacity="1"/>
+<path d="M23 28 A3 3 0 1 0 29 28 A3 3 0 1 0 23 28 Z" fill="none" stroke="#ff7a33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M33 28 A3 3 0 1 0 39 28 A3 3 0 1 0 33 28 Z" fill="none" stroke="#ff7a33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M23 36 A3 3 0 1 0 29 36 A3 3 0 1 0 23 36 Z" fill="none" stroke="#ff7a33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M33 36 A3 3 0 1 0 39 36 A3 3 0 1 0 33 36 Z" fill="none" stroke="#ff7a33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+<g id="hot-core">
+<path d="M19 22 L41 22 L48 32 L41 42 L19 42 Z" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.55"/>
+<path d="M23 28 A3 3 0 1 0 29 28 A3 3 0 1 0 23 28 Z" fill="none" stroke="#ffffff" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.55"/>
+<path d="M33 28 A3 3 0 1 0 39 28 A3 3 0 1 0 33 28 Z" fill="none" stroke="#ffffff" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.55"/>
+<path d="M23 36 A3 3 0 1 0 29 36 A3 3 0 1 0 23 36 Z" fill="none" stroke="#ffffff" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.55"/>
+<path d="M33 36 A3 3 0 1 0 39 36 A3 3 0 1 0 33 36 Z" fill="none" stroke="#ffffff" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.55"/>
+</g>
+</svg>

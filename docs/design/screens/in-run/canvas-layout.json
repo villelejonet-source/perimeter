@@ -1,0 +1,55 @@
+{
+  "v": 3,
+  "createdOnFiles": {"v": 1, "at": "2026-10-04T09:30:00Z"},
+  "title": "PERIMETER — In-run screens",
+  "launch": {"view": "canvas"},
+  "pages": [],
+  "boards": {
+    "Main.dc.html": {"x": 0, "y": 0, "w": 390, "h": 844, "title": "01 Battle — mid-wave"},
+    "Place-Valid.dc.html": {"x": 0, "y": 1224, "w": 390, "h": 844, "title": "02 Drag — valid spot"},
+    "Place-Path.dc.html": {"x": 470, "y": 1224, "w": 390, "h": 844, "title": "03 Invalid — on the path"},
+    "Place-Buffer.dc.html": {"x": 940, "y": 1224, "w": 390, "h": 844, "title": "04 Invalid — no-build buffer"},
+    "Place-Overlap.dc.html": {"x": 1410, "y": 1224, "w": 390, "h": 844, "title": "05 Invalid — overlaps a tower"},
+    "Place-NoCredits.dc.html": {"x": 1880, "y": 1224, "w": 390, "h": 844, "title": "06 Not enough Credits"},
+    "Panel-Railgun.dc.html": {"x": 0, "y": 2448, "w": 390, "h": 844, "title": "07 Tower panel — Railgun LV 2"},
+    "Panel-Level4.dc.html": {"x": 470, "y": 2448, "w": 390, "h": 844, "title": "08 Tower panel — LV 4, spec hint"},
+    "Pause.dc.html": {"x": 940, "y": 2448, "w": 390, "h": 844, "title": "09 Pause menu"},
+    "Pause-Retreat.dc.html": {"x": 1410, "y": 2448, "w": 390, "h": 844, "title": "10 Retreat — confirm"},
+    "Alert-Elite.dc.html": {"x": 0, "y": 3672, "w": 390, "h": 844, "title": "11 Elite wave incoming"},
+    "Alert-Boss.dc.html": {"x": 470, "y": 3672, "w": 390, "h": 844, "title": "12 Boss incoming"},
+    "Alert-BaseHit.dc.html": {"x": 940, "y": 3672, "w": 390, "h": 844, "title": "13 Base taking damage"},
+    "RunEnd.dc.html": {"x": 1410, "y": 3672, "w": 390, "h": 844, "title": "14 Run end"},
+    "Battlefield.dc.html": {"x": 0, "y": 4896, "w": 390, "h": 844, "title": "Component — Battlefield"},
+    "Hud.dc.html": {"x": 470, "y": 4896, "w": 390, "h": 56, "title": "Component — HUD"},
+    "Controls.dc.html": {"x": 940, "y": 4896, "w": 390, "h": 190, "title": "Component — Controls + build bar"}
+  },
+  "order": [
+    "Main.dc.html",
+    "Place-Valid.dc.html",
+    "Place-Path.dc.html",
+    "Place-Buffer.dc.html",
+    "Place-Overlap.dc.html",
+    "Place-NoCredits.dc.html",
+    "Panel-Railgun.dc.html",
+    "Panel-Level4.dc.html",
+    "Pause.dc.html",
+    "Pause-Retreat.dc.html",
+    "Alert-Elite.dc.html",
+    "Alert-Boss.dc.html",
+    "Alert-BaseHit.dc.html",
+    "RunEnd.dc.html",
+    "Battlefield.dc.html",
+    "Hud.dc.html",
+    "Controls.dc.html"
+  ],
+  "notes": {
+    "t1": {"x": 0, "y": -260, "text": "1 · Battle", "kind": "title1", "maxW": 2270},
+    "t2": {"x": 0, "y": 964, "text": "2 · Placement states", "kind": "title1", "maxW": 2270},
+    "t3": {"x": 0, "y": 2188, "text": "3 · Tower panel & pause", "kind": "title1", "maxW": 2270},
+    "t4": {"x": 0, "y": 3412, "text": "4 · Alerts & run end", "kind": "title1", "maxW": 2270},
+    "t5": {"x": 0, "y": 4636, "text": "Shared components", "kind": "title1", "maxW": 2270}
+  },
+  "designSystems": [
+    {"title": "PERIMETER", "namespace": "perimeter", "artifact": "https://claude.ai/code/artifact/a6def6be-2989-43c6-a0c2-5af7da6d5f8e", "version": "1791068302-f856", "copiedAt": "2026-10-04T09:30:00Z"}
+  ]
+}

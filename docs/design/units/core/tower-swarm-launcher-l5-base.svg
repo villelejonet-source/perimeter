@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+<title>tower-swarm-launcher-l5-base</title>
+<g id="body">
+<path d="M5 5 L59 5 L59 59 L5 59 Z" fill="#06080d" stroke="#ff7a33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill-opacity="1"/>
+<path d="M11 11 L53 11 L53 53 L11 53 Z" fill="none" stroke="#ff7a33" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M11 11 L18 11 L18 18 L11 18 Z" fill="none" stroke="#ff7a33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M46 11 L53 11 L53 18 L46 18 Z" fill="none" stroke="#ff7a33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M46 46 L53 46 L53 53 L46 53 Z" fill="none" stroke="#ff7a33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M11 46 L18 46 L18 53 L11 53 Z" fill="none" stroke="#ff7a33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+</svg>

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="52" height="52" viewBox="-10 -10 52 52">
+<title>state-slowed</title>
+<g id="halo-far">
+<path d="M28.12 23 L16 30 L3.88 23 L3.88 9 L16 2 L28.12 9 Z" fill="none" stroke="#8ff3ff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.12" stroke-dasharray="3 4"/>
+</g>
+<g id="halo-near">
+<path d="M28.12 23 L16 30 L3.88 23 L3.88 9 L16 2 L28.12 9 Z" fill="none" stroke="#8ff3ff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.35" stroke-dasharray="3 4"/>
+</g>
+<g id="body">
+<path d="M28.12 23 L16 30 L3.88 23 L3.88 9 L16 2 L28.12 9 Z" fill="none" stroke="#8ff3ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="3 4"/>
+</g>
+</svg>

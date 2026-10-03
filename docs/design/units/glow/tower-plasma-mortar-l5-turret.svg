@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="84" height="84" viewBox="-10 -10 84 84">
+<title>tower-plasma-mortar-l5-turret</title>
+<g id="halo-far">
+<path d="M30 32 A8 8 0 1 0 46 32 A8 8 0 1 0 30 32 Z" fill="none" stroke="#ff4fd8" stroke-width="19" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.12"/>
+<path d="M37 32 A3.5 3.5 0 1 0 44 32 A3.5 3.5 0 1 0 37 32 Z" fill="none" stroke="#ff4fd8" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.12"/>
+<path d="M17 23.5 A8 8 0 1 0 33 23.5 A8 8 0 1 0 17 23.5 Z" fill="none" stroke="#ff4fd8" stroke-width="19" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.12"/>
+<path d="M24 23.5 A3.5 3.5 0 1 0 31 23.5 A3.5 3.5 0 1 0 24 23.5 Z" fill="none" stroke="#ff4fd8" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.12"/>
+<path d="M17 40.5 A8 8 0 1 0 33 40.5 A8 8 0 1 0 17 40.5 Z" fill="none" stroke="#ff4fd8" stroke-width="19" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.12"/>
+<path d="M24 40.5 A3.5 3.5 0 1 0 31 40.5 A3.5 3.5 0 1 0 24 40.5 Z" fill="none" stroke="#ff4fd8" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.12"/>
+</g>
+<g id="halo-near">
+<path d="M30 32 A8 8 0 1 0 46 32 A8 8 0 1 0 30 32 Z" fill="none" stroke="#ff4fd8" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.35"/>
+<path d="M37 32 A3.5 3.5 0 1 0 44 32 A3.5 3.5 0 1 0 37 32 Z" fill="none" stroke="#ff4fd8" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.35"/>
+<path d="M17 23.5 A8 8 0 1 0 33 23.5 A8 8 0 1 0 17 23.5 Z" fill="none" stroke="#ff4fd8" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.35"/>
+<path d="M24 23.5 A3.5 3.5 0 1 0 31 23.5 A3.5 3.5 0 1 0 24 23.5 Z" fill="none" stroke="#ff4fd8" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.35"/>
+<path d="M17 40.5 A8 8 0 1 0 33 40.5 A8 8 0 1 0 17 40.5 Z" fill="none" stroke="#ff4fd8" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.35"/>
+<path d="M24 40.5 A3.5 3.5 0 1 0 31 40.5 A3.5 3.5 0 1 0 24 40.5 Z" fill="none" stroke="#ff4fd8" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.35"/>
+</g>
+<g id="body">
+<path d="M30 32 A8 8 0 1 0 46 32 A8 8 0 1 0 30 32 Z" fill="#06080d" stroke="#ff4fd8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill-opacity="1"/>
+<path d="M37 32 A3.5 3.5 0 1 0 44 32 A3.5 3.5 0 1 0 37 32 Z" fill="none" stroke="#ff4fd8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M17 23.5 A8 8 0 1 0 33 23.5 A8 8 0 1 0 17 23.5 Z" fill="#06080d" stroke="#ff4fd8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill-opacity="1"/>
+<path d="M24 23.5 A3.5 3.5 0 1 0 31 23.5 A3.5 3.5 0 1 0 24 23.5 Z" fill="none" stroke="#ff4fd8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M17 40.5 A8 8 0 1 0 33 40.5 A8 8 0 1 0 17 40.5 Z" fill="#06080d" stroke="#ff4fd8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill-opacity="1"/>
+<path d="M24 40.5 A3.5 3.5 0 1 0 31 40.5 A3.5 3.5 0 1 0 24 40.5 Z" fill="none" stroke="#ff4fd8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+<g id="hot-core">
+<path d="M30 32 A8 8 0 1 0 46 32 A8 8 0 1 0 30 32 Z" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.55"/>
+<path d="M37 32 A3.5 3.5 0 1 0 44 32 A3.5 3.5 0 1 0 37 32 Z" fill="none" stroke="#ffffff" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.55"/>
+<path d="M17 23.5 A8 8 0 1 0 33 23.5 A8 8 0 1 0 17 23.5 Z" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.55"/>
+<path d="M24 23.5 A3.5 3.5 0 1 0 31 23.5 A3.5 3.5 0 1 0 24 23.5 Z" fill="none" stroke="#ffffff" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.55"/>
+<path d="M17 40.5 A8 8 0 1 0 33 40.5 A8 8 0 1 0 17 40.5 Z" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.55"/>
+<path d="M24 40.5 A3.5 3.5 0 1 0 31 40.5 A3.5 3.5 0 1 0 24 40.5 Z" fill="none" stroke="#ffffff" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.55"/>
+</g>
+</svg>

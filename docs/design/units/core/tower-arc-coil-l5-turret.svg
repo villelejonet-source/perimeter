@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+<title>tower-arc-coil-l5-turret</title>
+<g id="body">
+<path d="M19.5 32 A12.5 12.5 0 1 0 44.5 32 A12.5 12.5 0 1 0 19.5 32 Z" fill="none" stroke="#ff4fd8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M39 32 L54 32" fill="none" stroke="#ff4fd8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M28.5 38.06 L21 51.05" fill="none" stroke="#ff4fd8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M28.5 25.94 L21 12.95" fill="none" stroke="#ff4fd8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M50 32 A4 4 0 1 0 58 32 A4 4 0 1 0 50 32 Z" fill="#06080d" stroke="#ff4fd8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill-opacity="1"/>
+<path d="M17 51.05 A4 4 0 1 0 25 51.05 A4 4 0 1 0 17 51.05 Z" fill="#06080d" stroke="#ff4fd8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill-opacity="1"/>
+<path d="M17 12.95 A4 4 0 1 0 25 12.95 A4 4 0 1 0 17 12.95 Z" fill="#06080d" stroke="#ff4fd8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill-opacity="1"/>
+<path d="M25 32 A7 7 0 1 0 39 32 A7 7 0 1 0 25 32 Z" fill="#06080d" stroke="#ff4fd8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill-opacity="1"/>
+</g>
+</svg>

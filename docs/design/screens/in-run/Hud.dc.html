@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>HUD</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@600;700;800&amp;family=Barlow+Semi+Condensed:wght@500;600;700&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}</style>
+</helmet>
+<div style="width: 390px; height: 56px; box-sizing: border-box; padding: 0 12px; background: rgba(17, 23, 38, 0.88); border-top: 1px solid #2a3550; border-bottom: 1px solid #2a3550; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; align-items: center; font-family: 'Barlow Semi Condensed', 'Barlow', system-ui, sans-serif; color: #eaf0fa">
+
+<div style="display: flex; flex-direction: column; gap: 2px; padding: 4px 6px">
+<span style="font-size: 13px; line-height: 16px; font-weight: 700; letter-spacing: 0.08em; color: #a3afc6">WAVE</span>
+<span style="font-family: 'Oxanium', 'Chakra Petch', system-ui, sans-serif; font-size: 20px; line-height: 24px; font-weight: 700; font-variant-numeric: tabular-nums">{{ wave }}</span>
+</div>
+
+<sc-if value="{{ baseNormal }}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; flex-direction: column; gap: 2px; padding: 4px 6px">
+<span style="font-size: 13px; line-height: 16px; font-weight: 700; letter-spacing: 0.08em; color: #a3afc6">BASE</span>
+<div style="display: flex; align-items: center; gap: 4px">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c6ff3d" stroke-width="2.5" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="3.5"></circle></svg>
+<span style="font-family: 'Oxanium', 'Chakra Petch', system-ui, sans-serif; font-size: 20px; line-height: 24px; font-weight: 700; font-variant-numeric: tabular-nums">{{ base }}</span>
+<span style="font-family: 'Oxanium', 'Chakra Petch', system-ui, sans-serif; font-size: 15px; line-height: 18px; font-weight: 600; color: #a3afc6">/20</span>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{ baseAlert }}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 2px; padding: 2px 4px; border: 2px dashed #ff3355">
+<span style="font-size: 13px; line-height: 16px; font-weight: 700; letter-spacing: 0.08em; color: #eaf0fa">BASE HIT</span>
+<div style="display: flex; align-items: center; gap: 4px">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ff3355" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.3 3h7.4L21 8.3v7.4L15.7 21H8.3L3 15.7V8.3z"></path><path d="M9 9l6 6M15 9l-6 6"></path></svg>
+<span style="font-family: 'Oxanium', 'Chakra Petch', system-ui, sans-serif; font-size: 20px; line-height: 24px; font-weight: 700; font-variant-numeric: tabular-nums">{{ base }}</span>
+<span style="font-family: 'Oxanium', 'Chakra Petch', system-ui, sans-serif; font-size: 15px; line-height: 18px; font-weight: 600; color: #a3afc6">/20</span>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ creditsNormal }}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; flex-direction: column; gap: 2px; padding: 4px 6px">
+<span style="font-size: 13px; line-height: 16px; font-weight: 700; letter-spacing: 0.08em; color: #a3afc6">CREDITS</span>
+<div style="display: flex; align-items: center; gap: 4px">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffd84d" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7.5v9"></path></svg>
+<span style="font-family: 'Oxanium', 'Chakra Petch', system-ui, sans-serif; font-size: 20px; line-height: 24px; font-weight: 700; font-variant-numeric: tabular-nums">{{ credits }}</span>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{ creditsAlert }}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 2px; padding: 2px 4px; border: 2px dashed #ff3355">
+<span style="font-size: 13px; line-height: 16px; font-weight: 700; letter-spacing: 0.08em; color: #eaf0fa">CREDITS</span>
+<div style="display: flex; align-items: center; gap: 4px">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffd84d" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7.5v9"></path></svg>
+<span style="font-family: 'Oxanium', 'Chakra Petch', system-ui, sans-serif; font-size: 20px; line-height: 24px; font-weight: 700; font-variant-numeric: tabular-nums">{{ credits }}</span>
+</div>
+</div>
+</sc-if>
+
+<div style="display: flex; flex-direction: column; gap: 2px; padding: 4px 6px">
+<span style="font-size: 13px; line-height: 16px; font-weight: 700; letter-spacing: 0.08em; color: #a3afc6">NEXT WAVE</span>
+<div style="display: flex; align-items: center; gap: 4px">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a3afc6" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+<span style="font-family: 'Oxanium', 'Chakra Petch', system-ui, sans-serif; font-size: 20px; line-height: 24px; font-weight: 700; font-variant-numeric: tabular-nums">{{ next }}</span>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"wave":{"editor":"text","default":"14"},"base":{"editor":"text","default":"17"},"credits":{"editor":"text","default":"240"},"next":{"editor":"text","default":"0:18"},"baseAlert":{"editor":"boolean","default":false},"creditsAlert":{"editor":"boolean","default":false},"$preview":{"width":390,"height":56}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const baseAlert = this.props.baseAlert ?? false;
+    const creditsAlert = this.props.creditsAlert ?? false;
+    return {
+      wave: this.props.wave ?? '14',
+      base: this.props.base ?? '17',
+      credits: this.props.credits ?? '240',
+      next: this.props.next ?? '0:18',
+      baseAlert: baseAlert,
+      baseNormal: !baseAlert,
+      creditsAlert: creditsAlert,
+      creditsNormal: !creditsAlert
+    };
+  }
+}
+</script>
+</body>
+</html>

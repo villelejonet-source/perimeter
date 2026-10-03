@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+<title>tower-cryo-projector-l5-turret</title>
+<g id="body">
+<path d="M36 28 L58 18 L58 46 L36 36 Z" fill="#06080d" stroke="#8ff3ff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill-opacity="1"/>
+<path d="M43 32 L54 32" fill="none" stroke="#8ff3ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M35.66 37 L27 42 L18.34 37 L18.34 27 L27 22 L35.66 27 Z" fill="#06080d" stroke="#8ff3ff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill-opacity="1"/>
+<path d="M21.5 32 L32.5 32" fill="none" stroke="#8ff3ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M24.25 27.24 L29.75 36.76" fill="none" stroke="#8ff3ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M29.75 27.24 L24.25 36.76" fill="none" stroke="#8ff3ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+</svg>

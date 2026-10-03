@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+<title>tower-cryo-projector-l5-base</title>
+<g id="body">
+<path d="M59 32 L45.5 55.38 L18.5 55.38 L5 32 L18.5 8.62 L45.5 8.62 Z" fill="#06080d" stroke="#8ff3ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill-opacity="1"/>
+<path d="M53 32 L42.5 50.19 L21.5 50.19 L11 32 L21.5 13.81 L42.5 13.81 Z" fill="none" stroke="#8ff3ff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M53 32 L59 32" fill="none" stroke="#8ff3ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M42.5 50.19 L45.5 55.38" fill="none" stroke="#8ff3ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M21.5 50.19 L18.5 55.38" fill="none" stroke="#8ff3ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M11 32 L5 32" fill="none" stroke="#8ff3ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M21.5 13.81 L18.5 8.62" fill="none" stroke="#8ff3ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M42.5 13.81 L45.5 8.62" fill="none" stroke="#8ff3ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+</svg>

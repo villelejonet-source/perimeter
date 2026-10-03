@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+<title>fx-mortar-blast</title>
+<g id="body">
+<path d="M3 32 A29 29 0 1 0 61 32 A29 29 0 1 0 3 32 Z" fill="none" stroke="#ff4fd8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M12 32 A20 20 0 1 0 52 32 A20 20 0 1 0 12 32 Z" fill="none" stroke="#ff4fd8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="5 5"/>
+</g>
+</svg>

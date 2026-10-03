@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="-12 -12 120 120">
+<title>base-healthy</title>
+<g id="halo-far">
+<path d="M8 48 A40 40 0 1 0 88 48 A40 40 0 1 0 8 48 Z" fill="none" stroke="#c6ff3d" stroke-width="20" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.12"/>
+<path d="M65.32 58 L48 68 L30.68 58 L30.68 38 L48 28 L65.32 38 Z" fill="none" stroke="#c6ff3d" stroke-width="19" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.12"/>
+<path d="M56 48 L48 56 L40 48 L48 40 Z" fill="none" stroke="#c6ff3d" stroke-width="19" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.12"/>
+</g>
+<g id="halo-near">
+<path d="M8 48 A40 40 0 1 0 88 48 A40 40 0 1 0 8 48 Z" fill="none" stroke="#c6ff3d" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.35"/>
+<path d="M65.32 58 L48 68 L30.68 58 L30.68 38 L48 28 L65.32 38 Z" fill="none" stroke="#c6ff3d" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.35"/>
+<path d="M56 48 L48 56 L40 48 L48 40 Z" fill="none" stroke="#c6ff3d" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.35"/>
+</g>
+<g id="body">
+<path d="M8 48 A40 40 0 1 0 88 48 A40 40 0 1 0 8 48 Z" fill="none" stroke="#c6ff3d" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M65.32 58 L48 68 L30.68 58 L30.68 38 L48 28 L65.32 38 Z" fill="#06080d" stroke="#c6ff3d" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill-opacity="1"/>
+<path d="M56 48 L48 56 L40 48 L48 40 Z" fill="none" stroke="#c6ff3d" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+<g id="hot-core">
+<path d="M8 48 A40 40 0 1 0 88 48 A40 40 0 1 0 8 48 Z" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.55"/>
+<path d="M65.32 58 L48 68 L30.68 58 L30.68 38 L48 28 L65.32 38 Z" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.55"/>
+<path d="M56 48 L48 56 L40 48 L48 40 Z" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.55"/>
+</g>
+</svg>

@@ -1,0 +1,452 @@
+[
+ {
+  "key": "tower-pulse-laser-l1-base",
+  "frame": [
+   64,
+   64
+  ],
+  "glowPad": 10,
+  "halo": 8
+ },
+ {
+  "key": "tower-pulse-laser-l1-turret",
+  "frame": [
+   64,
+   64
+  ],
+  "glowPad": 10,
+  "halo": 8
+ },
+ {
+  "key": "tower-pulse-laser-l5-base",
+  "frame": [
+   64,
+   64
+  ],
+  "glowPad": 10,
+  "halo": 8
+ },
+ {
+  "key": "tower-pulse-laser-l5-turret",
+  "frame": [
+   64,
+   64
+  ],
+  "glowPad": 10,
+  "halo": 8
+ },
+ {
+  "key": "tower-railgun-l1-base",
+  "frame": [
+   64,
+   64
+  ],
+  "glowPad": 10,
+  "halo": 8
+ },
+ {
+  "key": "tower-railgun-l1-turret",
+  "frame": [
+   64,
+   64
+  ],
+  "glowPad": 10,
+  "halo": 8
+ },
+ {
+  "key": "tower-railgun-l5-base",
+  "frame": [
+   64,
+   64
+  ],
+  "glowPad": 10,
+  "halo": 8
+ },
+ {
+  "key": "tower-railgun-l5-turret",
+  "frame": [
+   64,
+   64
+  ],
+  "glowPad": 10,
+  "halo": 8
+ },
+ {
+  "key": "tower-plasma-mortar-l1-base",
+  "frame": [
+   64,
+   64
+  ],
+  "glowPad": 10,
+  "halo": 8
+ },
+ {
+  "key": "tower-plasma-mortar-l1-turret",
+  "frame": [
+   64,
+   64
+  ],
+  "glowPad": 10,
+  "halo": 8
+ },
+ {
+  "key": "tower-plasma-mortar-l5-base",
+  "frame": [
+   64,
+   64
+  ],
+  "glowPad": 10,
+  "halo": 8
+ },
+ {
+  "key": "tower-plasma-mortar-l5-turret",
+  "frame": [
+   64,
+   64
+  ],
+  "glowPad": 10,
+  "halo": 8
+ },
+ {
+  "key": "tower-arc-coil-l1-base",
+  "frame": [
+   64,
+   64
+  ],
+  "glowPad": 10,
+  "halo": 8
+ },
+ {
+  "key": "tower-arc-coil-l1-turret",
+  "frame": [
+   64,
+   64
+  ],
+  "glowPad": 10,
+  "halo": 8
+ },
+ {
+  "key": "tower-arc-coil-l5-base",
+  "frame": [
+   64,
+   64
+  ],
+  "glowPad": 10,
+  "halo": 8
+ },
+ {
+  "key": "tower-arc-coil-l5-turret",
+  "frame": [
+   64,
+   64
+  ],
+  "glowPad": 10,
+  "halo": 8
+ },
+ {
+  "key": "tower-cryo-projector-l1-base",
+  "frame": [
+   64,
+   64
+  ],
+  "glowPad": 10,
+  "halo": 8
+ },
+ {
+  "key": "tower-cryo-projector-l1-turret",
+  "frame": [
+   64,
+   64
+  ],
+  "glowPad": 10,
+  "halo": 8
+ },
+ {
+  "key": "tower-cryo-projector-l5-base",
+  "frame": [
+   64,
+   64
+  ],
+  "glowPad": 10,
+  "halo": 8
+ },
+ {
+  "key": "tower-cryo-projector-l5-turret",
+  "frame": [
+   64,
+   64
+  ],
+  "glowPad": 10,
+  "halo": 8
+ },
+ {
+  "key": "tower-swarm-launcher-l1-base",
+  "frame": [
+   64,
+   64
+  ],
+  "glowPad": 10,
+  "halo": 8
+ },
+ {
+  "key": "tower-swarm-launcher-l1-turret",
+  "frame": [
+   64,
+   64
+  ],
+  "glowPad": 10,
+  "halo": 8
+ },
+ {
+  "key": "tower-swarm-launcher-l5-base",
+  "frame": [
+   64,
+   64
+  ],
+  "glowPad": 10,
+  "halo": 8
+ },
+ {
+  "key": "tower-swarm-launcher-l5-turret",
+  "frame": [
+   64,
+   64
+  ],
+  "glowPad": 10,
+  "halo": 8
+ },
+ {
+  "key": "enemy-drone",
+  "frame": [
+   32,
+   32
+  ],
+  "glowPad": 10,
+  "halo": 4
+ },
+ {
+  "key": "enemy-skitter",
+  "frame": [
+   32,
+   32
+  ],
+  "glowPad": 10,
+  "halo": 4
+ },
+ {
+  "key": "enemy-bulwark",
+  "frame": [
+   32,
+   32
+  ],
+  "glowPad": 10,
+  "halo": 4
+ },
+ {
+  "key": "enemy-warden",
+  "frame": [
+   32,
+   32
+  ],
+  "glowPad": 10,
+  "halo": 4
+ },
+ {
+  "key": "enemy-wraith",
+  "frame": [
+   32,
+   32
+  ],
+  "glowPad": 10,
+  "halo": 4
+ },
+ {
+  "key": "enemy-splitter",
+  "frame": [
+   32,
+   32
+  ],
+  "glowPad": 10,
+  "halo": 4
+ },
+ {
+  "key": "enemy-medic",
+  "frame": [
+   32,
+   32
+  ],
+  "glowPad": 10,
+  "halo": 4
+ },
+ {
+  "key": "enemy-drone-elite",
+  "frame": [
+   32,
+   32
+  ],
+  "glowPad": 10,
+  "halo": 8
+ },
+ {
+  "key": "state-shield",
+  "frame": [
+   32,
+   32
+  ],
+  "glowPad": 10,
+  "halo": 4
+ },
+ {
+  "key": "state-shield-recharging",
+  "frame": [
+   32,
+   32
+  ],
+  "glowPad": 10,
+  "halo": 4
+ },
+ {
+  "key": "state-armor",
+  "frame": [
+   32,
+   32
+  ],
+  "glowPad": 10,
+  "halo": 4
+ },
+ {
+  "key": "state-frozen",
+  "frame": [
+   32,
+   32
+  ],
+  "glowPad": 10,
+  "halo": 4
+ },
+ {
+  "key": "state-slowed",
+  "frame": [
+   32,
+   32
+  ],
+  "glowPad": 10,
+  "halo": 4
+ },
+ {
+  "key": "boss-juggernaut",
+  "frame": [
+   96,
+   96
+  ],
+  "glowPad": 20,
+  "halo": 16
+ },
+ {
+  "key": "boss-aegis",
+  "frame": [
+   96,
+   96
+  ],
+  "glowPad": 20,
+  "halo": 16
+ },
+ {
+  "key": "boss-hive-carrier",
+  "frame": [
+   96,
+   96
+  ],
+  "glowPad": 20,
+  "halo": 16
+ },
+ {
+  "key": "proj-laser-beam",
+  "frame": [
+   64,
+   8
+  ],
+  "glowPad": 6,
+  "halo": 4
+ },
+ {
+  "key": "proj-rail-trail",
+  "frame": [
+   64,
+   8
+  ],
+  "glowPad": 6,
+  "halo": 4
+ },
+ {
+  "key": "proj-mortar-shell",
+  "frame": [
+   16,
+   16
+  ],
+  "glowPad": 6,
+  "halo": 4
+ },
+ {
+  "key": "fx-mortar-blast",
+  "frame": [
+   64,
+   64
+  ],
+  "glowPad": 6,
+  "halo": 4
+ },
+ {
+  "key": "proj-chain-lightning",
+  "frame": [
+   64,
+   24
+  ],
+  "glowPad": 6,
+  "halo": 4
+ },
+ {
+  "key": "proj-cryo-beam",
+  "frame": [
+   64,
+   16
+  ],
+  "glowPad": 6,
+  "halo": 4
+ },
+ {
+  "key": "proj-missile",
+  "frame": [
+   16,
+   8
+  ],
+  "glowPad": 6,
+  "halo": 4
+ },
+ {
+  "key": "base-healthy",
+  "frame": [
+   96,
+   96
+  ],
+  "glowPad": 12,
+  "halo": 8
+ },
+ {
+  "key": "base-damaged",
+  "frame": [
+   96,
+   96
+  ],
+  "glowPad": 12,
+  "halo": 8
+ },
+ {
+  "key": "base-critical",
+  "frame": [
+   96,
+   96
+  ],
+  "glowPad": 12,
+  "halo": 8
+ }
+]

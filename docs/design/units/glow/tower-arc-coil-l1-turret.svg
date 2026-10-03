@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="84" height="84" viewBox="-10 -10 84 84">
+<title>tower-arc-coil-l1-turret</title>
+<g id="halo-far">
+<path d="M38 32 L49 32" fill="none" stroke="#ff4fd8" stroke-width="19" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.12"/>
+<path d="M29 37.2 L23.5 46.72" fill="none" stroke="#ff4fd8" stroke-width="19" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.12"/>
+<path d="M29 26.8 L23.5 17.28" fill="none" stroke="#ff4fd8" stroke-width="19" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.12"/>
+<path d="M45.5 32 A3.5 3.5 0 1 0 52.5 32 A3.5 3.5 0 1 0 45.5 32 Z" fill="none" stroke="#ff4fd8" stroke-width="19" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.12"/>
+<path d="M20 46.72 A3.5 3.5 0 1 0 27 46.72 A3.5 3.5 0 1 0 20 46.72 Z" fill="none" stroke="#ff4fd8" stroke-width="19" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.12"/>
+<path d="M20 17.28 A3.5 3.5 0 1 0 27 17.28 A3.5 3.5 0 1 0 20 17.28 Z" fill="none" stroke="#ff4fd8" stroke-width="19" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.12"/>
+<path d="M26 32 A6 6 0 1 0 38 32 A6 6 0 1 0 26 32 Z" fill="none" stroke="#ff4fd8" stroke-width="19" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.12"/>
+</g>
+<g id="halo-near">
+<path d="M38 32 L49 32" fill="none" stroke="#ff4fd8" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.35"/>
+<path d="M29 37.2 L23.5 46.72" fill="none" stroke="#ff4fd8" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.35"/>
+<path d="M29 26.8 L23.5 17.28" fill="none" stroke="#ff4fd8" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.35"/>
+<path d="M45.5 32 A3.5 3.5 0 1 0 52.5 32 A3.5 3.5 0 1 0 45.5 32 Z" fill="none" stroke="#ff4fd8" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.35"/>
+<path d="M20 46.72 A3.5 3.5 0 1 0 27 46.72 A3.5 3.5 0 1 0 20 46.72 Z" fill="none" stroke="#ff4fd8" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.35"/>
+<path d="M20 17.28 A3.5 3.5 0 1 0 27 17.28 A3.5 3.5 0 1 0 20 17.28 Z" fill="none" stroke="#ff4fd8" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.35"/>
+<path d="M26 32 A6 6 0 1 0 38 32 A6 6 0 1 0 26 32 Z" fill="none" stroke="#ff4fd8" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.35"/>
+</g>
+<g id="body">
+<path d="M38 32 L49 32" fill="none" stroke="#ff4fd8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M29 37.2 L23.5 46.72" fill="none" stroke="#ff4fd8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M29 26.8 L23.5 17.28" fill="none" stroke="#ff4fd8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M45.5 32 A3.5 3.5 0 1 0 52.5 32 A3.5 3.5 0 1 0 45.5 32 Z" fill="#06080d" stroke="#ff4fd8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill-opacity="1"/>
+<path d="M20 46.72 A3.5 3.5 0 1 0 27 46.72 A3.5 3.5 0 1 0 20 46.72 Z" fill="#06080d" stroke="#ff4fd8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill-opacity="1"/>
+<path d="M20 17.28 A3.5 3.5 0 1 0 27 17.28 A3.5 3.5 0 1 0 20 17.28 Z" fill="#06080d" stroke="#ff4fd8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill-opacity="1"/>
+<path d="M26 32 A6 6 0 1 0 38 32 A6 6 0 1 0 26 32 Z" fill="#06080d" stroke="#ff4fd8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill-opacity="1"/>
+</g>
+<g id="hot-core">
+<path d="M38 32 L49 32" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.55"/>
+<path d="M29 37.2 L23.5 46.72" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.55"/>
+<path d="M29 26.8 L23.5 17.28" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.55"/>
+<path d="M45.5 32 A3.5 3.5 0 1 0 52.5 32 A3.5 3.5 0 1 0 45.5 32 Z" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.55"/>
+<path d="M20 46.72 A3.5 3.5 0 1 0 27 46.72 A3.5 3.5 0 1 0 20 46.72 Z" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.55"/>
+<path d="M20 17.28 A3.5 3.5 0 1 0 27 17.28 A3.5 3.5 0 1 0 20 17.28 Z" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.55"/>
+<path d="M26 32 A6 6 0 1 0 38 32 A6 6 0 1 0 26 32 Z" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.55"/>
+</g>
+</svg>

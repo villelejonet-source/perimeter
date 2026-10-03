@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Alert — base taking damage</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@600;700;800&amp;family=Barlow+Semi+Condensed:wght@500;600;700&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}</style>
+</helmet>
+<div style="position: relative; width: 390px; height: 844px; overflow: hidden; background: #06080d; font-family: 'Barlow Semi Condensed', 'Barlow', system-ui, sans-serif; color: #eaf0fa">
+<div style="position: absolute; left: 0; top: 0; width: 390px; height: 844px"><dc-import name="Battlefield" base-state="damaged" hint-size="390px,844px"></dc-import></div>
+<div style="position: absolute; left: 0; top: 48px; width: 390px; height: 56px"><dc-import name="Hud" base="15" base-alert="{{ true }}" hint-size="390px,56px"></dc-import></div>
+
+<div style="position: absolute; left: 140px; top: 548px; width: 104px; height: 104px; box-sizing: border-box; border-radius: 50%; border: 4px dashed #ff3355"></div>
+<div style="position: absolute; left: 244px; top: 566px; font-family: 'Oxanium', 'Chakra Petch', system-ui, sans-serif; font-size: 22px; line-height: 22px; font-weight: 800; color: #ff3355">−2</div>
+
+<div style="position: absolute; left: 0; top: 654px; width: 390px; height: 190px"><dc-import name="Controls" hint-size="390px,190px"></dc-import></div>
+
+<div aria-hidden="true" style="position: absolute; left: 0; top: 0; width: 390px; height: 12px; background: repeating-linear-gradient(135deg, #ff3355 0 4px, transparent 4px 10px)"></div>
+<div aria-hidden="true" style="position: absolute; left: 0; bottom: 0; width: 390px; height: 12px; background: repeating-linear-gradient(135deg, #ff3355 0 4px, transparent 4px 10px)"></div>
+<div aria-hidden="true" style="position: absolute; left: 0; top: 0; width: 12px; height: 844px; background: repeating-linear-gradient(135deg, #ff3355 0 4px, transparent 4px 10px)"></div>
+<div aria-hidden="true" style="position: absolute; right: 0; top: 0; width: 12px; height: 844px; background: repeating-linear-gradient(135deg, #ff3355 0 4px, transparent 4px 10px)"></div>
+<div aria-hidden="true" style="position: absolute; left: 0; top: 0; width: 390px; height: 844px; box-sizing: border-box; border: 2px solid #ff3355"></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

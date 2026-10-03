@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+<title>tower-swarm-launcher-l1-turret</title>
+<g id="body">
+<path d="M19 22 L41 22 L48 32 L41 42 L19 42 Z" fill="#06080d" stroke="#ff7a33" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill-opacity="1"/>
+<path d="M23 28 A3 3 0 1 0 29 28 A3 3 0 1 0 23 28 Z" fill="none" stroke="#ff7a33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M33 28 A3 3 0 1 0 39 28 A3 3 0 1 0 33 28 Z" fill="none" stroke="#ff7a33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M23 36 A3 3 0 1 0 29 36 A3 3 0 1 0 23 36 Z" fill="none" stroke="#ff7a33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M33 36 A3 3 0 1 0 39 36 A3 3 0 1 0 33 36 Z" fill="none" stroke="#ff7a33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+</svg>

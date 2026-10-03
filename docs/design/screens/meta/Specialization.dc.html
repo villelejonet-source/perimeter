@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Specialization pick</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600;700&amp;family=Oxanium:wght@500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;background:#06080d}
+a{color:#c6ff3d}a:hover{color:#eaf0fa}
+*{box-sizing:border-box}
+.d{font-family:"Oxanium","Chakra Petch",system-ui,sans-serif;font-variant-numeric:tabular-nums}
+.u{font-family:"Barlow Semi Condensed","Barlow",system-ui,sans-serif}
+.lbl{font-family:"Barlow Semi Condensed","Barlow",system-ui,sans-serif;font-size:13px;line-height:16px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.c2s{clip-path:polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px)}
+.c2m{clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px)}
+.field{background-color:#06080d;background-image:repeating-linear-gradient(0deg,#141b2b 0 1px,transparent 1px 39px),repeating-linear-gradient(90deg,#141b2b 0 1px,transparent 1px 39px)}
+button{font:inherit;cursor:pointer;border:0;padding:0;color:inherit;background:none}
+button:focus-visible{outline:2px solid #c6ff3d;outline-offset:3px}
+</style>
+</helmet>
+<div class="u field" style="width:390px;height:844px;position:relative;overflow:hidden;color:#eaf0fa">
+  <svg viewBox="0 0 390 844" width="390" height="844" aria-hidden="true" style="position:absolute;inset:0;fill:none">
+    <path d="M-10 180H120V420H270V620H400" style="stroke:#2a3550;stroke-width:36;stroke-linejoin:miter"></path>
+    <path d="M120 300l14 14-14 14-14-14z" style="stroke:#ff4fd8;stroke-width:3;fill:#06080d;filter:drop-shadow(0 0 8px rgba(255,79,216,.8))"></path>
+    <rect x="216" y="500" width="24" height="24" style="stroke:#ff7a33;stroke-width:3;fill:#06080d"></rect>
+    <path d="M300 360l11 6v13l-11 6-11-6v-13z" style="stroke:#8ff3ff;stroke-width:3;fill:#06080d"></path>
+    <path d="M60 172l8 13H52z M190 412l8 13h-16z M262 560l8 13h-16z" style="stroke:#eaf0fa;stroke-width:2;fill:#06080d"></path>
+  </svg>
+  <div style="position:absolute;inset:0;background:rgba(10,14,23,.86)"></div>
+
+  <div style="position:relative;height:100%;display:flex;flex-direction:column;padding:56px 16px 34px;gap:16px">
+    <!-- Paused HUD -->
+    <div class="c2m" style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:rgba(17,23,38,.88)">
+      <div style="display:flex;flex-direction:column">
+        <span class="lbl" style="color:#a3afc6">Wave</span>
+        <span class="d" style="font-size:20px;line-height:24px;font-weight:700">23</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px;width:110px">
+        <span class="lbl" style="color:#a3afc6">Base 34 / 40</span>
+        <span style="display:block;height:4px;background:#2a3550"><span style="display:block;width:85%;height:4px;background:#eaf0fa"></span></span>
+      </div>
+      <div style="display:flex;align-items:center;gap:4px">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" style="fill:none;stroke:#ffd84d;stroke-width:2;stroke-linecap:round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v10"></path></svg>
+        <span class="d" style="font-size:20px;line-height:24px;font-weight:700">1,840</span>
+      </div>
+      <span class="lbl c2s" style="padding:4px 8px;background:#1a2236;color:#a3afc6">Paused</span>
+    </div>
+
+    <!-- Header -->
+    <div style="display:flex;align-items:center;gap:12px">
+      <svg viewBox="0 0 48 48" width="48" height="48" aria-hidden="true" style="flex:none;fill:#06080d;stroke:#ff4fd8;stroke-width:3;stroke-linejoin:round;filter:drop-shadow(0 0 8px rgba(255,79,216,.5))"><path d="M24 4l20 20-20 20L4 24z"></path><path d="M26 14l-5 10h7l-5 10" style="fill:none;stroke-width:2.5;stroke-linecap:round"></path></svg>
+      <div style="display:flex;flex-direction:column">
+        <span class="lbl" style="color:#c6ff3d">Pulse Laser reached level 5</span>
+        <h1 class="d" style="margin:0;font-size:28px;line-height:32px;font-weight:700;letter-spacing:.04em;text-transform:uppercase">Specialize</h1>
+        <span style="font-size:14px;line-height:18px;color:#a3afc6">Pick one. Locked for this tower until the run ends.</span>
+      </div>
+    </div>
+
+    <!-- Cards -->
+    <div style="display:flex;flex-direction:column;gap:8px;flex:1">
+
+      <!-- Overclock -->
+      <button class="c2m" style="display:block;text-align:left;background:#5d6e94;padding:2px">
+        <span class="c2m" style="display:grid;grid-template-columns:48px minmax(0, 1fr);gap:12px;padding:12px;background:#1a2236">
+          <svg viewBox="0 0 48 48" width="48" height="48" aria-hidden="true" style="fill:#06080d;stroke:#ff4fd8;stroke-width:2.5;stroke-linejoin:round;stroke-linecap:round"><path d="M24 4l20 20-20 20L4 24z"></path><path d="M16 18l6 6-6 6M24 18l6 6-6 6" style="fill:none"></path></svg>
+          <span style="display:flex;flex-direction:column;gap:4px">
+            <span style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+              <span style="font-size:19px;line-height:24px;font-weight:700">Overclock</span>
+              <span style="display:flex;align-items:center;gap:4px">
+                <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" style="fill:none;stroke:#ff4fd8;stroke-width:2;stroke-linejoin:round"><path d="M12 3l9 9-9 9-9-9z"></path></svg>
+                <span class="lbl" style="color:#ff4fd8">Energy</span>
+              </span>
+            </span>
+            <span style="font-size:16px;line-height:22px;font-weight:500;color:#eaf0fa">Fire rate ramps up while firing continuously. Resets after 2 s idle.</span>
+            <span class="d" style="font-size:15px;line-height:18px;font-weight:600;color:#a3afc6">FIRE RATE +10%/s · MAX +100%</span>
+          </span>
+        </span>
+      </button>
+
+      <!-- Flechette (selected, damage type change) -->
+      <button aria-pressed="true" class="c2m" style="display:block;text-align:left;background:#c6ff3d;padding:3px;position:relative">
+        <span class="c2m" style="display:flex;flex-direction:column;background:#1a2236">
+          <span style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:#111726;border-bottom:1px solid #2a3550">
+            <span class="lbl" style="color:#eaf0fa;flex:1">Damage type changes</span>
+            <span style="display:flex;align-items:center;gap:4px">
+              <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" style="fill:none;stroke:#ff4fd8;stroke-width:2;stroke-linejoin:round"><path d="M12 3l9 9-9 9-9-9z"></path></svg>
+              <span class="lbl" style="color:#ff4fd8;text-decoration:line-through">Energy</span>
+            </span>
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" style="fill:none;stroke:#eaf0fa;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M4 12h15M14 7l5 5-5 5"></path></svg>
+            <span class="c2s" style="display:flex;align-items:center;gap:4px;padding:4px 8px;background:#ff7a33;color:#06080d">
+              <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" style="fill:none;stroke:#06080d;stroke-width:2.5"><rect x="4" y="4" width="16" height="16"></rect></svg>
+              <span class="lbl">Kinetic</span>
+            </span>
+          </span>
+          <span style="display:grid;grid-template-columns:48px minmax(0, 1fr);gap:12px;padding:12px">
+            <svg viewBox="0 0 48 48" width="48" height="48" aria-hidden="true" style="fill:#06080d;stroke:#ff7a33;stroke-width:2.5;stroke-linecap:round;filter:drop-shadow(0 0 8px rgba(255,122,51,.45))"><rect x="5" y="5" width="38" height="38"></rect><path d="M13 17h10M17 24h16M13 31h10" style="stroke-width:3.5"></path></svg>
+            <span style="display:flex;flex-direction:column;gap:6px">
+              <span style="font-size:19px;line-height:24px;font-weight:700">Flechette</span>
+              <span style="font-size:16px;line-height:22px;font-weight:500">Swaps the beam for flechette bursts that pierce 2 enemies.</span>
+              <span style="display:flex;align-items:center;gap:8px">
+                <svg viewBox="0 0 120 8" width="120" height="8" aria-hidden="true" style="fill:none;stroke-width:3;stroke-linecap:round"><path d="M2 4h46" style="stroke:#ff4fd8;opacity:.5"></path><path d="M66 4h8M84 4h8M102 4h8" style="stroke:#ff7a33"></path></svg>
+                <span style="font-size:14px;line-height:18px;color:#a3afc6">Beam → short slugs</span>
+              </span>
+              <span style="display:flex;flex-wrap:wrap;gap:6px">
+                <span class="c2s" style="display:flex;align-items:center;gap:6px;padding:4px 8px;background:#111726">
+                  <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" style="fill:none;stroke:#c3ccd9;stroke-width:2;stroke-linecap:round"><path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"></path></svg>
+                  <span class="lbl" style="color:#eaf0fa">Now strong vs Armor</span>
+                </span>
+                <span class="c2s" style="display:flex;align-items:center;gap:6px;padding:4px 8px;background:#111726">
+                  <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" style="fill:none;stroke:#5b8cff;stroke-width:2;stroke-dasharray:4 3"><circle cx="12" cy="12" r="8"></circle></svg>
+                  <span class="lbl" style="color:#a3afc6">Loses Shield bonus</span>
+                </span>
+              </span>
+            </span>
+          </span>
+        </span>
+        <span style="position:absolute;top:-10px;right:-6px;width:28px;height:28px;border-radius:50%;background:#c6ff3d;display:flex;align-items:center;justify-content:center">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" style="fill:none;stroke:#06080d;stroke-width:3;stroke-linecap:round;stroke-linejoin:round"><path d="M5 12.5l4.5 4.5L19 7"></path></svg>
+        </span>
+      </button>
+
+      <!-- Prism -->
+      <button class="c2m" style="display:block;text-align:left;background:#5d6e94;padding:2px">
+        <span class="c2m" style="display:grid;grid-template-columns:48px minmax(0, 1fr);gap:12px;padding:12px;background:#1a2236">
+          <svg viewBox="0 0 48 48" width="48" height="48" aria-hidden="true" style="fill:#06080d;stroke:#ff4fd8;stroke-width:2.5;stroke-linejoin:round;stroke-linecap:round"><path d="M24 4l20 20-20 20L4 24z"></path><path d="M12 24h9M21 24l11-7M21 24h14M21 24l11 7" style="fill:none;stroke-width:2"></path></svg>
+          <span style="display:flex;flex-direction:column;gap:4px">
+            <span style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+              <span style="font-size:19px;line-height:24px;font-weight:700">Prism</span>
+              <span style="display:flex;align-items:center;gap:4px">
+                <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" style="fill:none;stroke:#ff4fd8;stroke-width:2;stroke-linejoin:round"><path d="M12 3l9 9-9 9-9-9z"></path></svg>
+                <span class="lbl" style="color:#ff4fd8">Energy</span>
+              </span>
+            </span>
+            <span style="font-size:16px;line-height:22px;font-weight:500">Splits the beam across 3 targets.</span>
+            <span class="d" style="font-size:15px;line-height:18px;font-weight:600;color:#a3afc6">3 BEAMS · 45% DMG EACH</span>
+          </span>
+        </span>
+      </button>
+    </div>
+
+    <!-- Thumb zone actions -->
+    <div style="display:flex;gap:8px">
+      <button class="c2m" style="width:112px;height:56px;background:#5d6e94;padding:2px">
+        <span class="c2m" style="display:flex;width:100%;height:100%;align-items:center;justify-content:center;background:#1a2236;font-size:16px;font-weight:700;letter-spacing:.06em;text-transform:uppercase">Later</span>
+      </button>
+      <div style="flex:1;filter:drop-shadow(0 0 8px rgba(198,255,61,.35)) drop-shadow(0 0 16px rgba(198,255,61,.12))">
+        <button class="c2m" style="width:100%;height:56px;background:#c6ff3d;color:#06080d;font-size:18px;line-height:20px;font-weight:700;letter-spacing:.06em;text-transform:uppercase">Lock in Flechette</button>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

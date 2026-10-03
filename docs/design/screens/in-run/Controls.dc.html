@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Controls and build bar</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@600;700;800&amp;family=Barlow+Semi+Condensed:wght@500;600;700&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}</style>
+</helmet>
+<div style="width: 390px; height: 190px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: flex-end; gap: 8px; font-family: 'Barlow Semi Condensed', 'Barlow', system-ui, sans-serif; color: #eaf0fa">
+
+<sc-if value="{{ showRow }}" hint-placeholder-val="{{ true }}">
+<div style="height: 56px; padding: 0 16px; display: flex; align-items: center; gap: 8px">
+<button aria-label="Pause" style="width: 48px; height: 48px; flex: none; border: 0; padding: 2px; background: #5d6e94; clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px); cursor: pointer">
+<span style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #111726; clip-path: polygon(9px 0, 100% 0, 100% calc(100% - 9px), calc(100% - 9px) 100%, 0 100%, 0 9px)">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#eaf0fa" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M9 6v12M15 6v12"></path></svg>
+</span>
+</button>
+<div role="group" aria-label="Game speed" style="height: 48px; flex: none; padding: 2px; background: #5d6e94; display: flex; gap: 2px; box-sizing: border-box; clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px)">
+<button aria-pressed="true" style="width: 46px; height: 44px; border: 0; border-bottom: 3px solid #c6ff3d; padding: 0; background: #1a2236; color: #c6ff3d; font-family: 'Oxanium', 'Chakra Petch', system-ui, sans-serif; font-size: 16px; font-weight: 700; cursor: pointer">1x</button>
+<button aria-pressed="false" style="width: 46px; height: 44px; border: 0; padding: 0; background: #111726; color: #eaf0fa; font-family: 'Oxanium', 'Chakra Petch', system-ui, sans-serif; font-size: 16px; font-weight: 700; cursor: pointer">2x</button>
+<button disabled aria-label="3x speed, locked" style="width: 46px; height: 44px; border: 0; padding: 0; background: repeating-linear-gradient(135deg, #1a2236 0 4px, #111726 4px 10px); color: #6f7c96; font-family: 'Oxanium', 'Chakra Petch', system-ui, sans-serif; font-size: 15px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 2px">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6f7c96" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="1"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>3x
+</button>
+</div>
+<button aria-label="Call next wave early for bonus Credits" style="flex: 1; height: 56px; border: 0; padding: 0 8px; background: #c6ff3d; color: #06080d; clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; cursor: pointer">
+<span style="font-family: 'Barlow Semi Condensed', 'Barlow', system-ui, sans-serif; font-size: 18px; line-height: 20px; font-weight: 700; letter-spacing: 0.06em">CALL EARLY</span>
+<span style="display: flex; align-items: center; gap: 4px; font-family: 'Oxanium', 'Chakra Petch', system-ui, sans-serif; font-size: 15px; line-height: 18px; font-weight: 700">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#06080d" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7.5v9"></path></svg>+{{ bonus }}
+</span>
+</button>
+</div>
+</sc-if>
+
+<div style="padding: 8px 16px 34px; background: #111726; border-top: 1px solid #2a3550">
+<sc-if value="{{ showBar }}" hint-placeholder-val="{{ true }}">
+<div style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px">
+
+<button aria-label="Pulse Laser, 100 Credits" style="height: 76px; border: 0; padding: 4px 0 6px; background: #1a2236; clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px); display: flex; flex-direction: column; align-items: center; justify-content: space-between; color: #eaf0fa; cursor: pointer">
+<sc-if value="{{ slot1Here }}" hint-placeholder-val="{{ true }}">
+<span style="position: relative; width: 44px; height: 44px; display: block"><img src="../units/glow/tower-pulse-laser-l1-base.svg" alt="" style="position: absolute; left: 0; top: 0; width: 44px; height: 44px"><img src="../units/glow/tower-pulse-laser-l1-turret.svg" alt="" style="position: absolute; left: 0; top: 0; width: 44px; height: 44px"></span>
+</sc-if>
+<span style="display: flex; align-items: center; gap: 3px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffd84d" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7.5v9"></path></svg><span style="font-family: 'Oxanium', 'Chakra Petch', system-ui, sans-serif; font-size: 15px; line-height: 18px; font-weight: 700; font-variant-numeric: tabular-nums">100</span></span>
+</button>
+
+<button aria-label="Railgun, 140 Credits" style="height: 76px; border: 0; padding: 4px 0 6px; background: #1a2236; clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px); display: flex; flex-direction: column; align-items: center; justify-content: space-between; color: #eaf0fa; cursor: pointer">
+<span style="position: relative; width: 44px; height: 44px; display: block"><img src="../units/glow/tower-railgun-l1-base.svg" alt="" style="position: absolute; left: 0; top: 0; width: 44px; height: 44px"><img src="../units/glow/tower-railgun-l1-turret.svg" alt="" style="position: absolute; left: 0; top: 0; width: 44px; height: 44px"></span>
+<span style="display: flex; align-items: center; gap: 3px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffd84d" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7.5v9"></path></svg><span style="font-family: 'Oxanium', 'Chakra Petch', system-ui, sans-serif; font-size: 15px; line-height: 18px; font-weight: 700; font-variant-numeric: tabular-nums">140</span></span>
+</button>
+
+<button aria-label="Cryo Projector, 120 Credits" style="height: 76px; border: 0; padding: 4px 0 6px; background: #1a2236; clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px); display: flex; flex-direction: column; align-items: center; justify-content: space-between; color: #eaf0fa; cursor: pointer">
+<span style="position: relative; width: 44px; height: 44px; display: block"><img src="../units/glow/tower-cryo-projector-l1-base.svg" alt="" style="position: absolute; left: 0; top: 0; width: 44px; height: 44px"><img src="../units/glow/tower-cryo-projector-l1-turret.svg" alt="" style="position: absolute; left: 0; top: 0; width: 44px; height: 44px"></span>
+<span style="display: flex; align-items: center; gap: 3px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffd84d" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7.5v9"></path></svg><span style="font-family: 'Oxanium', 'Chakra Petch', system-ui, sans-serif; font-size: 15px; line-height: 18px; font-weight: 700; font-variant-numeric: tabular-nums">120</span></span>
+</button>
+
+<sc-if value="{{ notDenied }}" hint-placeholder-val="{{ true }}">
+<button aria-label="Arc Coil, 260 Credits, can't afford" aria-disabled="true" style="height: 76px; border: 0; padding: 4px 0 6px; background: repeating-linear-gradient(135deg, #1a2236 0 4px, #111726 4px 10px); clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px); display: flex; flex-direction: column; align-items: center; justify-content: space-between; color: #6f7c96; cursor: pointer">
+<span style="position: relative; width: 44px; height: 44px; display: block; opacity: 0.35"><img src="../units/glow/tower-arc-coil-l1-base.svg" alt="" style="position: absolute; left: 0; top: 0; width: 44px; height: 44px"><img src="../units/glow/tower-arc-coil-l1-turret.svg" alt="" style="position: absolute; left: 0; top: 0; width: 44px; height: 44px"></span>
+<span style="display: flex; align-items: center; gap: 3px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6f7c96" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7.5v9"></path></svg><span style="font-family: 'Oxanium', 'Chakra Petch', system-ui, sans-serif; font-size: 15px; line-height: 18px; font-weight: 700; font-variant-numeric: tabular-nums">260</span></span>
+</button>
+</sc-if>
+<sc-if value="{{ denied }}" hint-placeholder-val="{{ false }}">
+<button aria-label="Arc Coil, 260 Credits, not enough Credits" aria-disabled="true" style="height: 76px; box-sizing: border-box; border: 2px dashed #ff3355; padding: 2px 0 4px; background: repeating-linear-gradient(135deg, rgba(255, 51, 85, 0.22) 0 4px, #1a2236 4px 10px); display: flex; flex-direction: column; align-items: center; justify-content: space-between; color: #eaf0fa; cursor: pointer; transform: translateY(-4px)">
+<span style="position: relative; width: 44px; height: 44px; display: block; opacity: 0.4"><img src="../units/glow/tower-arc-coil-l1-base.svg" alt="" style="position: absolute; left: 0; top: 0; width: 44px; height: 44px"><img src="../units/glow/tower-arc-coil-l1-turret.svg" alt="" style="position: absolute; left: 0; top: 0; width: 44px; height: 44px"></span>
+<span style="display: flex; align-items: center; gap: 3px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ff3355" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.3 3h7.4L21 8.3v7.4L15.7 21H8.3L3 15.7V8.3z"></path><path d="M9 9l6 6M15 9l-6 6"></path></svg><span style="font-family: 'Oxanium', 'Chakra Petch', system-ui, sans-serif; font-size: 15px; line-height: 18px; font-weight: 700; font-variant-numeric: tabular-nums">260</span></span>
+</button>
+</sc-if>
+
+<button aria-label="Plasma Mortar, 320 Credits, can't afford" aria-disabled="true" style="height: 76px; border: 0; padding: 4px 0 6px; background: repeating-linear-gradient(135deg, #1a2236 0 4px, #111726 4px 10px); clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px); display: flex; flex-direction: column; align-items: center; justify-content: space-between; color: #6f7c96; cursor: pointer">
+<span style="position: relative; width: 44px; height: 44px; display: block; opacity: 0.35"><img src="../units/glow/tower-plasma-mortar-l1-base.svg" alt="" style="position: absolute; left: 0; top: 0; width: 44px; height: 44px"><img src="../units/glow/tower-plasma-mortar-l1-turret.svg" alt="" style="position: absolute; left: 0; top: 0; width: 44px; height: 44px"></span>
+<span style="display: flex; align-items: center; gap: 3px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6f7c96" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7.5v9"></path></svg><span style="font-family: 'Oxanium', 'Chakra Petch', system-ui, sans-serif; font-size: 15px; line-height: 18px; font-weight: 700; font-variant-numeric: tabular-nums">320</span></span>
+</button>
+
+<button disabled aria-label="Swarm Launcher, locked" style="height: 76px; border: 0; padding: 4px 0 6px; background: repeating-linear-gradient(135deg, #1a2236 0 4px, #111726 4px 10px); clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px); display: flex; flex-direction: column; align-items: center; justify-content: space-between; color: #6f7c96">
+<span style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#6f7c96" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="1"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg></span>
+<span style="font-size: 13px; line-height: 18px; font-weight: 700; letter-spacing: 0.04em">LOCKED</span>
+</button>
+</div>
+</sc-if>
+
+<sc-if value="{{ dragging }}" hint-placeholder-val="{{ false }}">
+<div style="height: 76px; box-sizing: border-box; border: 2px dashed #5d6e94; display: flex; align-items: center; justify-content: center; gap: 8px; color: #a3afc6">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#a3afc6" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+<span style="font-size: 16px; line-height: 18px; font-weight: 700; letter-spacing: 0.06em">DROP HERE TO CANCEL</span>
+</div>
+</sc-if>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"variant":{"editor":"enum","options":["normal","drag","denied"],"default":"normal"},"bonus":{"editor":"text","default":"45"},"$preview":{"width":390,"height":190}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const v = this.props.variant ?? 'normal';
+    return {
+      bonus: this.props.bonus ?? '45',
+      showRow: v === 'normal',
+      showBar: v !== 'drag',
+      dragging: v === 'drag',
+      denied: v === 'denied',
+      notDenied: v !== 'denied',
+      slot1Here: true
+    };
+  }
+}
+</script>
+</body>
+</html>

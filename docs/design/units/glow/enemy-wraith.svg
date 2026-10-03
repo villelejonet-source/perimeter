@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="52" height="52" viewBox="-10 -10 52 52">
+<title>enemy-wraith</title>
+<path d="M29 20 L12 9 L16 17 L9 20 L16 23 L12 31 Z" fill="#5d6e94" fill-opacity="0.45"/>
+<g id="halo-far">
+<path d="M26 15 L9 4 L13 12 L6 15 L13 18 L9 26 Z" fill="none" stroke="#eaf0fa" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.12"/>
+</g>
+<g id="halo-near">
+<path d="M26 15 L9 4 L13 12 L6 15 L13 18 L9 26 Z" fill="none" stroke="#eaf0fa" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.35"/>
+</g>
+<g id="body">
+<path d="M26 15 L9 4 L13 12 L6 15 L13 18 L9 26 Z" fill="#06080d" stroke="#eaf0fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill-opacity="1"/>
+</g>
+</svg>
