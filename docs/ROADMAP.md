@@ -30,7 +30,7 @@ A scripted test run is deterministic (same seed → identical result).
 - [x] Run-end screen
 
 **Accept:** a full run is playable in the browser and on device with one tower type.
-_Status 2026-10-04: browser verified; device playthrough pending._
+_Accepted 2026-10-04: verified in the browser and on device._
 
 ## Phase 3 — Full combat content
 - [ ] All 6 towers with base stats
