@@ -23,6 +23,7 @@ Always check ROADMAP.md for the current phase before starting work, and DESIGN.m
 - `npm run dev` — browser dev server (primary playtest loop)
 - `npm test` — unit tests (sim must stay green)
 - `npm run sim -- --strategy=greedy --runs=200` — headless balance sim, writes CSV to `tools/out/`
+- `npm run sim -- --mode=career --hours=50` — research-pace check against the meta presets
   (`--strategy=all --preset=all` for the full matrix, `--mode=specs` for the spec matrix; results in `docs/BALANCE.md`)
 - `npm run build && npx cap sync ios` — build and sync to the iOS project
 

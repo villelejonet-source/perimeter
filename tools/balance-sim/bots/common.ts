@@ -120,7 +120,7 @@ export function towers(ctx: BotContext): Tower[] {
 export function tryPlace(ctx: BotContext, kind: TowerKind): boolean {
   const s = ctx.sim.state;
   if (!s.unlocked.includes(kind) || s.credits < placeCost(kind)) return false;
-  const st = towerStats(kind, s.meta.startingLevel, null, s.meta);
+  const st = towerStats(kind, s.meta.towers[kind].startingLevel, null, s.meta);
   const spot = ctx.spots.best(st.range);
   if (!spot) return false;
   ctx.send({ type: 'placeTower', kind, x: spot.x, y: spot.y });

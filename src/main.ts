@@ -10,10 +10,11 @@ import { VIEW_HEIGHT, VIEW_WIDTH } from './render/layout';
 import { DEV_UNLOCK_ALL_KEY, setPlatform } from './render/registry';
 import { BootScene, NEXT_SCENE_KEY } from './render/scenes/BootScene';
 import { GameScene } from './render/scenes/GameScene';
+import { MenuScene } from './render/scenes/MenuScene';
 import { PerfSpikeScene } from './render/scenes/PerfSpikeScene';
 
 const params = new URLSearchParams(window.location.search);
-const next = params.get('scene') === 'perf' ? 'PerfSpike' : 'Game';
+const next = params.get('scene') === 'perf' ? 'PerfSpike' : 'Menu';
 
 const game = new Phaser.Game({
   type: Phaser.WEBGL,
@@ -25,7 +26,7 @@ const game = new Phaser.Game({
   fps: { target: 60 },
   render: { antialias: true, powerPreference: 'high-performance' },
   input: { activePointers: 2 },
-  scene: [BootScene, GameScene, PerfSpikeScene],
+  scene: [BootScene, MenuScene, GameScene, PerfSpikeScene],
 });
 setPlatform(game, createPlatform());
 game.registry.set(NEXT_SCENE_KEY, next);

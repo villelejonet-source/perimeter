@@ -34,7 +34,7 @@ export function greedyDps(override: SpecOverride = {}): Bot {
 
       for (const kind of TOWER_ORDER) {
         if (!s.unlocked.includes(kind) || !isDamageTower(kind)) continue;
-        const st = towerStats(kind, meta.startingLevel, null, meta);
+        const st = towerStats(kind, meta.towers[kind].startingLevel, null, meta);
         const spot = ctx.spots.best(st.range);
         if (!spot) continue;
         const c = placeCost(kind);

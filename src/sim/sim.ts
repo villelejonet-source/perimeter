@@ -44,9 +44,11 @@ export class Sim {
   readonly path: Path;
   readonly map: MapDef;
   readonly rng: Rng;
+  readonly config: Readonly<SimConfig>;
   private readonly queue: Command[] = [];
 
   constructor(config: SimConfig) {
+    this.config = config;
     const map = MAPS[config.mapId ?? DEFAULT_MAP_ID];
     if (!map) throw new Error(`Unknown map: ${config.mapId}`);
     this.map = map;
@@ -82,6 +84,11 @@ export class Sim {
 
   enqueue(command: Command): void {
     this.queue.push(command);
+  }
+
+  /** Commands not yet applied (snapshots keep them so a restore applies them too). */
+  get pending(): readonly Command[] {
+    return this.queue;
   }
 
   step(): void {
@@ -136,7 +143,7 @@ export class Sim {
         t.kind = cmd.kind;
         t.x = x;
         t.y = y;
-        t.level = s.meta.startingLevel;
+        t.level = s.meta.towers[cmd.kind].startingLevel;
         t.cooldown = 0;
         t.targeting = 'first';
         t.invested = cost;

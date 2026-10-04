@@ -12,6 +12,8 @@ export default tseslint.config(
     languageOptions: { globals: { ...globals.browser, ...globals.node } },
     rules: {
       '@typescript-eslint/no-explicit-any': 'error',
+      // `const { dropped: _dropped, ...rest } = obj` omits fields on purpose.
+      '@typescript-eslint/no-unused-vars': ['error', { ignoreRestSiblings: true, varsIgnorePattern: '^_' }],
       // With noUncheckedIndexedAccess, `arr[i]!` in bounds-checked hot loops is intentional.
       '@typescript-eslint/no-non-null-assertion': 'off',
     },

@@ -17,6 +17,7 @@ import { balancedMix } from './bots/balanced';
 import { greedyDps } from './bots/greedy';
 import { specFocused } from './bots/specFocused';
 import type { Bot } from './bots/types';
+import { career } from './career';
 import { runOne, type RunResult } from './runner';
 import { summarize } from './summary';
 
@@ -52,6 +53,27 @@ const presets: MetaPresetId[] =
 
 const results: RunResult[] = [];
 const t0 = Date.now();
+if (mode === 'career') {
+  // Research pace: does ~10 h / ~50 h of play reach the matching presets?
+  const hours = Number(arg('hours', '50'));
+  const pts = career(hours, seed0);
+  const marks = [1, 2, 5, 10, 20, 30, 40, 50].filter((h) => h <= hours);
+  console.log(
+    '| play h | runs | wall | Pulse dmg | Rail dmg | Pulse rate | towers | +Credits | +Base HP | start Lv | Cores spent |',
+  );
+  console.log('|---|---|---|---|---|---|---|---|---|---|---|');
+  for (const h of marks) {
+    const pt = pts.find((q) => q.hours >= h) ?? pts[pts.length - 1]!;
+    console.log(
+      `| ${pt.hours.toFixed(1)} | ${pt.runs} | ${pt.wall} | ×${pt.pulseDmg.toFixed(2)} | ×${pt.railDmg.toFixed(2)} | ×${pt.rate.toFixed(2)} | ${pt.unlocked} | +${pt.startCredits} | +${pt.baseHp} | ${pt.startLevel} | ${pt.spent} |`,
+    );
+  }
+  console.log(
+    '\nPresets: 10h = dmg ×1.3, rate ×1.1, 5 towers, +100 Credits, +5 HP; 50h = dmg ×2.0, rate ×1.3, 6 towers, +300, +15 HP, start Lv 3',
+  );
+  console.log(`${((Date.now() - t0) / 1000).toFixed(1)} s`);
+  process.exit(0);
+}
 if (mode === 'specs') {
   // Spec matrix: for each tower + spec, force that spec under every strategy.
   const lines = [

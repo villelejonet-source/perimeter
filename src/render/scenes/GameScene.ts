@@ -11,10 +11,14 @@ import { HudBar } from '../../ui/dom/HudBar';
 import { Overlay } from '../../ui/dom/overlay';
 import { PlacementChip } from '../../ui/dom/PlacementChip';
 import { RunEnd } from '../../ui/dom/RunEnd';
+import { PauseMenu } from '../../ui/dom/PauseMenu';
+import { metaFromProfile } from '../../meta/research';
+import { runRewards } from '../../meta/rewards';
+import { restoreSim, snapshotSim } from '../../sim/snapshot';
 import { TowerPanel } from '../../ui/dom/TowerPanel';
 import { Placement } from '../input/Placement';
 import { S, T, ZONES } from '../layout';
-import { DEV_UNLOCK_ALL_KEY, getPlatform } from '../registry';
+import { DEV_UNLOCK_ALL_KEY, getPlatform, getStore } from '../registry';
 import { WorldView } from '../WorldView';
 
 /** Gap kept between the selected tower's range circle and the top of the tower panel. */
@@ -38,6 +42,8 @@ export class GameScene extends Phaser.Scene {
   private alerts!: Alerts;
   private runEnd: RunEnd | null = null;
   private picker: SpecPicker | null = null;
+  private pauseMenu: PauseMenu | null = null;
+  private speeds: readonly number[] = [1, 2];
   /** Towers already offered the spec pick (LATER doesn't re-open it automatically). */
   private offered = new Set<number>();
   private pausedByPicker = false;
@@ -52,20 +58,35 @@ export class GameScene extends Phaser.Scene {
 
   create(): void {
     this.cameras.main.setBackgroundColor(T.void).setScroll(0, 0);
-    // Dev builds: `?unlock=all` makes every tower buildable for playtesting (research is Phase 6).
-    const unlockAll = this.registry.get(DEV_UNLOCK_ALL_KEY) === true;
-    this.sim = new Sim({
-      seed: (Date.now() ^ (performance.now() * 1000)) >>> 0,
-      ...(unlockAll ? { unlockedTowers: TOWER_ORDER } : {}),
-    });
+    const store = getStore(this);
+    // GDD §11: a run interrupted by closing the app resumes exactly where it was.
+    const saved = store.run;
+    if (saved) {
+      this.sim = restoreSim(saved);
+    } else {
+      // Dev builds: `?unlock=all` makes every tower buildable for playtesting.
+      const unlockAll = this.registry.get(DEV_UNLOCK_ALL_KEY) === true;
+      this.sim = new Sim({
+        seed: (Date.now() ^ (performance.now() * 1000)) >>> 0,
+        meta: metaFromProfile(store.profile),
+        ...(unlockAll ? { unlockedTowers: TOWER_ORDER } : {}),
+      });
+    }
+    this.speeds = this.sim.state.meta.speed3x ? [1, 2, 3] : [1, 2];
     this.driver = new FixedStepDriver();
     this.speed = 1;
     this.ended = false;
     this.runEnd = null;
+    this.pauseMenu = null;
     this.lastBaseHp = this.sim.state.baseHp;
-    this.lastWave = 0;
+    this.lastWave = this.sim.state.wave;
     this.picker = null;
-    this.offered = new Set();
+    // A resumed run doesn't re-offer picks the player already deferred.
+    this.offered = new Set(
+      this.sim.state.towers.items
+        .filter((t) => t.alive && t.level >= SPEC_LEVEL && !t.spec)
+        .map((t) => t.id),
+    );
     this.pausedByPicker = false;
 
     this.world = new WorldView(this, this.sim);
@@ -99,8 +120,8 @@ export class GameScene extends Phaser.Scene {
     this.overlay = new Overlay(this.game);
     this.hud = new HudBar(this.overlay.root);
     this.alerts = new Alerts(this.overlay.root);
-    this.controls = new Controls(this.overlay.root, this.sim.state.unlocked, {
-      togglePause: () => this.send({ type: 'setPaused', paused: !this.sim.state.paused }),
+    this.controls = new Controls(this.overlay.root, this.sim.state.unlocked, this.speeds, {
+      togglePause: () => this.openPause(),
       setSpeed: (n) => (this.speed = n),
       callEarly: () => this.send({ type: 'callEarly' }),
       dragStart: (kind, e) => {
@@ -132,9 +153,11 @@ export class GameScene extends Phaser.Scene {
       this.input.off('pointerdown', this.onFieldDown, this);
       this.runEnd?.destroy();
       this.picker?.destroy();
+      this.pauseMenu?.destroy();
       this.alerts.destroy();
       this.overlay.destroy();
     });
+    if (saved) this.openPause();
   }
 
   override update(_time: number, deltaMs: number): void {
@@ -154,6 +177,7 @@ export class GameScene extends Phaser.Scene {
     if (s.wave > this.lastWave) {
       this.lastWave = s.wave;
       this.announceWave(s.wave);
+      this.autosave();
     }
     if (s.baseHp < this.lastBaseHp) {
       getPlatform(this).haptics.play('leak');
@@ -163,7 +187,7 @@ export class GameScene extends Phaser.Scene {
     }
     this.lastBaseHp = s.baseHp;
 
-    if (!this.picker && !this.ended) this.offerSpecs();
+    if (!this.picker && !this.pauseMenu && !this.ended) this.offerSpecs();
     if (s.gameOver && !this.ended) this.endRun();
   }
 
@@ -280,19 +304,67 @@ export class GameScene extends Phaser.Scene {
     if (best !== this.panel.selectedId) this.selectTower(best);
   }
 
-  private onHidden(): void {
-    if (!this.sim.state.paused) this.send({ type: 'setPaused', paused: true });
+  /** Snapshot the run into the save (each wave, on pause, and when the app is backgrounded). */
+  private autosave(): void {
+    if (!this.ended) void getStore(this).saveRun(snapshotSim(this.sim));
   }
 
-  private endRun(): void {
+  /** GDD §11: leaving the app pauses the run and saves it, so a kill resumes exactly here. */
+  private onHidden(): void {
+    if (this.ended) return;
+    if (!this.sim.state.paused) this.send({ type: 'setPaused', paused: true });
+    this.autosave();
+    if (!this.pauseMenu && !this.picker) this.openPause();
+  }
+
+  /** Pause menu (Pause.dc.html): earned-so-far, Retreat (with confirm), Resume. */
+  private openPause(): void {
+    if (this.pauseMenu || this.ended) return;
+    this.selectTower(-1);
+    const wasPaused = this.sim.state.paused;
+    if (!wasPaused) this.send({ type: 'setPaused', paused: true });
+    const s = this.sim.state;
+    const r = runRewards(getStore(this).profile, s.wave, s.stats.bossesKilled);
+    this.pauseMenu = new PauseMenu(
+      this.overlay.root,
+      { wave: s.wave, baseHp: s.baseHp, maxBaseHp: s.maxBaseHp, cores: r.cores, shards: r.shards },
+      {
+        resume: () => {
+          this.pauseMenu?.destroy();
+          this.pauseMenu = null;
+          this.send({ type: 'setPaused', paused: false });
+        },
+        retreat: () => {
+          this.pauseMenu?.destroy();
+          this.pauseMenu = null;
+          this.endRun(true);
+        },
+      },
+    );
+    this.autosave();
+  }
+
+  /** Base fell or the player retreated: pay out (GDD §4), clear the saved run, show run end. */
+  private endRun(retreated = false): void {
     this.ended = true;
     this.selectTower(-1);
     getPlatform(this).haptics.play('runEnd');
     const s = this.sim.state;
+    const store = getStore(this);
+    const previousBest = store.profile.bestWave;
+    const rewards = runRewards(store.profile, s.wave, s.stats.bossesKilled);
+    store.finishRun(s.wave, rewards);
     this.runEnd = new RunEnd(
       this.overlay.root,
-      { wave: s.wave, seconds: s.tick / GAME.tickRate, kills: s.stats.kills },
-      () => this.scene.restart(),
+      {
+        wave: s.wave,
+        previousBest,
+        cores: rewards.cores,
+        shards: rewards.shards,
+        milestoneShards: rewards.milestoneShards,
+        retreated,
+      },
+      { menu: () => this.scene.start('Menu'), again: () => this.scene.restart() },
     );
   }
 }

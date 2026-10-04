@@ -1,5 +1,7 @@
 import Phaser from 'phaser';
 import { FONT_DISPLAY, FONT_UI, T } from '../layout';
+import { MetaStore } from '../../meta/store';
+import { getPlatform, setStore } from '../registry';
 import { bakeUnitAtlas, preloadUnits } from '../units';
 
 /** Weights used by the design system's type styles. */
@@ -12,10 +14,10 @@ const FONT_FACES = [
   `700 16px ${FONT_UI}`,
 ];
 
-/** Registry key holding the scene to start after boot (default 'Game'). */
+/** Registry key holding the scene to start after boot (default 'Menu'). */
 export const NEXT_SCENE_KEY = 'nextScene';
 
-/** Loads unit SVGs and bundled fonts, bakes the unit atlas, then starts `next`. */
+/** Loads unit SVGs, bundled fonts and the save; bakes the unit atlas; then starts `next`. */
 export class BootScene extends Phaser.Scene {
   constructor() {
     super('Boot');
@@ -28,9 +30,12 @@ export class BootScene extends Phaser.Scene {
 
   create(): void {
     bakeUnitAtlas(this);
+    const store = new MetaStore(getPlatform(this).storage);
+    setStore(this.game, store);
     // Phaser Text rasterises immediately, so fonts must be ready before any scene draws text.
-    void Promise.all(FONT_FACES.map((f) => document.fonts.load(f))).finally(() => {
-      this.scene.start((this.registry.get(NEXT_SCENE_KEY) as string | undefined) ?? 'Game');
+    const fonts = Promise.all(FONT_FACES.map((f) => document.fonts.load(f))).catch(() => undefined);
+    void Promise.all([fonts, store.load()]).then(() => {
+      this.scene.start((this.registry.get(NEXT_SCENE_KEY) as string | undefined) ?? 'Menu');
     });
   }
 }

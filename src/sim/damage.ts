@@ -71,6 +71,7 @@ function kill(state: SimState, path: Path, e: Enemy): void {
   state.credits += e.bounty;
   state.stats.creditsEarned += e.bounty;
   state.stats.kills++;
+  if (e.boss) state.stats.bossesKilled++;
   if (e.splitKind) {
     // Copy first: the dead splitter's pool slot is reused by its first child.
     const kind = e.splitKind;

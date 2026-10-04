@@ -164,6 +164,8 @@ export interface SpawnGroup {
 
 export interface RunStats {
   kills: number;
+  /** Bosses killed this run (Shard payout). */
+  bossesKilled: number;
   leaks: number;
   creditsEarned: number;
   damageDealt: number;
@@ -311,6 +313,7 @@ export function newFx(): Fx {
 export function newStats(): RunStats {
   return {
     kills: 0,
+    bossesKilled: 0,
     leaks: 0,
     creditsEarned: 0,
     damageDealt: 0,

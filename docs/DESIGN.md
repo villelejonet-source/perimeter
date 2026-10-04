@@ -36,16 +36,16 @@ maps → `src/data/maps.ts`.
 | 2 (built) | Control row + build bar | `screens/in-run/Controls.dc.html` | `src/ui/dom/Controls.ts` | applied |
 | 2 (built) | Placement: valid / path / buffer / overlap / no Credits | `screens/in-run/Place-*.dc.html` | `src/render/input/Placement.ts` | applied |
 | 2 (built) | Tower panel | `screens/in-run/Panel-Railgun.dc.html` | `src/ui/dom/TowerPanel.ts` | applied |
-| 2 (built) | Pause | `screens/in-run/Pause.dc.html` | none (only a pause toggle exists) | ready |
+| 2 (built) | Pause | `screens/in-run/Pause.dc.html` | `src/ui/dom/PauseMenu.ts` | applied |
 | 2 (built) | Run end | `screens/in-run/RunEnd.dc.html` | `src/ui/dom/RunEnd.ts` | applied |
 | 2–3 | Unit art: towers L1/L5, enemies, bosses, base states, projectiles, status overlays | `units/` | `src/render/units.ts`, `WorldView.ts` | applied |
 | 3 | Elite / boss / base-hit alerts | `screens/in-run/Alert-*.dc.html` | `src/ui/dom/Alerts.ts` | applied |
 | 4 | Tower panel at LV 4 (specialization preview) | `screens/in-run/Panel-Level4.dc.html` | `src/ui/dom/TowerPanel.ts` | applied |
 | 4 | Specialization pick | `screens/meta/Specialization.dc.html` | `src/ui/dom/SpecPicker.ts` | applied |
-| 6 | Main menu | `screens/meta/Main.dc.html` | none | ready |
-| 6 | Research Lab: towers / base & idle / unlocks | `screens/meta/Research{Towers,Base,Unlocks}.dc.html` | none | ready |
-| 6 | Welcome back (offline income) | `screens/meta/WelcomeBack.dc.html` | none | ready |
-| 6 | Pause → Retreat confirm | `screens/in-run/Pause-Retreat.dc.html` | none | ready |
+| 6 | Main menu | `screens/meta/Main.dc.html` | `src/ui/dom/screens/MainMenu.ts` | applied |
+| 6 | Research Lab: towers / base & idle / unlocks | `screens/meta/Research{Towers,Base,Unlocks}.dc.html` | `src/ui/dom/screens/ResearchLab.ts` | applied |
+| 6 | Welcome back (offline income) | `screens/meta/WelcomeBack.dc.html` | `src/ui/dom/screens/WelcomeBack.ts` | applied |
+| 6 | Pause → Retreat confirm | `screens/in-run/Pause-Retreat.dc.html` | `src/ui/dom/PauseMenu.ts` | applied |
 | 7 | Post-boss artifact pick | `screens/meta/ArtifactPick.dc.html` | none | ready |
 | 7 | Artifact codex and crafting | `screens/meta/Codex.dc.html` | none | ready |
 | 8 | 3 maps | `maps/map-01-s-curve.json`, `map-02-switchbacks.json`, `map-03-spiral.json` | `src/data/maps.ts` | ready, not applied |
@@ -77,6 +77,8 @@ Decided 2026-10-04:
 
 - Phase 4: reaching LV 5 opens the pick and pauses the run; LATER defers it (the panel then offers it). Towers can keep upgrading unspecialized. Specs reuse existing art: Flechette slugs use the rail trail, Ion Rail and EMP use the laser beam, Plasma Pools and the Stasis aura are drawn shapes (no art in the handoff, INVENTORY request 12).
 
+- Phase 6: the app opens on the main menu. Run reward is floor(wave² / 4) Cores, plus 1 Shard per boss and 3 Shards the first time each 10th wave is reached. Towers 4–6 unlock in order with Cores (Arc Coil → Cryo → Swarm), no wave gates. Research pace matches the 10 h / 50 h balance presets. Not-yet-built items on the mockups are shown disabled: Settings (Phase 8), sector select (Phase 8), Codex, 4th choice and free reroll (Phase 7), double-with-ad on Welcome back and Run end (Phase 9).
+
 Open: the remaining requests in `design/INVENTORY.md` §3.
 
 ## Applied
@@ -99,3 +101,8 @@ Log when a design has been implemented, so drift is visible later.
 | 2026-10-04 | `screens/meta/Specialization.dc.html` | Pick screen: paused HUD card, 3 cards, type-change strip, LATER / LOCK IN. Spec icons for the 15 specs the mockup didn't draw follow its style (`src/ui/dom/specIcons.ts`) |
 | 2026-10-04 | `screens/in-run/Panel-Level4.dc.html` | LV 4 hint card; LV 5+ choose card after LATER; spec name in the panel header |
 | 2026-10-04 | `screens/in-run/RunEnd.dc.html` | Run end with wave reached, run time, kills, Play Again. Best, Cores/Shards and Menu wait for Phase 6; Double Cores waits for Phase 9 (`src/ui/dom/RunEnd.ts`) |
+| 2026-10-04 | `screens/meta/Main.dc.html` | Main menu: currencies, best wave, Research Lab card with affordable badge, Play / Resume (`src/ui/dom/screens/MainMenu.ts`) |
+| 2026-10-04 | `screens/meta/Research{Towers,Base,Unlocks}.dc.html` | Research Lab tabs, tower picker, rows with level bar and buy / need / locked / max states (`src/ui/dom/screens/ResearchLab.ts`) |
+| 2026-10-04 | `screens/meta/WelcomeBack.dc.html` | Offline income dial, cap chip, tamper message, Collect (`src/ui/dom/screens/WelcomeBack.ts`) |
+| 2026-10-04 | `screens/in-run/Pause.dc.html`, `Pause-Retreat.dc.html` | Pause menu with earned-this-run, retreat confirm (`src/ui/dom/PauseMenu.ts`) |
+| 2026-10-04 | `screens/in-run/RunEnd.dc.html` | Best wave, NEW BEST, Cores/Shards incl. milestones, Back to menu (`src/ui/dom/RunEnd.ts`) |

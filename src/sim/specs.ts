@@ -28,12 +28,13 @@ export function towerStats(
   meta: MetaModifiers = FRESH_ACCOUNT,
 ): TowerStats {
   const def = TOWERS[kind];
+  const tm = meta.towers[kind];
   const base = def.attack.type === 'chill' ? def.attack.chillPerHit : def.damage;
   const s: TowerStats = {
     damageType: spec ? (SPECS[spec].damageType ?? def.damageType) : def.damageType,
-    power: towerDamage(base, level) * meta.towerDamageMult,
-    fireRate: def.fireRate * meta.towerFireRateMult,
-    range: def.range * meta.towerRangeMult,
+    power: towerDamage(base, level) * tm.damageMult,
+    fireRate: def.fireRate * tm.fireRateMult,
+    range: def.range * tm.rangeMult,
     canHitFlying: def.canHitFlying,
     attack: { ...def.attack },
   };

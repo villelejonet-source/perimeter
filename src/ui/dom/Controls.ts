@@ -50,6 +50,7 @@ export class Controls {
   constructor(
     parent: HTMLElement,
     unlocked: readonly TowerKind[],
+    speeds: readonly number[],
     private readonly actions: ControlsActions,
   ) {
     this.el = h('div', 'controls');
@@ -60,17 +61,19 @@ export class Controls {
     const speedGroup = h('div', 'speed-group');
     speedGroup.setAttribute('role', 'group');
     speedGroup.setAttribute('aria-label', 'Game speed');
-    for (const n of [1, 2]) {
+    for (const n of speeds) {
       const b = h('button', '', `${n}x`);
       b.addEventListener('click', () => actions.setSpeed(n));
       speedGroup.appendChild(b);
       this.speeds.push(b);
     }
-    // 3x unlocks via research (Phase 6).
-    const locked3x = h('button', '', `${icon.lock(14)}3x`);
-    locked3x.disabled = true;
-    locked3x.setAttribute('aria-label', '3x speed, locked');
-    speedGroup.appendChild(locked3x);
+    if (!speeds.includes(3)) {
+      // 3x unlocks in the Research Lab.
+      const locked3x = h('button', '', `${icon.lock(14)}3x`);
+      locked3x.disabled = true;
+      locked3x.setAttribute('aria-label', '3x speed, locked (Research Lab)');
+      speedGroup.appendChild(locked3x);
+    }
     const call = h(
       'button',
       'call-early btn-primary',
@@ -184,6 +187,7 @@ export class Controls {
     }
     this.speeds.forEach((b, i) => {
       const on = String(i + 1 === speed);
+      // Speed buttons are 1x, 2x[, 3x] in order.
       if (b.getAttribute('aria-pressed') !== on) b.setAttribute('aria-pressed', on);
     });
     setText(

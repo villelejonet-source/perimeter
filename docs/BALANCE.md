@@ -7,6 +7,7 @@ Last full run: 2026-10-04, 50 runs per strategy × preset, seeds 1–50, map 1.
 npm run sim -- --strategy=all --preset=all --runs=50   # strategies × presets
 npm run sim -- --mode=specs --runs=24                   # spec matrix
 npm run sim -- --strategy=greedy --runs=200             # one strategy
+npm run sim -- --mode=career --hours=50                 # research pace (Phase 6)
 ```
 
 Each run writes `tools/out/balance-<time>-runs.csv` (one row per run, including damage by
@@ -40,8 +41,8 @@ the base is above 70%.
 | 50h | balanced-mix | 86 / 86 / 86 | 85.2 | 31:35 |
 | 50h | spec-focused | 62 / 86 / 86 | 81.1 | 31:48 |
 
-Meta progress pushes the wall later (GDD §5). The 10 h and 50 h presets are stand-ins
-(`src/data/meta.ts`) until Phase 6 sets real research costs.
+Meta progress pushes the wall later (GDD §5). The 10 h and 50 h presets (`src/data/meta.ts`)
+are the targets the research costs are calibrated against (below).
 
 **Where runs end:** the wall lands on content spikes: the wave-25 elites (armored Bulwarks
 cost 3 HP each), the wave-30 Hive Carrier, the wave-35 elites. Wraiths are the most common leak
@@ -93,10 +94,35 @@ matrix (locked); run `--mode=specs --preset=50h` to compare them.
 Earlier tuning (Phase 3): Pulse damage 8, Railgun cost 110 / 0.4 per s / 2 hits, Juggernaut
 180 HP / 7 armor, Cryo chill 0.25 per hit with 0.2/s decay.
 
+## Meta economy (Phase 6)
+
+**Rewards** (`REWARDS` in `src/data/meta.ts`): a run that reaches wave w pays floor(w² × 0.25)
+Cores (wave 20 → 100, wave 40 → 400). 1 Shard per boss, plus 3 Shards the first time each 10th
+wave is reached. Offline: the best-wave run reward per hour (+10% per Offline income level),
+0.25 Shards per hour, capped at 8 h (+1 h per Offline cap level, max 12 h). A clock that moved
+backwards pays nothing.
+
+**Research costs** (`src/data/research.ts`): base cost × 8 × growth^level. The career sim plays
+balanced-bot runs, adds 4 h of offline income after every second run, buys tower unlocks in
+order (saving for one when it costs ≤ 8 runs of income), and otherwise buys the cheapest research.
+
+| play h | runs | wall | Pulse dmg | Pulse rate | towers | +Credits | +Base HP | start Lv |
+|---|---|---|---|---|---|---|---|---|
+| 1.1 | 6 | 27 | ×1.05 | ×1.00 | 3 | +0 | +0 | 1 |
+| 5.2 | 28 | 37 | ×1.25 | ×1.04 | 3 | +50 | +1 | 1 |
+| 10.0 | 52 | 47 | ×1.30 | ×1.08 | 4 | +100 | +3 | 1 |
+| 20.3 | 93 | 56 | ×1.45 | ×1.12 | 5 | +150 | +5 | 1 |
+| 50.1 | 182 | 62 | ×1.75 | ×1.26 | 6 | +300 | +11 | 2 |
+
+Against the presets (10 h: ×1.3 / ×1.1 / 5 towers / +100 / +5 HP; 50 h: ×2.0 / ×1.3 / 6 / +300 /
++15 / Lv 3) the damage and Credits tracks land on target. The cheap-first bot spreads Cores
+across all six towers, so per-tower depth and Base HP run a little behind at 50 h; a player who
+focuses a few towers will be ahead of the bot.
+
 ## Next balance work
 
 - Wraith leaks dominate: consider a little more Pulse Laser range or fewer early Wraiths, once
   players can unlock Arc Coil / Swarm (Phase 6).
-- The 50 h preset reaches wave ~86 in ~30 min: tune research costs in Phase 6 so late runs stay
-  within a sensible session length.
+- The 50 h preset reaches wave ~86 in ~30 min; the career bot reaches ~62 at 50 h. Revisit late
+  session length once artifacts (Phase 7) add power.
 - Re-run the spec matrix at the 10 h / 50 h presets once Arc Coil, Cryo and Swarm are reachable.

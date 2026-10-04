@@ -63,13 +63,18 @@ _Accepted 2026-10-04: fresh medians wave 37 / 32 / 32 (greedy / balanced / spec-
 tuning log in `docs/BALANCE.md`._
 
 ## Phase 6 — Meta layer and persistence
-- [ ] Save/load with schemaVersion and migrations; autosave each wave and on app pause
-- [ ] Mid-run resume after app kill
-- [ ] Cores and Shards payout at run end
-- [ ] Research Lab UI and all research effects (incl. tower unlocks, 3x speed)
-- [ ] Offline income with cap (8 h, 12 h via research), clock-tamper guard, welcome-back screen
+- [x] Save/load with schemaVersion and migrations; autosave each wave and on app pause
+- [x] Mid-run resume after app kill
+- [x] Cores and Shards payout at run end
+- [x] Research Lab UI and all research effects (incl. tower unlocks, 3x speed)
+- [x] Offline income with cap (8 h, 12 h via research), clock-tamper guard, welcome-back screen
 
 **Accept:** kill the app mid-wave → relaunch → identical state. Offline income math is unit-tested.
+_Accepted 2026-10-04 (browser): autosave on hide mid-wave 20 → reload → Resume gives an identical
+sim hash, paused with the pause menu open. `src/sim/snapshot.test.ts` round-trips a busy mid-wave
+snapshot through JSON and keeps playing identically; `src/meta/meta.test.ts` covers offline income
+(rate, cap, research, tamper guard), rewards and save migrations. Research pace calibrated with
+`npm run sim -- --mode=career` (`docs/BALANCE.md`). Device check pending._
 
 ## Phase 7 — Artifacts
 - [ ] Artifact data model with tiers, ~30 artifacts

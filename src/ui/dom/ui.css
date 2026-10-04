@@ -134,6 +134,13 @@
   background: var(--surface-200);
   clip-path: var(--chamfer-md-inner);
 }
+.btn-secondary:disabled {
+  background: var(--line);
+  color: var(--ink-faint);
+}
+.btn-secondary:disabled > .inner {
+  background: var(--hatch);
+}
 .btn-lg-text {
   font-size: 18px;
   line-height: 20px;
@@ -823,4 +830,316 @@ button.spec-hint {
 #ui.picking .controls,
 #ui.picking .panel {
   visibility: hidden;
+}
+
+/* ---------- Meta screens (docs/design/screens/meta/*.dc.html) ---------- */
+.screen {
+  position: absolute;
+  inset: 0;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  background: var(--surface-100);
+  pointer-events: auto;
+}
+.screen.pad {
+  padding: 56px 16px 34px;
+}
+.chip-cur {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 40px;
+  padding: 0 12px 0 10px;
+  background: var(--surface-200);
+  clip-path: var(--chamfer-sm);
+}
+.chip-cur .d {
+  font-size: 20px;
+  line-height: 24px;
+  font-weight: 700;
+}
+.btn-sq {
+  width: 48px;
+  height: 48px;
+  flex: none;
+  padding: 2px;
+  background: var(--line-strong);
+  clip-path: var(--chamfer-sm);
+}
+.btn-sq > .inner {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-200);
+  clip-path: var(--chamfer-sm);
+}
+.btn-sq:disabled > .inner {
+  background: var(--hatch);
+  opacity: 0.6;
+}
+.menu-card {
+  display: block;
+  padding: 2px;
+  background: var(--line-strong);
+  clip-path: var(--chamfer-md);
+  text-align: left;
+}
+.menu-card > .inner {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px;
+  height: 100%;
+  box-sizing: border-box;
+  background: var(--surface-300);
+  clip-path: var(--chamfer-md);
+}
+.menu-card:disabled > .inner {
+  background: var(--hatch);
+  color: var(--ink-faint);
+}
+.badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  background: var(--accent);
+  color: var(--on-accent);
+  font-size: 15px;
+  line-height: 18px;
+  font-weight: 700;
+  clip-path: var(--chamfer-sm);
+}
+.sector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px;
+  background: var(--surface-200);
+  clip-path: var(--chamfer-md);
+}
+.title-lg {
+  margin: 0;
+  font-size: 28px;
+  line-height: 32px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* Research Lab */
+.lab-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 56px 16px 16px;
+  -webkit-overflow-scrolling: touch;
+}
+.lab-towers {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+.lab-tower {
+  height: 56px;
+  padding: 2px;
+  background: var(--line-strong);
+  clip-path: var(--chamfer-sm);
+}
+.lab-tower[aria-pressed='true'] {
+  padding: 3px;
+  background: var(--accent);
+}
+.lab-tower > .inner {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 100%;
+  padding: 0 6px;
+  background: var(--surface-300);
+  clip-path: var(--chamfer-sm);
+  font-size: 15px;
+  line-height: 17px;
+  font-weight: 700;
+  text-align: left;
+}
+.lab-tower:disabled {
+  background: var(--line);
+}
+.lab-tower:disabled > .inner {
+  background: var(--hatch);
+  color: var(--ink-faint);
+}
+.lab-tower img {
+  width: 36px;
+  height: 36px;
+  flex: none;
+}
+.r-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 10px 10px 12px;
+  background: var(--surface-300);
+  clip-path: var(--chamfer-md);
+}
+.r-row .info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.r-row .name {
+  font-size: 19px;
+  line-height: 24px;
+  font-weight: 700;
+}
+.r-bar {
+  display: block;
+  height: 4px;
+  background: var(--line);
+}
+.r-bar > span {
+  display: block;
+  height: 4px;
+  background: var(--ink);
+}
+.r-bar.max {
+  background: var(--accent);
+}
+.r-buy {
+  flex: none;
+  width: 112px;
+  height: 48px;
+  padding: 2px;
+  background: var(--line-strong);
+  clip-path: var(--chamfer-sm);
+}
+.r-buy > .inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  height: 100%;
+  background: var(--surface-200);
+  clip-path: var(--chamfer-sm);
+}
+.r-buy .cost {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 15px;
+  line-height: 18px;
+  font-weight: 700;
+}
+.r-buy:disabled {
+  background: var(--line);
+}
+.r-buy:disabled > .inner {
+  background: var(--hatch);
+  color: var(--ink-faint);
+}
+.r-max {
+  flex: none;
+  width: 112px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.tabbar {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2px;
+  padding: 2px;
+  margin: 0 16px 34px;
+  height: 48px;
+  box-sizing: border-box;
+  background: var(--line-strong);
+  clip-path: var(--chamfer-md);
+}
+.tabbar button {
+  background: var(--surface-200);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.tabbar button[aria-pressed='true'] {
+  background: var(--surface-300);
+  color: var(--accent);
+  box-shadow: inset 0 -3px 0 var(--accent);
+}
+.tabbar .count {
+  min-width: 18px;
+  padding: 0 4px;
+  background: var(--accent);
+  color: var(--on-accent);
+  font-family: var(--font-display);
+  font-size: 13px;
+  line-height: 18px;
+}
+
+/* Welcome back */
+.earn-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+}
+.earn-row + .earn-row {
+  border-top: 1px solid var(--line);
+}
+
+/* Pause (in-run/Pause.dc.html) */
+.scrim {
+  position: absolute;
+  inset: 0;
+  background: rgba(6, 8, 13, 0.82);
+  pointer-events: auto;
+}
+.sheet {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 390px;
+  box-sizing: border-box;
+  padding: 20px 16px 34px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: var(--surface-200);
+  border-top: 1px solid var(--line);
+  clip-path: var(--chamfer-lg-top);
+  pointer-events: auto;
+}
+.earned {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+.earned > div {
+  padding: 10px 12px;
+  background: var(--surface-300);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.earned .d {
+  font-size: 20px;
+  line-height: 24px;
+  font-weight: 700;
 }

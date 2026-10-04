@@ -15,6 +15,8 @@ export const C = {
   kinetic: '#ff7a33',
   cryo: '#8ff3ff',
   warning: '#ffd23f',
+  cores: '#b48cff',
+  shards: '#5cf2c8',
 } as const;
 
 export const icon = {
@@ -56,6 +58,28 @@ export const icon = {
       2,
       '<path d="M12 2.5l8.2 4.75v9.5L12 21.5l-8.2-4.75v-9.5z"/><path d="M12 7.5v9M8.1 9.75l7.8 4.5M15.9 9.75l-7.8 4.5"/>',
     ),
+  /** Currency twins (design-system README): Cores = cube, Shards = crystal. */
+  cores: (size = 20) =>
+    svg(
+      size,
+      C.cores,
+      2,
+      '<path d="M12 2.5l8.5 4.75v9.5L12 21.5l-8.5-4.75v-9.5z"/><path d="M12 12l8.5-4.75M12 12L3.5 7.25M12 12v9.5"/>',
+    ),
+  shards: (size = 20) =>
+    svg(size, C.shards, 2, '<path d="M12 2l6 8-6 12-6-12z"/><path d="M6 10h12"/>'),
+  gear: (size = 24) =>
+    svg(
+      size,
+      C.ink,
+      2,
+      '<circle cx="12" cy="12" r="3.5"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/>',
+    ),
+  back: (size = 24) => svg(size, C.ink, 2.5, '<path d="M15 5l-7 7 7 7"/>'),
+  next: (size = 24) => svg(size, C.ink, 2.5, '<path d="M9 5l7 7-7 7"/>'),
+  playSolid: (size = 20, color: string = C.onAccent) =>
+    svg(size, color, 2.5, `<path d="M7 4.5l13 7.5-13 7.5z" fill="${color}"/>`),
+  exit: (size = 20) => svg(size, C.ink, 2.5, '<path d="M10 4H5v16h5M14 8l4 4-4 4M18 12H9"/>'),
   /** Fast-forward chevrons (elite banner). */
   chevrons: () => svg(28, C.ink, 2.5, '<path d="M6 6l6 6-6 6M12 6l6 6-6 6"/>'),
   warning: (size = 28) =>
