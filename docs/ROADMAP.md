@@ -103,12 +103,17 @@ towers on a 50 h account, stacks waves, and shows min/avg fps over 30 s (PASS at
 min ≥ 50). Browser (desktop Chrome, ~145 enemies): avg 58, min 47._
 
 ## Phase 9 — Monetization and analytics
-- [ ] Ads interface → AdMob (rewarded only), ATT prompt
-- [ ] IAP interface → RevenueCat (Commander Pass, starter pack, Core/Shard packs)
-- [ ] Revive, double offline, extra reroll, double Cores hooks
-- [ ] Analytics events per GDD §12
+- [x] Ads interface → AdMob (rewarded only), ATT prompt
+- [x] IAP interface → RevenueCat (Commander Pass, starter pack, Core/Shard packs)
+- [x] Revive, double offline, extra reroll, double Cores hooks
+- [x] Analytics events per GDD §12 (local buffer; provider later)
 
 **Accept:** sandbox purchases and test ads work on device; everything degrades gracefully offline.
+_Partly verified 2026-10-04 in the iOS Simulator (native build): the tracking prompt, an AdMob
+test ad played to "Reward granted" and doubled the run's Cores, and the shop shows "Store
+unavailable" with no store configured. Browser mocks cover every purchase, pass and revive flow.
+Pending your accounts and device: sandbox purchases need App Store Connect products and a
+RevenueCat key (steps in `docs/MONETIZATION.md`)._
 
 ## Phase 10 — Ship
 - [ ] App icon, launch screen, store screenshots

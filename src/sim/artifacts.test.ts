@@ -462,3 +462,35 @@ describe('Dual Spec', () => {
     expect(t.stats.attack.type === 'rail' && t.stats.attack.strip).toBeGreaterThan(0);
   });
 });
+
+describe('rewarded-ad hooks in the sim (Phase 9)', () => {
+  it('an ad reroll is free and does not raise the price', () => {
+    const sim = poolSim(pool(['superconductor', 'capacitorBank', 'kineticPrimer', 'skyguard']));
+    sim.state.credits = 0;
+    killBoss(sim);
+    sim.step();
+    const before = sim.state.offer;
+    sim.enqueue({ type: 'rerollArtifacts', ad: true });
+    sim.step();
+    expect(sim.state.lastRejection).toBeNull();
+    expect(sim.state.offer).not.toBe(before);
+    expect(sim.state.rerolls).toBe(0);
+  });
+
+  it('revive restores half the base once per run', () => {
+    const sim = labSim();
+    sim.state.baseHp = 0;
+    sim.step();
+    expect(sim.state.gameOver).toBe(true);
+    sim.enqueue({ type: 'revive' });
+    sim.step();
+    expect(sim.state.gameOver).toBe(false);
+    expect(sim.state.baseHp).toBe(Math.ceil(sim.state.maxBaseHp * 0.5));
+    sim.state.baseHp = 0;
+    sim.step();
+    sim.enqueue({ type: 'revive' });
+    sim.step();
+    expect(sim.state.gameOver).toBe(true);
+    expect(sim.state.lastRejection).toBe('noRevive');
+  });
+});

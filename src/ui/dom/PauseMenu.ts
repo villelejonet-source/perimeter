@@ -26,7 +26,7 @@ export class PauseMenu {
     private readonly info: PauseInfo,
     private readonly actions: { resume(): void; retreat(): void; settings(): void },
   ) {
-    this.el = h('div');
+    this.el = h('div', 'pause-layer');
     parent.appendChild(this.el);
     this.showPaused();
   }

@@ -31,6 +31,7 @@ import {
   updateOffers,
 } from './artifacts';
 import type { OwnedArtifact } from '../data/artifacts';
+import { MONETIZATION } from '../data/shop';
 import { updateTowers } from './towers';
 import { Pool } from './pool';
 import { callEarly, updateWaves } from './waves';
@@ -99,6 +100,7 @@ export class Sim {
       freeRerolls: meta.freeRerolls,
       dualSpecUsed: false,
       invulnerable: config.invulnerable ?? false,
+      revived: false,
       lastRejection: null,
     };
     for (const a of config.startArtifacts ?? []) takeArtifact(this.state, a);
@@ -148,6 +150,14 @@ export class Sim {
     const s = this.state;
     if (cmd.type === 'setPaused') {
       s.paused = cmd.paused;
+      return;
+    }
+    if (cmd.type === 'revive') {
+      if (!s.gameOver || s.revived) return this.reject('noRevive');
+      s.revived = true;
+      s.gameOver = false;
+      s.baseHp = Math.max(1, Math.ceil(s.maxBaseHp * MONETIZATION.reviveHpShare));
+      s.lastRejection = null;
       return;
     }
     if (s.gameOver) return this.reject('gameOver');
@@ -229,11 +239,14 @@ export class Sim {
       }
       case 'rerollArtifacts': {
         if (!s.offer) return this.reject('noOffer');
-        const cost = nextRerollCost(s);
-        if (s.credits < cost) return this.reject('credits');
-        if (s.freeRerolls > 0) s.freeRerolls--;
-        else s.rerolls++;
-        s.credits -= cost;
+        // An ad reroll is free and doesn't raise the Credit price.
+        if (!cmd.ad) {
+          const cost = nextRerollCost(s);
+          if (s.credits < cost) return this.reject('credits');
+          if (s.freeRerolls > 0) s.freeRerolls--;
+          else s.rerolls++;
+          s.credits -= cost;
+        }
         s.offer = { wave: s.offer.wave, choices: drawChoices(s, this.rng) };
         break;
       }

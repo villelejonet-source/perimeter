@@ -8,8 +8,12 @@ import { DEFAULT_MAP_ID } from '../../data/maps';
 import type { SimSnapshot } from '../../sim/snapshot';
 import { WelcomeBack } from '../../ui/dom/screens/WelcomeBack';
 import { T } from '../layout';
-import { getStore, STRESS_KEY } from '../registry';
+import { getPlatform, getStore, STRESS_KEY } from '../registry';
+import { Shop } from '../../ui/dom/screens/Shop';
+import type { PurchaseResult } from '../../platform/iap';
+import type { ProductId } from '../../data/shop';
 import { playMusic } from '../audio';
+import { earnReward, rewardState } from '../rewards';
 
 interface Screen {
   destroy(): void;
@@ -50,10 +54,12 @@ export class MenuScene extends Phaser.Scene {
     const e = store.pendingOffline!;
     this.show(
       new WelcomeBack(this.overlay.root, e, {
-        collect: () => {
-          store.collectOffline();
+        collect: (mult) => {
+          store.collectOffline(mult);
           this.showMain();
         },
+        earn: () => earnReward(this, 'double_offline'),
+        rewardState: () => rewardState(this),
         research: () => {
           store.collectOffline();
           this.showLab();
@@ -70,9 +76,32 @@ export class MenuScene extends Phaser.Scene {
         research: () => this.showLab(),
         codex: () => this.show(new Codex(this.overlay.root, store, () => this.showMain())),
         settings: () => this.showSettings(),
+        shop: () => this.showShop(),
         selectMap: (id) => {
           store.selectMap(id);
           this.showMain();
+        },
+      }),
+    );
+  }
+
+  private showShop(): void {
+    const store = getStore(this);
+    const { iap, analytics } = getPlatform(this);
+    this.show(
+      new Shop(this.overlay.root, store, {
+        back: () => this.showMain(),
+        products: () => iap.products(),
+        purchase: async (id) => {
+          const result = await iap.purchase(id).catch((): PurchaseResult => 'failed');
+          if (result === 'ok') store.grant(id);
+          analytics.track({ name: 'purchase', product: id, result });
+          return result;
+        },
+        restore: async () => {
+          const ids = await iap.restore().catch((): ProductId[] => []);
+          for (const id of ids) store.grant(id);
+          return ids;
         },
       }),
     );

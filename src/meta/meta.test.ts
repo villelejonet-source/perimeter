@@ -18,6 +18,8 @@ import {
   unlockedTowers,
 } from './research';
 import { MAP_ORDER } from '../data/maps';
+import { MONETIZATION, PRODUCTS } from '../data/shop';
+import { grantProduct, owns } from './shop';
 import { applyRunRewards, coresForWave, runRewards } from './rewards';
 import { SaveStore } from './save';
 
@@ -329,5 +331,35 @@ describe('maps and settings (Phase 8)', () => {
     expect(s.profile.tutorialDone).toBe(true);
     const fresh = migrate({ schemaVersion: 2, profile: { ...v2, runs: 0 }, run: null, savedAt: 1 });
     expect(fresh.profile.tutorialDone).toBe(false);
+  });
+});
+
+describe('shop and Commander Pass (Phase 9)', () => {
+  it('packs add currency every time; one-time products grant once', () => {
+    let p = profile();
+    p = grantProduct(grantProduct(p, 'cores_s'), 'cores_s');
+    expect(p.cores).toBe(2 * PRODUCTS.cores_s.cores!);
+    p = grantProduct(p, 'starter_pack');
+    const after = p.cores;
+    expect(p.purchases.starterPack).toBe(true);
+    expect(p.artifacts.dualSpec).toBe(3);
+    expect(grantProduct(p, 'starter_pack').cores).toBe(after); // restore twice: no double grant
+    expect(owns(p, 'starter_pack')).toBe(true);
+  });
+
+  it('the pass adds 20% to run Cores and offline Cores', () => {
+    const p = profile({ bestWave: 30 });
+    const withPass = grantProduct(p, 'commander_pass');
+    expect(runRewards(withPass, 30, 0).cores).toBe(
+      Math.floor(coresForWave(30) * MONETIZATION.passCoresMult),
+    );
+    const away = (q: Profile) => offlineEarnings({ ...q, lastSeen: T0 }, T0 + 4 * H).cores;
+    expect(away(withPass)).toBeGreaterThan(away(p) * 1.19);
+  });
+
+  it('migrates a v3 save to no purchases', () => {
+    const { purchases: _p, ...v3 } = profile();
+    const s = migrate({ schemaVersion: 3, profile: v3, run: null, savedAt: 1 });
+    expect(s.profile.purchases).toEqual({ commanderPass: false, starterPack: false });
   });
 });

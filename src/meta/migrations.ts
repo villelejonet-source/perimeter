@@ -3,7 +3,7 @@ import { DEFAULT_MAP_ID } from '../data/maps';
 import { DEFAULT_SETTINGS, starterArtifacts, type Profile } from './profile';
 
 /** Bump when the save format changes, and add a migration from the previous version. */
-export const CURRENT_SCHEMA_VERSION = 3;
+export const CURRENT_SCHEMA_VERSION = 4;
 
 export interface SaveFile {
   schemaVersion: number;
@@ -51,6 +51,20 @@ const MIGRATIONS: Record<number, (raw: Raw) => Raw> = {
         : profile,
     };
   },
+  // 3 → 4 (Phase 9): one-time purchases.
+  3: (raw) => {
+    const profile = raw.profile as Raw | undefined;
+    return {
+      ...raw,
+      schemaVersion: 4,
+      profile: profile
+        ? { purchases: { commanderPass: false, starterPack: false }, ...profile }
+        : profile,
+      run: raw.run
+        ? { ...(raw.run as Raw), state: { revived: false, ...((raw.run as Raw).state as Raw) } }
+        : null,
+    };
+  },
 };
 
 const NO_ARTIFACT_META = { artifactPool: [], artifactChoices: 3, freeRerolls: 0 };
@@ -91,7 +105,8 @@ function isProfile(p: unknown): p is Profile {
     o.artifacts !== null &&
     typeof o.bestByMap === 'object' &&
     typeof o.settings === 'object' &&
-    typeof o.mapId === 'string'
+    typeof o.mapId === 'string' &&
+    typeof o.purchases === 'object'
   );
 }
 

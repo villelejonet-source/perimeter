@@ -240,6 +240,8 @@ export interface SimState {
   freeRerolls: number;
   /** Dual Spec already given to a tower this run. */
   dualSpecUsed: boolean;
+  /** The once-per-run revive has been used. */
+  revived: boolean;
   /** Test runs only (performance test): leaks don't hurt the base. */
   invulnerable: boolean;
   /** Reason the most recent command was rejected, for UI feedback. */

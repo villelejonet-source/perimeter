@@ -36,6 +36,10 @@ export class BootScene extends Phaser.Scene {
     setStore(this.game, store);
     // Phaser Text rasterises immediately, so fonts must be ready before any scene draws text.
     const fonts = Promise.all(FONT_FACES.map((f) => document.fonts.load(f))).catch(() => undefined);
+    // Ads (with the tracking prompt) and the store start in the background; nothing waits on them.
+    const { ads, iap } = getPlatform(this);
+    void ads.init().catch(() => undefined);
+    void iap.init().catch(() => undefined);
     void Promise.all([fonts, store.load()]).then(() => {
       this.scene.start((this.registry.get(NEXT_SCENE_KEY) as string | undefined) ?? 'Menu');
     });

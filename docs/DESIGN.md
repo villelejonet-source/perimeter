@@ -52,8 +52,8 @@ maps → `src/data/maps.ts`.
 | 8 | Tutorial overlays | none | `src/ui/dom/Tutorial.ts` | built without design |
 | 8 | Map select | `screens/meta/Main.dc.html` sector row | `src/ui/dom/screens/MainMenu.ts` | applied (arrows on the main menu) |
 | 8 | Settings (sound, music, haptics) | none | `src/ui/dom/screens/Settings.ts` | built without design |
-| 9 | Shop, Commander Pass, packs | none | none | missing |
-| 9 | Revive / rewarded-ad prompts | none | none | missing |
+| 9 | Shop, Commander Pass, packs | none | `src/ui/dom/screens/Shop.ts` | built without design |
+| 9 | Revive / rewarded-ad prompts | `WelcomeBack.dc.html`, `RunEnd.dc.html` (double buttons) | `src/ui/dom/RewardButton.ts`, `RevivePrompt.ts` | double buttons applied; revive built without design |
 | 10 | App icon, launch screen, store screenshots | none | none | missing |
 
 ## Decisions and open questions
@@ -82,6 +82,8 @@ Decided 2026-10-04:
 - Phase 7: ~30 artifacts drafted from the GDD starter set and the mockup names, using the GDD names where they differ (`src/data/artifacts.ts`). 8 starters are crafted free at Common. Tiers scale the effect ×1 / 1.5 / 2.2 / 3.2 and are drawn with weight 100 / 60 / 35 / 20. Crafting costs 10 Shards, then 20 / 40 / 80 per tier. Dual Spec is Legendary-only: one specialized tower per run can take a second spec from its panel. A boss that leaks gives no pick (the pick triggers on the kill), and there's no skip button, as in the mockup. Built without a design: the Codex "craft" state (the detail sheet with a dashed icon and Craft + cost, INVENTORY request 11), the 28 artifact glyphs (same frame language as the mockup's), the artifacts row in the pause menu, and the Dual Spec card in the tower panel.
 
 - Phase 8: audio waits for real files. `src/data/audio.ts` lists every sound and track (file null = silent); Settings toggles work now. Maps 2 and 3 unlock in order on the Research Lab Unlocks tab (Cores). Best wave is tracked per map; offline income and milestones use the best on any map. The main menu's sector arrows pick the map, and a saved run pins it. The tutorial runs on the first run only and is skippable: 1) drag a Pulse Laser to the ringed spot (the run waits), 2) tap it and upgrade, 3) call a wave early, 4) a shields/armor tip that pauses until dismissed. It can be replayed from Settings. Saves from before Phase 8 skip it if they have runs. Built without a design: Settings (toggle rows, no Sunlight boost yet), the tutorial coach card and highlight rings, the performance-test fps readout. New VFX reuse the existing art, tinted: deaths use the mortar blast (gold for bosses), freezes the frozen overlay, shield breaks the shield bubble, with camera shake on boss deaths and leaks.
+
+- Phase 9: the catalog is in `src/data/shop.ts`: Commander Pass $4.99 (ad rewards without ads, +20% Cores), Starter Pack $1.99 (5,000 Cores, 40 Shards, Dual Spec), Core packs 3k / 18k / 40k, Shard packs 30 / 180. Ad limits per GDD: revive once per run (50% base HP), free reroll once per artifact pick, double Cores once per run end, double offline once per welcome back. Reward buttons are outlined in reward gold, never primary, and say "No ad available right now" offline. Analytics goes to a local buffer until a provider is picked. Built without a design: Shop, revive prompt, the free-reroll button on the artifact pick, the cart button on the main menu.
 
 Open: the remaining requests in `design/INVENTORY.md` §3.
 
@@ -117,3 +119,5 @@ Log when a design has been implemented, so drift is visible later.
 | 2026-10-04 | `maps/map-02-switchbacks.json`, `map-03-spiral.json` | Loaded (`npm run sync:design`), unlockable sectors |
 | 2026-10-04 | `screens/meta/Main.dc.html` sector row and gear | Sector arrows switch maps (locked ones say so); gear opens Settings |
 | 2026-10-04 | `screens/in-run/Pause.dc.html` Settings button | Opens Settings over the pause menu |
+| 2026-10-04 | `screens/meta/WelcomeBack.dc.html` "Double with ad" | Reward-gold outlined button above Collect (`src/ui/dom/RewardButton.ts`) |
+| 2026-10-04 | `screens/in-run/RunEnd.dc.html` "Double Cores" | Same button on the run end; Cores update when claimed |

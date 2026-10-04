@@ -10,6 +10,7 @@ export interface MainMenuActions {
   research(): void;
   codex(): void;
   settings(): void;
+  shop(): void;
   selectMap(mapId: string): void;
 }
 
@@ -45,7 +46,10 @@ export class MainMenu {
            <div class="chip-cur">${icon.cores()}<span class="d">${fmt.int(p.cores)}</span><span class="label muted">Cores</span></div>
            <div class="chip-cur">${icon.shards()}<span class="d">${fmt.int(p.shards)}</span><span class="label muted">Shards</span></div>
          </div>
-         <button class="btn-sq settings" aria-label="Settings"><span class="inner">${icon.gear()}</span></button>
+         <div style="display:flex;gap:8px">
+           <button class="btn-sq shop" aria-label="Shop"><span class="inner">${icon.cart()}</span></button>
+           <button class="btn-sq settings" aria-label="Settings"><span class="inner">${icon.gear()}</span></button>
+         </div>
        </div>
        <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px">
          <svg width="72" height="72" viewBox="0 0 48 48" aria-hidden="true" style="fill:none;stroke:#c6ff3d;stroke-width:2.5;stroke-linejoin:round;filter:drop-shadow(0 0 8px rgba(198,255,61,.5))"><path d="M24 4l17.3 10v20L24 44 6.7 34V14z"/><path d="M24 15l7.8 4.5v9L24 33l-7.8-4.5v-9z"/></svg>
@@ -79,6 +83,7 @@ export class MainMenu {
     this.el.querySelector('.research')!.addEventListener('click', () => actions.research());
     this.el.querySelector('.codex')!.addEventListener('click', () => actions.codex());
     this.el.querySelector('.settings')!.addEventListener('click', () => actions.settings());
+    this.el.querySelector('.shop')!.addEventListener('click', () => actions.shop());
     this.el.querySelector('.prev')!.addEventListener('click', () => actions.selectMap(cycle(-1)));
     this.el.querySelector('.next')!.addEventListener('click', () => actions.selectMap(cycle(1)));
     this.el.querySelector('.play')!.addEventListener('click', () => actions.play());

@@ -1,5 +1,6 @@
 import { DEFAULT_MAP_ID } from '../data/maps';
 import { REWARDS } from '../data/meta';
+import { MONETIZATION } from '../data/shop';
 import type { Profile } from './profile';
 
 export interface RunRewards {
@@ -32,7 +33,7 @@ export function runRewards(
   );
   const milestoneShards = newMilestones * REWARDS.milestoneShards;
   return {
-    cores: coresForWave(wave),
+    cores: Math.floor(coresForWave(wave) * passMult(p)),
     shards: bossesKilled * REWARDS.shardsPerBoss + milestoneShards,
     milestoneShards,
     newBest: wave > (p.bestByMap[mapId] ?? 0),
@@ -57,4 +58,9 @@ export function applyRunRewards(
     ),
     runs: p.runs + 1,
   };
+}
+
+/** Commander Pass: permanent Core bonus (GDD §12). */
+export function passMult(p: Profile): number {
+  return p.purchases.commanderPass ? MONETIZATION.passCoresMult : 1;
 }

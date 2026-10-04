@@ -12,6 +12,8 @@ export type Command =
   | { type: 'callEarly' }
   /** Take choice `index` of the pending artifact offer. */
   | { type: 'pickArtifact'; index: number }
-  /** Redraw the pending offer for Credits (free rerolls first). */
-  | { type: 'rerollArtifacts' }
+  /** Redraw the pending offer for Credits (free rerolls first). `ad`: paid by a rewarded ad. */
+  | { type: 'rerollArtifacts'; ad?: boolean }
+  /** Base fell: come back once per run with part of the base HP (rewarded ad, GDD §12). */
+  | { type: 'revive' }
   | { type: 'setPaused'; paused: boolean };

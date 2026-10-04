@@ -66,5 +66,17 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<!-- AdMob (docs/MONETIZATION.md). Google's public test app id; replace with yours for release. -->
+	<key>GADApplicationIdentifier</key>
+	<string>ca-app-pub-3940256099942544~1458002511</string>
+	<key>NSUserTrackingUsageDescription</key>
+	<string>Lets us show you more relevant ads. Ads in Perimeter are always optional.</string>
+	<key>SKAdNetworkItems</key>
+	<array>
+		<dict>
+			<key>SKAdNetworkIdentifier</key>
+			<string>cstr6suwn9.skadnetwork</string>
+		</dict>
+	</array>
 </dict>
 </plist>

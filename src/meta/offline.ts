@@ -2,7 +2,7 @@ import { REWARDS } from '../data/meta';
 import { RESEARCH_BY_ID } from '../data/research';
 import type { Profile } from './profile';
 import { researchLevel } from './research';
-import { coresForWave } from './rewards';
+import { coresForWave, passMult } from './rewards';
 
 const HOUR = 3_600_000;
 
@@ -32,7 +32,7 @@ export function offlineCapHours(p: Profile): number {
 export function offlineCoresPerHour(p: Profile): number {
   const research =
     1 + researchLevel(p, 'offlineRate') * RESEARCH_BY_ID.get('offlineRate')!.perLevel;
-  return coresForWave(p.bestWave) * REWARDS.offlineRunsPerHour * research;
+  return coresForWave(p.bestWave) * REWARDS.offlineRunsPerHour * research * passMult(p);
 }
 
 /** Offline income since `p.lastSeen`, capped (8 h, 12 h with research). Pure. */

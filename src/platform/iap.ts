@@ -1,35 +1,94 @@
-export type ProductId = 'commander_pass' | 'starter_pack' | 'cores_small' | 'shards_small';
+import { Purchases, type PurchasesStoreProduct } from '@revenuecat/purchases-capacitor';
+import { PRODUCT_ORDER, PRODUCTS, type ProductId } from '../data/shop';
+import { MONETIZATION_CONFIG } from './config';
 
-export interface Product {
+export type PurchaseResult = 'ok' | 'cancelled' | 'failed' | 'unavailable';
+
+export interface StoreProduct {
   id: ProductId;
-  title: string;
+  /** Localized price from the store. */
   price: string;
 }
 
+/**
+ * In-app purchases (GDD §12) behind an interface, so the game runs without a store. The game
+ * grants contents itself after `purchase` resolves 'ok' (src/meta/shop.ts).
+ */
 export interface Iap {
-  products(): Promise<Product[]>;
-  purchase(id: ProductId): Promise<boolean>;
+  init(): Promise<void>;
+  /** Products the store knows about; empty when offline or not configured. */
+  products(): Promise<StoreProduct[]>;
+  purchase(id: ProductId): Promise<PurchaseResult>;
+  /** One-time products the account owns (Restore purchases). */
   restore(): Promise<ProductId[]>;
 }
 
-/** Web mock: every purchase succeeds; non-consumables are remembered for the session. */
+/** Web mock: every purchase succeeds after a short delay. */
 export class MockIap implements Iap {
   private readonly owned = new Set<ProductId>();
-  async products(): Promise<Product[]> {
-    return [
-      { id: 'commander_pass', title: 'Commander Pass', price: '$4.99' },
-      { id: 'starter_pack', title: 'Starter Pack', price: '$1.99' },
-      { id: 'cores_small', title: 'Core Pack', price: '$0.99' },
-      { id: 'shards_small', title: 'Shard Pack', price: '$0.99' },
-    ];
+  async init(): Promise<void> {}
+  async products(): Promise<StoreProduct[]> {
+    return PRODUCT_ORDER.map((id) => ({ id, price: PRODUCTS[id].fallbackPrice }));
   }
-  async purchase(id: ProductId): Promise<boolean> {
+  async purchase(id: ProductId): Promise<PurchaseResult> {
     console.info(`[MockIap] purchase: ${id}`);
     await new Promise((r) => setTimeout(r, 300));
-    if (id === 'commander_pass' || id === 'starter_pack') this.owned.add(id);
-    return true;
+    if (PRODUCTS[id].oneTime) this.owned.add(id);
+    return 'ok';
   }
   async restore(): Promise<ProductId[]> {
     return [...this.owned];
+  }
+}
+
+/** RevenueCat on iOS (receipt validation is RevenueCat's). Disabled until an API key is set. */
+export class RevenueCatIap implements Iap {
+  private configured = false;
+  private cache = new Map<ProductId, PurchasesStoreProduct>();
+
+  async init(): Promise<void> {
+    const apiKey = MONETIZATION_CONFIG.revenuecat.iosApiKey;
+    if (!apiKey) return;
+    try {
+      await Purchases.configure({ apiKey });
+      this.configured = true;
+    } catch (e) {
+      console.warn('[RevenueCat] configure failed', e);
+    }
+  }
+
+  async products(): Promise<StoreProduct[]> {
+    if (!this.configured) return [];
+    try {
+      const { products } = await Purchases.getProducts({ productIdentifiers: [...PRODUCT_ORDER] });
+      for (const p of products) this.cache.set(p.identifier as ProductId, p);
+      return products.map((p) => ({ id: p.identifier as ProductId, price: p.priceString }));
+    } catch {
+      return [];
+    }
+  }
+
+  async purchase(id: ProductId): Promise<PurchaseResult> {
+    if (!this.configured) return 'unavailable';
+    if (!this.cache.has(id)) await this.products();
+    const product = this.cache.get(id);
+    if (!product) return 'unavailable';
+    try {
+      await Purchases.purchaseStoreProduct({ product });
+      return 'ok';
+    } catch (e) {
+      return (e as { userCancelled?: boolean }).userCancelled ? 'cancelled' : 'failed';
+    }
+  }
+
+  async restore(): Promise<ProductId[]> {
+    if (!this.configured) return [];
+    try {
+      const { customerInfo } = await Purchases.restorePurchases();
+      const ids = new Set(customerInfo.nonSubscriptionTransactions.map((t) => t.productIdentifier));
+      return PRODUCT_ORDER.filter((id) => PRODUCTS[id].oneTime && ids.has(id));
+    } catch {
+      return [];
+    }
   }
 }

@@ -75,6 +75,13 @@ export const icon = {
       2,
       '<circle cx="12" cy="12" r="3.5"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/>',
     ),
+  cart: (size = 24) =>
+    svg(
+      size,
+      C.credits,
+      2,
+      '<path d="M3 4h2.5l2.2 11h10.6l2-8H7"/><circle cx="9.5" cy="19" r="1.5"/><circle cx="16.5" cy="19" r="1.5"/>',
+    ),
   back: (size = 24) => svg(size, C.ink, 2.5, '<path d="M15 5l-7 7 7 7"/>'),
   next: (size = 24) => svg(size, C.ink, 2.5, '<path d="M9 5l7 7-7 7"/>'),
   playSolid: (size = 20, color: string = C.onAccent) =>

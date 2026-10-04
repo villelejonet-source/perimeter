@@ -20,7 +20,10 @@ import { canDualSpec } from '../../sim/sim';
 import { TowerPanel } from '../../ui/dom/TowerPanel';
 import { Placement } from '../input/Placement';
 import { S, T, ZONES } from '../layout';
-import { DEV_UNLOCK_ALL_KEY, getStore, STRESS_KEY } from '../registry';
+import { DEV_UNLOCK_ALL_KEY, getPlatform, getStore, STRESS_KEY } from '../registry';
+import { earnReward, rewardState } from '../rewards';
+import { RevivePrompt } from '../../ui/dom/RevivePrompt';
+import { MONETIZATION } from '../../data/shop';
 import { FpsMeter, STRESS, stressSim } from '../stress';
 import { buzz, playMusic, playSfx } from '../audio';
 import { Feedback } from '../feedback';
@@ -65,6 +68,7 @@ export class GameScene extends Phaser.Scene {
   private picker: SpecPicker | null = null;
   private artPick: ArtifactPick | null = null;
   private pausedByArtPick = false;
+  private revivePrompt: RevivePrompt | null = null;
   private takenOffer: SimState['offer'] = null;
   private pauseMenu: PauseMenu | null = null;
   private settings: SettingsScreen | null = null;
@@ -195,6 +199,7 @@ export class GameScene extends Phaser.Scene {
       this.runEnd?.destroy();
       this.picker?.destroy();
       this.artPick?.destroy();
+      this.revivePrompt?.destroy();
       this.pauseMenu?.destroy();
       this.alerts.destroy();
       this.tutorial?.destroy();
@@ -209,9 +214,17 @@ export class GameScene extends Phaser.Scene {
             finish: () => {
               this.tutorial = null;
               getStore(this).setTutorialDone(true);
+              getPlatform(this).analytics.track({ name: 'tutorial', step: 'done' });
             },
           })
         : null;
+    if (!this.stress) {
+      getPlatform(this).analytics.track({
+        name: 'run_start',
+        map: this.sim.map.id,
+        resumed: saved !== null,
+      });
+    }
     if (saved) this.openPause();
   }
 
@@ -249,7 +262,42 @@ export class GameScene extends Phaser.Scene {
       if (s.offer && s.offer !== this.takenOffer) this.openArtifactPick();
       else this.offerSpecs();
     }
-    if (s.gameOver && !this.ended) this.endRun();
+    if (s.gameOver && !this.ended && !this.revivePrompt) {
+      // GDD §12: one revive per run (rewarded ad); the performance test never ends this way.
+      if (!s.revived && !this.stress) this.openRevive();
+      else this.endRun();
+    }
+  }
+
+  /** The base fell: offer the once-per-run revive before ending the run. */
+  private openRevive(): void {
+    this.selectTower(-1);
+    const s = this.sim.state;
+    const close = (): void => {
+      this.revivePrompt?.destroy();
+      this.revivePrompt = null;
+    };
+    this.revivePrompt = new RevivePrompt(
+      this.overlay.root,
+      {
+        wave: s.wave,
+        reviveHp: Math.max(1, Math.ceil(s.maxBaseHp * MONETIZATION.reviveHpShare)),
+        maxBaseHp: s.maxBaseHp,
+      },
+      {
+        earn: () => earnReward(this, 'revive'),
+        state: () => rewardState(this),
+        revive: () => {
+          this.send({ type: 'revive' });
+          this.lastBaseHp = Math.ceil(s.maxBaseHp * MONETIZATION.reviveHpShare);
+          close();
+        },
+        end: () => {
+          close();
+          this.endRun();
+        },
+      },
+    );
   }
 
   /** Performance test: keep waves stacking, auto-take picks, report fps. */
@@ -298,6 +346,13 @@ export class GameScene extends Phaser.Scene {
       {
         pick: (spec) => {
           this.send({ type: 'specialize', towerId, spec });
+          getPlatform(this).analytics.track({
+            name: 'spec_pick',
+            tower: t.kind,
+            spec,
+            wave: this.sim.state.wave,
+            second: dual,
+          });
           buzz(this, 'place');
           close();
         },
@@ -316,6 +371,15 @@ export class GameScene extends Phaser.Scene {
     }
     this.artPick = new ArtifactPick(this.overlay.root, this.sim.state, {
       take: (index) => {
+        const choice = this.sim.state.offer?.choices[index];
+        if (choice) {
+          getPlatform(this).analytics.track({
+            name: 'artifact_pick',
+            artifact: choice.id,
+            tier: choice.tier,
+            wave: this.sim.state.wave,
+          });
+        }
         this.send({ type: 'pickArtifact', index });
         buzz(this, 'place');
         this.artPick?.destroy();
@@ -326,6 +390,11 @@ export class GameScene extends Phaser.Scene {
         }
         // The sim clears the offer on its next tick; don't re-open it meanwhile.
         this.takenOffer = this.sim.state.offer;
+      },
+      adReroll: {
+        earn: () => earnReward(this, 'extra_reroll'),
+        state: () => rewardState(this),
+        grant: () => this.send({ type: 'rerollArtifacts', ad: true }),
       },
       reroll: () => {
         this.send({ type: 'rerollArtifacts' });
@@ -491,6 +560,14 @@ export class GameScene extends Phaser.Scene {
     const previousBest = store.profile.bestByMap[mapId] ?? 0;
     const rewards = runRewards(store.profile, s.wave, s.stats.bossesKilled, mapId);
     store.finishRun(s.wave, rewards, mapId);
+    getPlatform(this).analytics.track({
+      name: 'run_end',
+      map: mapId,
+      wave: s.wave,
+      seconds: Math.round(s.tick / GAME.tickRate),
+      retreated,
+      cores: rewards.cores,
+    });
     playSfx(this, rewards.newBest ? 'newBest' : 'runEnd');
     this.runEnd = new RunEnd(
       this.overlay.root,
@@ -502,7 +579,15 @@ export class GameScene extends Phaser.Scene {
         milestoneShards: rewards.milestoneShards,
         retreated,
       },
-      { menu: () => this.scene.start('Menu'), again: () => this.scene.restart() },
+      {
+        menu: () => this.scene.start('Menu'),
+        again: () => this.scene.restart(),
+        double: {
+          earn: () => earnReward(this, 'double_cores'),
+          state: () => rewardState(this),
+          grant: () => store.addCores(rewards.cores),
+        },
+      },
     );
   }
 }

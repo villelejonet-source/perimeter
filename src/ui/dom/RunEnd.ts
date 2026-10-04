@@ -1,4 +1,5 @@
 import { icon } from './icons';
+import { RewardButton, type RewardState } from './RewardButton';
 import { fmt, h } from './overlay';
 
 export interface RunEndData {
@@ -13,12 +14,21 @@ export interface RunEndData {
 
 /**
  * Run end (in-run/RunEnd.dc.html): wave vs best, rewards, BACK TO MENU / PLAY AGAIN.
- * The optional "double Cores" ad arrives with ads in Phase 9.
+ * "Double Cores" is the opt-in rewarded option (GDD §12).
  */
 export class RunEnd {
   private readonly el: HTMLElement;
 
-  constructor(parent: HTMLElement, d: RunEndData, actions: { menu(): void; again(): void }) {
+  constructor(
+    parent: HTMLElement,
+    d: RunEndData,
+    actions: {
+      menu(): void;
+      again(): void;
+      /** Rewarded ad (or Commander Pass) for double Cores; null hides the option. */
+      double: { earn(): Promise<boolean>; grant(): void; state(): RewardState } | null;
+    },
+  ) {
     const newBest = d.wave > d.previousBest;
     this.el = h(
       'div',
@@ -34,12 +44,12 @@ export class RunEnd {
        <div style="display:flex;flex-direction:column;gap:8px">
          <span class="label muted">REWARDS EARNED</span>
          <div class="card" style="padding:12px 16px;background:var(--surface-300);border:0;flex-direction:row;align-items:center;gap:12px;clip-path:var(--chamfer-sm)">
-           ${icon.cores(28)}<span style="flex:1;font-size:16px;line-height:22px;font-weight:500">Cores</span><span class="d" style="font-size:28px;line-height:30px;font-weight:700">${fmt.int(d.cores)}</span>
+           ${icon.cores(28)}<span style="flex:1;font-size:16px;line-height:22px;font-weight:500">Cores</span><span class="d cores-n" style="font-size:28px;line-height:30px;font-weight:700">${fmt.int(d.cores)}</span>
          </div>
          <div class="card" style="padding:12px 16px;background:var(--surface-300);border:0;flex-direction:row;align-items:center;gap:12px;clip-path:var(--chamfer-sm)">
            ${icon.shards(28)}<span style="flex:1;display:flex;flex-direction:column"><span style="font-size:16px;line-height:22px;font-weight:500">Shards</span>${d.milestoneShards ? `<span class="caption muted">incl. ${d.milestoneShards} for new wave milestones</span>` : ''}</span><span class="d" style="font-size:28px;line-height:30px;font-weight:700">${fmt.int(d.shards)}</span>
          </div>
-         <span class="caption muted" style="text-align:center">Saved. Spend Cores in the Research Lab.</span>
+         <span class="caption muted saved" style="text-align:center">Saved. Spend Cores in the Research Lab.</span>
        </div>
        <div class="actions">
          <button class="btn-secondary menu" style="height:48px"><span class="inner btn-md-text">Back to menu</span></button>
@@ -48,6 +58,23 @@ export class RunEnd {
     );
     this.el.querySelector('.menu')!.addEventListener('click', () => actions.menu());
     this.el.querySelector('.again')!.addEventListener('click', () => actions.again());
+    const dbl = actions.double;
+    if (dbl && d.cores > 0) {
+      const b: RewardButton = new RewardButton(
+        'Double Cores',
+        `${fmt.int(d.cores)} → ${fmt.int(d.cores * 2)} Cores`,
+        '×2',
+        dbl.state,
+        () =>
+          void b.run(dbl.earn, () => {
+            dbl.grant();
+            this.el.querySelector('.cores-n')!.textContent = fmt.int(d.cores * 2);
+          }),
+      );
+      const saved = this.el.querySelector('.saved')!;
+      saved.textContent = 'Optional. Your rewards are already saved.';
+      saved.before(b.el);
+    }
     parent.appendChild(this.el);
   }
 

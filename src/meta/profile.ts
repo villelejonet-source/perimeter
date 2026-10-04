@@ -23,6 +23,13 @@ export interface Profile {
   settings: Settings;
   /** First-run tutorial finished or skipped. */
   tutorialDone: boolean;
+  /** One-time purchases owned (GDD §12). Consumable packs are granted, not recorded. */
+  purchases: Purchases;
+}
+
+export interface Purchases {
+  commanderPass: boolean;
+  starterPack: boolean;
 }
 
 /** Player settings (Settings screen, decided 2026-10-04). */
@@ -48,6 +55,7 @@ export function newProfile(now: number): Profile {
     mapId: DEFAULT_MAP_ID,
     settings: { ...DEFAULT_SETTINGS },
     tutorialDone: false,
+    purchases: { commanderPass: false, starterPack: false },
   };
 }
 

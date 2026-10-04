@@ -4,10 +4,13 @@ import type { ArtifactOffer, SimState } from '../../sim/state';
 import { artifactIcon, tierFrame, tierPips } from './artifactArt';
 import { C, icon } from './icons';
 import { fmt, h, setText } from './overlay';
+import { RewardButton, type RewardState } from './RewardButton';
 
 export interface ArtifactPickActions {
   take(index: number): void;
   reroll(): void;
+  /** One free reroll per pick for a rewarded ad (GDD §12). */
+  adReroll: { earn(): Promise<boolean>; state(): RewardState; grant(): void };
 }
 
 /**
@@ -24,6 +27,7 @@ export class ArtifactPick {
   private readonly nextEl: HTMLElement;
   private offer: ArtifactOffer | null = null;
   private selected = -1;
+  private readonly adBtn: RewardButton;
 
   constructor(
     parent: HTMLElement,
@@ -69,6 +73,11 @@ export class ArtifactPick {
       if (this.selected >= 0) this.actions.take(this.selected);
     });
     this.rerollBtn.addEventListener('click', () => this.actions.reroll());
+    const ad = this.actions.adReroll;
+    this.adBtn = new RewardButton('Free reroll', 'new choices', '', ad.state, () => {
+      void this.adBtn.run(ad.earn, ad.grant);
+    });
+    col.querySelector('.art-actions')!.before(this.adBtn.el);
     parent.appendChild(this.el);
     parent.classList.add('picking');
     this.update();
@@ -143,6 +152,7 @@ export class ArtifactPick {
   }
 
   destroy(): void {
+    this.adBtn.destroy();
     this.el.parentElement?.classList.remove('picking');
     this.el.remove();
   }

@@ -1,5 +1,6 @@
 import type { OfflineEarnings } from '../../../meta/offline';
 import { icon } from '../icons';
+import { RewardButton, type RewardState } from '../RewardButton';
 import { fmt, h } from '../overlay';
 
 const dur = (ms: number): string => {
@@ -9,7 +10,7 @@ const dur = (ms: number): string => {
 
 /**
  * Offline income on return (meta/WelcomeBack.dc.html). COLLECT is the one primary button;
- * the "double with ad" option arrives with ads in Phase 9.
+ * "Double with ad" is the opt-in rewarded option above it.
  */
 export class WelcomeBack {
   readonly el: HTMLElement;
@@ -17,7 +18,13 @@ export class WelcomeBack {
   constructor(
     parent: HTMLElement,
     e: OfflineEarnings,
-    actions: { collect(): void; research(): void },
+    actions: {
+      collect(mult: number): void;
+      research(): void;
+      /** Rewarded ad (or Commander Pass); resolves true when earned. */
+      earn(): Promise<boolean>;
+      rewardState(): RewardState;
+    },
   ) {
     const frac = e.capMs ? Math.min(1, e.countedMs / e.capMs) : 0;
     const r = 88;
@@ -49,9 +56,22 @@ export class WelcomeBack {
            <div class="earn-row">${icon.shards(28)}<span style="flex:1;display:flex;flex-direction:column;align-items:flex-start"><span style="font-size:19px;line-height:24px;font-weight:700">Shards</span><span class="caption muted">${e.shardsPerHour} per hour</span></span><span class="d" style="font-size:28px;line-height:30px;font-weight:700">+${fmt.int(e.shards)}</span></div>
          </div>
        </div>
-       <button class="btn-primary btn-lg-text collect" style="height:56px">Collect</button>`,
+       <div class="thumb" style="display:flex;flex-direction:column;gap:12px">
+         <button class="btn-primary btn-lg-text collect" style="height:56px">Collect</button>
+       </div>`,
     );
-    this.el.querySelector('.collect')!.addEventListener('click', () => actions.collect());
+    this.el.querySelector('.collect')!.addEventListener('click', () => actions.collect(1));
+    if (e.cores > 0 || e.shards > 0) {
+      // GDD §11: optional ad doubles the offline earnings, then collects.
+      const double: RewardButton = new RewardButton(
+        'Double with ad',
+        `${fmt.int(e.cores * 2)} Cores, ${fmt.int(e.shards * 2)} Shards`,
+        '×2',
+        actions.rewardState,
+        () => void double.run(actions.earn, () => actions.collect(2)),
+      );
+      this.el.querySelector('.thumb')!.prepend(double.el);
+    }
     this.el.querySelector('.raise')?.addEventListener('click', (ev) => {
       ev.preventDefault();
       actions.research();

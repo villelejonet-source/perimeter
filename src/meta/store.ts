@@ -1,6 +1,8 @@
 import type { ArtifactId } from '../data/artifacts';
 import type { ResearchId } from '../data/research';
 import { craftArtifact } from './artifacts';
+import type { ProductId } from '../data/shop';
+import { grantProduct } from './shop';
 import type { Storage } from '../platform/storage';
 import type { SimSnapshot } from '../sim/snapshot';
 import type { SaveFile } from './migrations';
@@ -80,6 +82,18 @@ export class MetaStore {
       ...this.save.profile,
       settings: { ...this.save.profile.settings, ...patch },
     };
+    void this.flush();
+  }
+
+  /** A store purchase or restore went through: grant it. */
+  grant(id: ProductId): void {
+    this.save.profile = grantProduct(this.save.profile, id);
+    void this.flush();
+  }
+
+  /** Double Cores ad at run end: pays the run's Cores again. */
+  addCores(cores: number): void {
+    this.save.profile = { ...this.save.profile, cores: this.save.profile.cores + cores };
     void this.flush();
   }
 

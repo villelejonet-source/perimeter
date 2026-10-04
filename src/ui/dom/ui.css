@@ -1539,3 +1539,93 @@ button.spec-hint {
   color: var(--accent);
   pointer-events: none;
 }
+/* Rewarded-ad button: outlined reward gold (design-system README). */
+.btn-reward {
+  display: block;
+  width: 100%;
+  padding: 2px;
+  background: var(--credits);
+  clip-path: var(--chamfer-md);
+}
+.btn-reward > .inner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 60px;
+  padding: 8px 16px;
+  box-sizing: border-box;
+  background: var(--surface-100);
+  clip-path: var(--chamfer-md-inner);
+}
+.btn-reward:disabled {
+  background: var(--line);
+}
+.btn-reward:disabled .btn-lg-text {
+  color: var(--ink-faint) !important;
+}
+.revive {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: auto;
+}
+.revive-col {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 220px 16px 34px;
+  box-sizing: border-box;
+}
+/* Shop (no mockup yet; built from the design system). */
+.shop-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+}
+.shop-feature {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
+  background: var(--surface-200);
+  border: 1px solid var(--line);
+  clip-path: var(--chamfer-md);
+}
+.shop-feature.pass {
+  border: 2px solid var(--credits);
+  box-shadow: inset 0 0 24px rgba(255, 216, 77, 0.08);
+}
+.shop-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+.shop-grid.three {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.shop-pack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 8px;
+  background: var(--surface-200);
+  border: 1px solid var(--line);
+  text-align: center;
+}
+/* Pause menu sits above in-run alerts (elite/boss banners). */
+.pause-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+}
+.art-pick,
+.spec-pick {
+  z-index: 5;
+}
