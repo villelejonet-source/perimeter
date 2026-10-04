@@ -11,7 +11,9 @@ export type UnlockId =
   | 'unlock.swarmLauncher'
   | 'speed3x'
   | 'artifactChoice4'
-  | 'freeReroll';
+  | 'freeReroll'
+  | 'unlock.map2'
+  | 'unlock.map3';
 export type ResearchId = `${TowerKind}.${TowerTrack}` | GlobalTrack | UnlockId;
 
 export interface ResearchDef {
@@ -173,6 +175,15 @@ const UNLOCKS: Omit<ResearchDef, 'group' | 'maxLevel' | 'growth' | 'perLevel' | 
   // GDD §10 unlocks for artifact picks (Phase 7). TODO(balance): costs are starting values.
   { id: 'artifactChoice4', name: '4th artifact choice', baseCost: 2500 },
   { id: 'freeReroll', name: 'Free reroll', baseCost: 1500 },
+  // GDD §10 "more maps" (Phase 8; decided 2026-10-04: maps unlock with Cores, in order).
+  // TODO(balance): costs are starting values.
+  { id: 'unlock.map2', name: 'Sector 02 · Canyon Switchbacks', baseCost: 1200 },
+  {
+    id: 'unlock.map3',
+    name: 'Sector 03 · Station Ring',
+    baseCost: 3000,
+    requires: 'unlock.map2',
+  },
 ];
 
 export const RESEARCH: readonly ResearchDef[] = [

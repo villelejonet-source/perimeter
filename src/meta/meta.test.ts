@@ -14,8 +14,10 @@ import {
   buyBlock,
   buyResearch,
   metaFromProfile,
+  unlockedMaps,
   unlockedTowers,
 } from './research';
+import { MAP_ORDER } from '../data/maps';
 import { applyRunRewards, coresForWave, runRewards } from './rewards';
 import { SaveStore } from './save';
 
@@ -287,5 +289,45 @@ describe('save migration 1 → 2 (artifacts)', () => {
     expect(resumed.state.meta.artifactPool).toEqual([]);
     for (let i = 0; i < 600; i++) resumed.step();
     expect(resumed.state.tick).toBe(1500);
+  });
+});
+
+describe('maps and settings (Phase 8)', () => {
+  it('map 1 is open; maps 2 and 3 unlock with research, in order', () => {
+    expect(unlockedMaps(profile())).toEqual([MAP_ORDER[0]]);
+    const p = profile({ cores: 1e9 });
+    expect(buyBlock(p, RESEARCH_BY_ID.get('unlock.map3')!)).toBe('requires');
+    const p2 = buyResearch(buyResearch(p, 'unlock.map2'), 'unlock.map3');
+    expect(unlockedMaps(p2)).toEqual(MAP_ORDER);
+  });
+
+  it('tracks the best wave per map; overall best stays the max', () => {
+    let p = profile();
+    p = applyRunRewards(p, 30, runRewards(p, 30, 0, MAP_ORDER[0]), MAP_ORDER[0]);
+    const r = runRewards(p, 12, 0, MAP_ORDER[1]);
+    expect(r.newBest).toBe(true); // first run on map 2
+    p = applyRunRewards(p, 12, r, MAP_ORDER[1]);
+    expect(p.bestByMap).toEqual({ [MAP_ORDER[0]!]: 30, [MAP_ORDER[1]!]: 12 });
+    expect(p.bestWave).toBe(30);
+  });
+
+  it('migrates a v2 save: best wave moves to map 1, tutorial skipped for veterans', () => {
+    const {
+      bestByMap: _b,
+      mapId: _m,
+      settings: _s,
+      tutorialDone: _t,
+      ...v2
+    } = profile({
+      bestWave: 25,
+      runs: 4,
+    });
+    const s = migrate({ schemaVersion: 2, profile: v2, run: null, savedAt: 1 });
+    expect(s.profile.bestByMap).toEqual({ [MAP_ORDER[0]!]: 25 });
+    expect(s.profile.mapId).toBe(MAP_ORDER[0]);
+    expect(s.profile.settings).toEqual({ sound: true, music: true, haptics: true });
+    expect(s.profile.tutorialDone).toBe(true);
+    const fresh = migrate({ schemaVersion: 2, profile: { ...v2, runs: 0 }, run: null, savedAt: 1 });
+    expect(fresh.profile.tutorialDone).toBe(false);
   });
 });

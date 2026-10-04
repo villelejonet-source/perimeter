@@ -136,7 +136,7 @@ function leak(state: SimState, e: Enemy): void {
   e.alive = false;
   // Boss rule (GDD §5): remaining base HP minus 1, so a boss leak is nearly fatal but not instant.
   const dmg = e.leakDamage < 0 ? Math.max(state.baseHp - 1, 1) : e.leakDamage;
-  state.baseHp = Math.max(0, state.baseHp - dmg);
+  if (!state.invulnerable) state.baseHp = Math.max(0, state.baseHp - dmg);
   state.stats.leaks++;
   state.stats.leaksByKind[e.kind] = (state.stats.leaksByKind[e.kind] ?? 0) + 1;
 }

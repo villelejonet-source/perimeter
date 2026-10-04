@@ -133,7 +133,18 @@ export interface Zone {
 }
 
 /** Short-lived visual record emitted by the sim for the renderer (beams, blasts). */
-export type FxKind = 'rail' | 'ion' | 'chain' | 'chill' | 'blast';
+export type FxKind =
+  | 'rail'
+  | 'ion'
+  | 'chain'
+  | 'chill'
+  | 'blast'
+  /** Enemy destroyed; radius = its body radius (bosses are big). */
+  | 'death'
+  /** Enemy froze solid. */
+  | 'freeze'
+  /** Shield knocked down to 0. */
+  | 'shieldBreak';
 
 export interface Fx {
   alive: boolean;
@@ -229,6 +240,8 @@ export interface SimState {
   freeRerolls: number;
   /** Dual Spec already given to a tower this run. */
   dualSpecUsed: boolean;
+  /** Test runs only (performance test): leaks don't hurt the base. */
+  invulnerable: boolean;
   /** Reason the most recent command was rejected, for UI feedback. */
   lastRejection: string | null;
 }

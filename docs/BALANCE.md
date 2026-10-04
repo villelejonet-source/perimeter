@@ -164,6 +164,20 @@ These need a player-style test, not the bots. 12 runs per cell is noisy (±1–2
 ×1.35 at 10 h, ×1.80 at 50 h). The bot has 23 artifacts crafted by 10 h and 29 by 50 h, with
 a tier sum of 26.
 
+## Maps (Phase 8)
+
+Fresh account, 20 runs per strategy (`--map=`), median wall / run time:
+
+| map | greedy | balanced | spec-focused |
+|---|---|---|---|
+| 1 Outpost Run | 37 / 12:02 | 36 / 11:32 | 36 / 11:23 |
+| 2 Canyon Switchbacks | 47 / 15:18 | 38 / 12:02 | 37 / 11:27 |
+| 3 Station Ring | 57 / 18:54 | 48 / 15:48 | 48 / 15:50 |
+
+**Watch:** the later maps are *easier*. The switchbacks and the spiral let one tower cover the
+path several times. Since rewards grow with wave², maps 2 and 3 also pay more. A per-map
+difficulty (e.g. an enemy HP multiplier) is a design decision for later, not made here.
+
 ## Next balance work
 
 - Wraith leaks dominate: consider a little more Pulse Laser range or fewer early Wraiths, once

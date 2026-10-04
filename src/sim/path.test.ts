@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { DEFAULT_MAP_ID, MAPS, parseMap } from '../data/maps';
+import { DEFAULT_MAP_ID, MAP_ORDER, MAPS, parseMap } from '../data/maps';
+import { placementError } from './placement';
+import { Sim } from './sim';
 import { Path } from './path';
 
 const map = MAPS[DEFAULT_MAP_ID]!;
@@ -95,5 +97,24 @@ describe('Path', () => {
     const d = path.distanceToBox(p.x + nx * 40, p.y + ny * 40, 16);
     expect(d).toBeGreaterThan(40 - 16 * Math.SQRT2 - 1);
     expect(d).toBeLessThanOrEqual(24 + 1);
+  });
+});
+
+describe('all maps', () => {
+  it('load, run spawn → base, and leave room to build', () => {
+    expect(MAP_ORDER).toHaveLength(3);
+    for (const id of MAP_ORDER) {
+      const m = MAPS[id]!;
+      const sim = new Sim({ seed: 1, mapId: id });
+      expect(sim.path.length).toBeGreaterThan(800);
+      const end = sim.path.positionAt(sim.path.length, { x: 0, y: 0 });
+      expect(Math.hypot(end.x - m.base.x, end.y - m.base.y)).toBeLessThan(1);
+      // At least a dozen valid tower spots.
+      let spots = 0;
+      for (let y = 120; y < 646; y += 32)
+        for (let x = 16; x < 390; x += 32)
+          if (placementError(sim.state, sim.path, sim.map, x, y) === null) spots++;
+      expect(spots).toBeGreaterThan(12);
+    }
   });
 });

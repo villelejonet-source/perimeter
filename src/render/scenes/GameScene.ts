@@ -13,15 +13,34 @@ import { Overlay } from '../../ui/dom/overlay';
 import { PlacementChip } from '../../ui/dom/PlacementChip';
 import { RunEnd } from '../../ui/dom/RunEnd';
 import { PauseMenu } from '../../ui/dom/PauseMenu';
-import { metaFromProfile } from '../../meta/research';
+import { metaFromProfile, unlockedMaps } from '../../meta/research';
 import { runRewards } from '../../meta/rewards';
 import { restoreSim, snapshotSim } from '../../sim/snapshot';
 import { canDualSpec } from '../../sim/sim';
 import { TowerPanel } from '../../ui/dom/TowerPanel';
 import { Placement } from '../input/Placement';
 import { S, T, ZONES } from '../layout';
-import { DEV_UNLOCK_ALL_KEY, getPlatform, getStore } from '../registry';
+import { DEV_UNLOCK_ALL_KEY, getStore, STRESS_KEY } from '../registry';
+import { FpsMeter, STRESS, stressSim } from '../stress';
+import { buzz, playMusic, playSfx } from '../audio';
+import { Feedback } from '../feedback';
+import type { SfxId } from '../../data/audio';
+import { DEFAULT_MAP_ID } from '../../data/maps';
+import { Tutorial } from '../../ui/dom/Tutorial';
+import { SettingsScreen } from '../../ui/dom/screens/Settings';
 import { WorldView } from '../WorldView';
+
+/** UI sounds for player commands (sim-driven sounds come from Feedback). */
+const COMMAND_SFX: Partial<Record<Command['type'], SfxId>> = {
+  placeTower: 'place',
+  upgradeTower: 'upgrade',
+  sellTower: 'sell',
+  specialize: 'specialize',
+  pickArtifact: 'artifact',
+  rerollArtifacts: 'uiTap',
+  callEarly: 'uiTap',
+  setTargeting: 'uiTap',
+};
 
 /** Gap kept between the selected tower's range circle and the top of the tower panel. */
 const PANEL_CLEARANCE = 8;
@@ -48,6 +67,13 @@ export class GameScene extends Phaser.Scene {
   private pausedByArtPick = false;
   private takenOffer: SimState['offer'] = null;
   private pauseMenu: PauseMenu | null = null;
+  private settings: SettingsScreen | null = null;
+  private tutorial: Tutorial | null = null;
+  private feedback!: Feedback;
+  /** Settings → Performance test run: nothing saved or paid out. */
+  private stress = false;
+  private fps: FpsMeter | null = null;
+  private lastStressCall = 0;
   private speeds: readonly number[] = [1, 2];
   /** Towers already offered the spec pick (LATER doesn't re-open it automatically). */
   private offered = new Set<number>();
@@ -65,21 +91,27 @@ export class GameScene extends Phaser.Scene {
     this.cameras.main.setBackgroundColor(T.void).setScroll(0, 0);
     const store = getStore(this);
     // GDD §11: a run interrupted by closing the app resumes exactly where it was.
-    const saved = store.run;
-    if (saved) {
+    this.stress = this.registry.get(STRESS_KEY) === true;
+    this.registry.set(STRESS_KEY, false);
+    const saved = this.stress ? null : store.run;
+    if (this.stress) {
+      this.sim = stressSim();
+    } else if (saved) {
       this.sim = restoreSim(saved);
     } else {
       // Dev builds: `?unlock=all` makes every tower buildable for playtesting.
       const unlockAll = this.registry.get(DEV_UNLOCK_ALL_KEY) === true;
+      const p = store.profile;
       this.sim = new Sim({
         seed: (Date.now() ^ (performance.now() * 1000)) >>> 0,
-        meta: metaFromProfile(store.profile),
+        mapId: unlockedMaps(p).includes(p.mapId) ? p.mapId : DEFAULT_MAP_ID,
+        meta: metaFromProfile(p),
         ...(unlockAll ? { unlockedTowers: TOWER_ORDER } : {}),
       });
     }
     this.speeds = this.sim.state.meta.speed3x ? [1, 2, 3] : [1, 2];
     this.driver = new FixedStepDriver();
-    this.speed = 1;
+    this.speed = this.stress ? STRESS.speed : 1;
     this.ended = false;
     this.runEnd = null;
     this.pauseMenu = null;
@@ -97,12 +129,14 @@ export class GameScene extends Phaser.Scene {
     this.pausedByPicker = false;
 
     this.world = new WorldView(this, this.sim);
+    this.feedback = new Feedback(this, this.sim);
+    playMusic(this, 'battle');
     this.placement = new Placement(this, this.sim, {
       place: (kind, x, y) => {
         this.send({ type: 'placeTower', kind, x, y });
-        getPlatform(this).haptics.play('place');
+        buzz(this, 'place');
       },
-      reject: () => getPlatform(this).haptics.play('tap'),
+      reject: () => buzz(this, 'tap'),
       dragChanged: (dragging) => {
         this.world.setDragging(dragging);
         this.controls.setDragMode(dragging);
@@ -163,8 +197,21 @@ export class GameScene extends Phaser.Scene {
       this.artPick?.destroy();
       this.pauseMenu?.destroy();
       this.alerts.destroy();
+      this.tutorial?.destroy();
+      this.settings?.destroy();
       this.overlay.destroy();
     });
+    this.fps = this.stress ? new FpsMeter(this.overlay.root) : null;
+    this.tutorial =
+      !saved && !this.stress && !store.profile.tutorialDone
+        ? new Tutorial(this.overlay.root, this.sim, {
+            setPaused: (paused) => this.send({ type: 'setPaused', paused }),
+            finish: () => {
+              this.tutorial = null;
+              getStore(this).setTutorialDone(true);
+            },
+          })
+        : null;
     if (saved) this.openPause();
   }
 
@@ -181,6 +228,9 @@ export class GameScene extends Phaser.Scene {
     this.hud.update(s, now);
     this.controls.update(s, this.speed, now);
     this.panel.update();
+    this.feedback.update();
+    if (this.fps) this.updateStress();
+    if (!this.ended) this.tutorial?.update();
 
     if (s.wave > this.lastWave) {
       this.lastWave = s.wave;
@@ -188,7 +238,6 @@ export class GameScene extends Phaser.Scene {
       this.autosave();
     }
     if (s.baseHp < this.lastBaseHp) {
-      getPlatform(this).haptics.play('leak');
       const b = this.sim.map.base;
       const cam = this.cameras.main;
       this.alerts.baseHit(this.lastBaseHp - s.baseHp, b.x - cam.scrollX / S, b.y - cam.scrollY / S);
@@ -201,6 +250,17 @@ export class GameScene extends Phaser.Scene {
       else this.offerSpecs();
     }
     if (s.gameOver && !this.ended) this.endRun();
+  }
+
+  /** Performance test: keep waves stacking, auto-take picks, report fps. */
+  private updateStress(): void {
+    const s = this.sim.state;
+    if (s.offer) this.send({ type: 'pickArtifact', index: 0 });
+    if (!s.paused && s.tick - this.lastStressCall >= STRESS.callEverySeconds * GAME.tickRate) {
+      this.lastStressCall = s.tick;
+      this.send({ type: 'callEarly' });
+    }
+    this.fps!.update(this.game.loop.actualFps, s.enemies.countAlive(), s.fx.countAlive());
   }
 
   /** GDD §7: a tower reaching level 5 offers its specialization pick once. */
@@ -238,7 +298,7 @@ export class GameScene extends Phaser.Scene {
       {
         pick: (spec) => {
           this.send({ type: 'specialize', towerId, spec });
-          getPlatform(this).haptics.play('place');
+          buzz(this, 'place');
           close();
         },
         later: close,
@@ -257,7 +317,7 @@ export class GameScene extends Phaser.Scene {
     this.artPick = new ArtifactPick(this.overlay.root, this.sim.state, {
       take: (index) => {
         this.send({ type: 'pickArtifact', index });
-        getPlatform(this).haptics.play('place');
+        buzz(this, 'place');
         this.artPick?.destroy();
         this.artPick = null;
         if (this.pausedByArtPick) {
@@ -269,23 +329,26 @@ export class GameScene extends Phaser.Scene {
       },
       reroll: () => {
         this.send({ type: 'rerollArtifacts' });
-        getPlatform(this).haptics.play('tap');
+        buzz(this, 'tap');
       },
     });
   }
 
   private announceWave(wave: number): void {
     const type = waveType(wave);
+    playSfx(this, type === 'boss' ? 'bossWave' : 'waveStart');
     if (type === 'elite') this.alerts.elite(wave);
     else if (type === 'boss') {
       const boss = bossFor(wave);
       this.alerts.boss(wave, boss.kind, boss.also);
-      getPlatform(this).haptics.play('boss');
+      buzz(this, 'boss');
     }
   }
 
   private send(cmd: Command): void {
     this.sim.enqueue(cmd);
+    const sfx = COMMAND_SFX[cmd.type];
+    if (sfx) playSfx(this, sfx);
   }
 
   /** DOM drag position → placement (logical screen px for the cancel zone, world px for the ghost). */
@@ -346,13 +409,13 @@ export class GameScene extends Phaser.Scene {
         bestSq = dSq;
       }
     }
-    if (best >= 0) getPlatform(this).haptics.play('tap');
+    if (best >= 0) buzz(this, 'tap');
     if (best !== this.panel.selectedId) this.selectTower(best);
   }
 
   /** Snapshot the run into the save (each wave, on pause, and when the app is backgrounded). */
   private autosave(): void {
-    if (!this.ended) void getStore(this).saveRun(snapshotSim(this.sim));
+    if (!this.ended && !this.stress) void getStore(this).saveRun(snapshotSim(this.sim));
   }
 
   /** GDD §11: leaving the app pauses the run and saves it, so a kill resumes exactly here. */
@@ -370,7 +433,7 @@ export class GameScene extends Phaser.Scene {
     const wasPaused = this.sim.state.paused;
     if (!wasPaused) this.send({ type: 'setPaused', paused: true });
     const s = this.sim.state;
-    const r = runRewards(getStore(this).profile, s.wave, s.stats.bossesKilled);
+    const r = runRewards(getStore(this).profile, s.wave, s.stats.bossesKilled, this.sim.map.id);
     this.pauseMenu = new PauseMenu(
       this.overlay.root,
       {
@@ -392,6 +455,20 @@ export class GameScene extends Phaser.Scene {
           this.pauseMenu = null;
           this.endRun(true);
         },
+        settings: () => {
+          this.settings = new SettingsScreen(
+            this.overlay.root,
+            getStore(this),
+            {
+              back: () => {
+                this.settings?.destroy();
+                this.settings = null;
+                playMusic(this, 'battle');
+              },
+            },
+            true,
+          );
+        },
       },
     );
     this.autosave();
@@ -401,12 +478,20 @@ export class GameScene extends Phaser.Scene {
   private endRun(retreated = false): void {
     this.ended = true;
     this.selectTower(-1);
-    getPlatform(this).haptics.play('runEnd');
+    buzz(this, 'runEnd');
+    this.tutorial?.destroy();
+    this.tutorial = null;
     const s = this.sim.state;
     const store = getStore(this);
-    const previousBest = store.profile.bestWave;
-    const rewards = runRewards(store.profile, s.wave, s.stats.bossesKilled);
-    store.finishRun(s.wave, rewards);
+    if (this.stress) {
+      this.scene.start('Menu');
+      return;
+    }
+    const mapId = this.sim.map.id;
+    const previousBest = store.profile.bestByMap[mapId] ?? 0;
+    const rewards = runRewards(store.profile, s.wave, s.stats.bossesKilled, mapId);
+    store.finishRun(s.wave, rewards, mapId);
+    playSfx(this, rewards.newBest ? 'newBest' : 'runEnd');
     this.runEnd = new RunEnd(
       this.overlay.root,
       {

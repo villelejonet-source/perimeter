@@ -1,4 +1,5 @@
 import { STARTER_ARTIFACTS, type ArtifactId, type ArtifactTier } from '../data/artifacts';
+import { DEFAULT_MAP_ID } from '../data/maps';
 import type { ResearchId } from '../data/research';
 
 /** Everything that persists between runs. */
@@ -15,7 +16,23 @@ export interface Profile {
   runs: number;
   /** Epoch ms of the last save, for offline income. */
   lastSeen: number;
+  /** Best wave per map (`bestWave` is the best on any map; offline income uses it). */
+  bestByMap: Record<string, number>;
+  /** Sector picked on the main menu. */
+  mapId: string;
+  settings: Settings;
+  /** First-run tutorial finished or skipped. */
+  tutorialDone: boolean;
 }
+
+/** Player settings (Settings screen, decided 2026-10-04). */
+export interface Settings {
+  sound: boolean;
+  music: boolean;
+  haptics: boolean;
+}
+
+export const DEFAULT_SETTINGS: Settings = { sound: true, music: true, haptics: true };
 
 export function newProfile(now: number): Profile {
   return {
@@ -27,6 +44,10 @@ export function newProfile(now: number): Profile {
     milestoneClaimed: 0,
     runs: 0,
     lastSeen: now,
+    bestByMap: {},
+    mapId: DEFAULT_MAP_ID,
+    settings: { ...DEFAULT_SETTINGS },
+    tutorialDone: false,
   };
 }
 

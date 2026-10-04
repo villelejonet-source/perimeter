@@ -90,12 +90,17 @@ Last Stand and Long Barrels. 30 artifacts in `src/data/artifacts.ts`, effect tes
 Numbers in `docs/BALANCE.md`. Device check pending._
 
 ## Phase 8 — Juice and onboarding
-- [ ] Pooled VFX: beams, rail trails, explosions, chain lightning, freeze
+- [x] Pooled VFX: beams, rail trails, explosions, chain lightning, freeze
 - [ ] Sound effects and music (with settings), haptics on key events
-- [ ] Short interactive tutorial for the first run
-- [ ] 3 maps
+  _System, Settings toggles and haptics done; silent until audio files are delivered
+  (decided 2026-10-04: wait for real assets; manifest in `src/data/audio.ts`)._
+- [x] Short interactive tutorial for the first run
+- [x] 3 maps
 
 **Accept:** 60 fps on device in a late wave at 2x with heavy VFX.
+_Pending device check: Settings → Performance test runs wave 60+ at 2x with 18 specialized
+towers on a 50 h account, stacks waves, and shows min/avg fps over 30 s (PASS at avg ≥ 58,
+min ≥ 50). Browser (desktop Chrome, ~145 enemies): avg 58, min 47._
 
 ## Phase 9 — Monetization and analytics
 - [ ] Ads interface → AdMob (rewarded only), ATT prompt

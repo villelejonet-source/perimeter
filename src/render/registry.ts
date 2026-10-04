@@ -23,3 +23,6 @@ export function setStore(game: Phaser.Game, store: MetaStore): void {
 export function getStore(scene: Phaser.Scene): MetaStore {
   return scene.registry.get(STORE_KEY) as MetaStore;
 }
+
+/** Set by Settings → Performance test; GameScene reads and clears it. */
+export const STRESS_KEY = 'stressTest';

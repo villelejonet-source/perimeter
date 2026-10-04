@@ -1,8 +1,9 @@
 import type { SimSnapshot } from '../sim/snapshot';
-import { starterArtifacts, type Profile } from './profile';
+import { DEFAULT_MAP_ID } from '../data/maps';
+import { DEFAULT_SETTINGS, starterArtifacts, type Profile } from './profile';
 
 /** Bump when the save format changes, and add a migration from the previous version. */
-export const CURRENT_SCHEMA_VERSION = 2;
+export const CURRENT_SCHEMA_VERSION = 3;
 
 export interface SaveFile {
   schemaVersion: number;
@@ -30,6 +31,24 @@ const MIGRATIONS: Record<number, (raw: Raw) => Raw> = {
       schemaVersion: 2,
       profile: profile ? { artifacts: starterArtifacts(), ...profile } : profile,
       run: raw.run ? runV1toV2(raw.run as Raw) : null,
+    };
+  },
+  // 2 → 3 (Phase 8): per-map best wave (all past runs were on map 1), selected map, settings,
+  // and the tutorial (skipped for players who already have runs).
+  2: (raw) => {
+    const profile = raw.profile as Raw | undefined;
+    return {
+      ...raw,
+      schemaVersion: 3,
+      profile: profile
+        ? {
+            bestByMap: { [DEFAULT_MAP_ID]: profile.bestWave ?? 0 },
+            mapId: DEFAULT_MAP_ID,
+            settings: { ...DEFAULT_SETTINGS },
+            tutorialDone: ((profile.runs as number | undefined) ?? 0) > 0,
+            ...profile,
+          }
+        : profile,
     };
   },
 };
@@ -69,7 +88,10 @@ function isProfile(p: unknown): p is Profile {
     typeof o.research === 'object' &&
     o.research !== null &&
     typeof o.artifacts === 'object' &&
-    o.artifacts !== null
+    o.artifacts !== null &&
+    typeof o.bestByMap === 'object' &&
+    typeof o.settings === 'object' &&
+    typeof o.mapId === 'string'
   );
 }
 

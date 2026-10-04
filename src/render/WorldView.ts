@@ -19,6 +19,20 @@ const BASE_HIT_MS = 600;
 const BOLT_LENGTH = 18;
 /** Elites without their own art draw larger (only the Drone has an elite variant). */
 const ELITE_SCALE = 1.2;
+/**
+ * Burst effects (Phase 8 juice): which art, tint, and how much it grows over its life
+ * (`from` → `to` × the radius × `size`).
+ */
+const BURSTS = {
+  blast: { frame: 'fx-mortar-blast', tint: 0xffffff, size: 1, from: 1, to: 1.15, alpha: 1 },
+  death: { frame: 'fx-mortar-blast', tint: 0xcfe6ff, size: 1.6, from: 0.5, to: 1.4, alpha: 1.3 },
+  freeze: { frame: 'state-frozen', tint: 0x8ff3ff, size: 1.2, from: 1, to: 1.9, alpha: 1.2 },
+  shieldBreak: { frame: 'state-shield', tint: 0x9fd8ff, size: 1.1, from: 1, to: 1.8, alpha: 1.2 },
+} as const;
+/** Deaths of enemies at least this big use the boss burst. */
+const BOSS_RADIUS = 14;
+const T_BOSS = 0xffc66b;
+
 /** Status overlays are 32-px frames; bosses scale them to their 68-px body. */
 const BOSS_OVERLAY_SCALE = 68 / 32;
 
@@ -246,20 +260,30 @@ export class WorldView {
     }
   }
 
-  /** Beams stretch from (x1, y1) to (x2, y2); blasts scale to their radius. All fade with ttl. */
+  /**
+   * Beams stretch from (x1, y1) to (x2, y2); blasts, deaths, freezes and shield breaks are
+   * bursts at (x1, y1) that grow as they fade. All fade with ttl. Tints are vertex colours,
+   * not filters, so everything stays in the one additive batch.
+   */
   private drawFx(img: Phaser.GameObjects.Image, f: Fx): void {
     const alpha = f.ttl / f.maxTtl;
-    if (f.kind === 'blast') {
-      if (img.frame.name !== 'fx-mortar-blast') img.setFrame('fx-mortar-blast');
-      // Expands slightly as it fades.
-      const size = (f.radius * 2 * (1.15 - 0.15 * alpha)) / unitSize('fx-mortar-blast').w;
+    const burst = BURSTS[f.kind as keyof typeof BURSTS];
+    if (burst) {
+      if (img.frame.name !== burst.frame) img.setFrame(burst.frame);
+      const t = 1 - alpha;
+      // Bosses (big radius) get the gold burst.
+      const tint = f.kind === 'death' && f.radius >= BOSS_RADIUS ? T_BOSS : burst.tint;
+      const size =
+        (f.radius * 2 * burst.size * (burst.from + (burst.to - burst.from) * t)) /
+        unitSize(burst.frame).w;
       img
         .setVisible(true)
         .setOrigin(0.5)
         .setPosition(f.x1 * S, f.y1 * S)
-        .setRotation(0)
+        .setRotation(f.kind === 'death' ? t * 0.6 : 0)
         .setScale(size)
-        .setAlpha(alpha);
+        .setTint(tint)
+        .setAlpha(Math.min(1, alpha * burst.alpha));
       return;
     }
     const frame =
@@ -267,7 +291,9 @@ export class WorldView {
         ? 'proj-rail-trail'
         : f.kind === 'chain'
           ? 'proj-chain-lightning'
-          : 'proj-cryo-beam';
+          : f.kind === 'ion'
+            ? 'proj-laser-beam'
+            : 'proj-cryo-beam';
     if (img.frame.name !== frame) img.setFrame(frame);
     const len = Math.hypot(f.x2 - f.x1, f.y2 - f.y1);
     img
@@ -276,6 +302,7 @@ export class WorldView {
       .setPosition(f.x1 * S, f.y1 * S)
       .setRotation(Math.atan2(f.y2 - f.y1, f.x2 - f.x1))
       .setScale(len / unitSize(frame).w, 1)
+      .setTint(0xffffff)
       .setAlpha(alpha);
   }
 

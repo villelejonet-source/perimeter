@@ -21,6 +21,7 @@ import {
   type OwnedArtifact,
 } from '../../src/data/artifacts';
 import { META_PRESETS, type MetaPresetId } from '../../src/data/meta';
+import { DEFAULT_MAP_ID } from '../../src/data/maps';
 import { TOWER_SPECS } from '../../src/data/specs';
 import { TOWER_ORDER } from '../../src/data/towers';
 import type { SpecOverride } from './bots/common';
@@ -167,7 +168,8 @@ if (mode === 'specs') {
 }
 for (const preset of presets) {
   for (const make of bots(strategy)) {
-    for (let i = 0; i < runs; i++) results.push(runOne(make(), preset, seed0 + i));
+    for (let i = 0; i < runs; i++)
+      results.push(runOne(make(), preset, seed0 + i, { mapId: arg('map', DEFAULT_MAP_ID) }));
   }
 }
 

@@ -3,6 +3,7 @@ import { FONT_DISPLAY, FONT_UI, T } from '../layout';
 import { MetaStore } from '../../meta/store';
 import { getPlatform, setStore } from '../registry';
 import { bakeUnitAtlas, preloadUnits } from '../units';
+import { preloadAudio } from '../audio';
 
 /** Weights used by the design system's type styles. */
 const FONT_FACES = [
@@ -26,6 +27,7 @@ export class BootScene extends Phaser.Scene {
   preload(): void {
     this.cameras.main.setBackgroundColor(T.void);
     preloadUnits(this);
+    preloadAudio(this);
   }
 
   create(): void {

@@ -48,10 +48,10 @@ maps → `src/data/maps.ts`.
 | 6 | Pause → Retreat confirm | `screens/in-run/Pause-Retreat.dc.html` | `src/ui/dom/PauseMenu.ts` | applied |
 | 7 | Post-boss artifact pick | `screens/meta/ArtifactPick.dc.html` | `src/ui/dom/ArtifactPick.ts` | applied |
 | 7 | Artifact codex and crafting | `screens/meta/Codex.dc.html` | `src/ui/dom/screens/Codex.ts` | applied |
-| 8 | 3 maps | `maps/map-01-s-curve.json`, `map-02-switchbacks.json`, `map-03-spiral.json` | `src/data/maps.ts` | ready, not applied |
-| 8 | Tutorial overlays | none | none | missing |
-| 8 | Map select | none | none | missing |
-| 8 | Settings (sound, music, haptics) | none | none | missing |
+| 8 | 3 maps | `maps/map-01-s-curve.json`, `map-02-switchbacks.json`, `map-03-spiral.json` | `src/data/maps.ts` | applied |
+| 8 | Tutorial overlays | none | `src/ui/dom/Tutorial.ts` | built without design |
+| 8 | Map select | `screens/meta/Main.dc.html` sector row | `src/ui/dom/screens/MainMenu.ts` | applied (arrows on the main menu) |
+| 8 | Settings (sound, music, haptics) | none | `src/ui/dom/screens/Settings.ts` | built without design |
 | 9 | Shop, Commander Pass, packs | none | none | missing |
 | 9 | Revive / rewarded-ad prompts | none | none | missing |
 | 10 | App icon, launch screen, store screenshots | none | none | missing |
@@ -80,6 +80,8 @@ Decided 2026-10-04:
 - Phase 6: the app opens on the main menu. Run reward is floor(wave² / 4) Cores, plus 1 Shard per boss and 3 Shards the first time each 10th wave is reached. Towers 4–6 unlock in order with Cores (Arc Coil → Cryo → Swarm), no wave gates. Research pace matches the 10 h / 50 h balance presets. Not-yet-built items on the mockups are shown disabled: Settings (Phase 8), sector select (Phase 8), Codex, 4th choice and free reroll (Phase 7), double-with-ad on Welcome back and Run end (Phase 9).
 
 - Phase 7: ~30 artifacts drafted from the GDD starter set and the mockup names, using the GDD names where they differ (`src/data/artifacts.ts`). 8 starters are crafted free at Common. Tiers scale the effect ×1 / 1.5 / 2.2 / 3.2 and are drawn with weight 100 / 60 / 35 / 20. Crafting costs 10 Shards, then 20 / 40 / 80 per tier. Dual Spec is Legendary-only: one specialized tower per run can take a second spec from its panel. A boss that leaks gives no pick (the pick triggers on the kill), and there's no skip button, as in the mockup. Built without a design: the Codex "craft" state (the detail sheet with a dashed icon and Craft + cost, INVENTORY request 11), the 28 artifact glyphs (same frame language as the mockup's), the artifacts row in the pause menu, and the Dual Spec card in the tower panel.
+
+- Phase 8: audio waits for real files. `src/data/audio.ts` lists every sound and track (file null = silent); Settings toggles work now. Maps 2 and 3 unlock in order on the Research Lab Unlocks tab (Cores). Best wave is tracked per map; offline income and milestones use the best on any map. The main menu's sector arrows pick the map, and a saved run pins it. The tutorial runs on the first run only and is skippable: 1) drag a Pulse Laser to the ringed spot (the run waits), 2) tap it and upgrade, 3) call a wave early, 4) a shields/armor tip that pauses until dismissed. It can be replayed from Settings. Saves from before Phase 8 skip it if they have runs. Built without a design: Settings (toggle rows, no Sunlight boost yet), the tutorial coach card and highlight rings, the performance-test fps readout. New VFX reuse the existing art, tinted: deaths use the mortar blast (gold for bosses), freezes the frozen overlay, shield breaks the shield bubble, with camera shake on boss deaths and leaks.
 
 Open: the remaining requests in `design/INVENTORY.md` §3.
 
@@ -112,3 +114,6 @@ Log when a design has been implemented, so drift is visible later.
 | 2026-10-04 | `screens/meta/Codex.dc.html` | Tile grid (crafted by tier / hatched not crafted), detail sheet with Now / Next and Upgrade priced in Shards, plus a Craft state (`src/ui/dom/screens/Codex.ts`) |
 | 2026-10-04 | `screens/meta/Main.dc.html` Codex card | Enabled, with a craftable badge |
 | 2026-10-04 | `screens/meta/ResearchUnlocks.dc.html` | 4th artifact choice and free reroll are now real research |
+| 2026-10-04 | `maps/map-02-switchbacks.json`, `map-03-spiral.json` | Loaded (`npm run sync:design`), unlockable sectors |
+| 2026-10-04 | `screens/meta/Main.dc.html` sector row and gear | Sector arrows switch maps (locked ones say so); gear opens Settings |
+| 2026-10-04 | `screens/in-run/Pause.dc.html` Settings button | Opens Settings over the pause menu |

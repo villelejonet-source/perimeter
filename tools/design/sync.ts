@@ -8,7 +8,7 @@ import { join } from 'node:path';
 const root = join(import.meta.dirname, '..', '..');
 const design = join(root, 'docs', 'design');
 
-const MAPS = ['map-01-s-curve'];
+const MAPS = ['map-01-s-curve', 'map-02-switchbacks', 'map-03-spiral'];
 
 const mapsOut = join(root, 'src', 'data', 'maps');
 const unitsOut = join(root, 'src', 'assets', 'units');

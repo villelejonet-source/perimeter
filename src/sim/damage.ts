@@ -10,6 +10,9 @@ import { emitFx } from './fx';
 import { nearestEnemy } from './targeting';
 
 const SHATTER_FX_TICKS = 14;
+const DEATH_FX_TICKS = 16;
+const BOSS_DEATH_FX_TICKS = 40;
+const SHIELD_BREAK_FX_TICKS = 14;
 
 const BRITTLE_ARMOR = 1 - SPEC_TUNING.brittle.armorLoss;
 const AT = ARTIFACT_TUNING;
@@ -47,6 +50,7 @@ export function applyHit(
   if (e.flying) dmg *= 1 + art.skyguard;
 
   let dealt = 0;
+  const hadShield = e.shield > 0;
   if (e.shield > 0) {
     const mult =
       DAMAGE.vsShield[type] *
@@ -64,6 +68,8 @@ export function applyHit(
     }
   }
   if (e.maxShield > 0) e.shieldDelay = SHIELD_REGEN_DELAY_TICKS;
+  if (hadShield && e.shield <= 0)
+    emitFx(state, 'shieldBreak', e.x, e.y, e.x, e.y, SHIELD_BREAK_FX_TICKS, e.radius);
 
   let overkill = 0;
   if (dmg > 0) {
@@ -109,6 +115,16 @@ export function applyHit(
 
 function kill(state: SimState, path: Path, e: Enemy, source: TowerKind): void {
   e.alive = false;
+  emitFx(
+    state,
+    'death',
+    e.x,
+    e.y,
+    e.x,
+    e.y,
+    e.boss ? BOSS_DEATH_FX_TICKS : DEATH_FX_TICKS,
+    e.radius,
+  );
   const bounty = Math.round(e.bounty * (1 + state.art.bountyProtocol));
   state.credits += bounty;
   state.stats.creditsEarned += bounty;

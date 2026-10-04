@@ -14,6 +14,7 @@ import { findTarget, nearestEnemy } from './targeting';
 const FX_RAIL_TICKS = 10;
 const FX_CHAIN_TICKS = 8;
 const FX_CHILL_TICKS = 6;
+const FX_FREEZE_TICKS = 20;
 /** Spread of a missile salvo around the aim direction, radians. */
 const SALVO_SPREAD = 0.9;
 const OVERCLOCK_RAMP_PER_TICK = SPEC_TUNING.overclock.ratePerSecond / GAME.tickRate;
@@ -206,9 +207,21 @@ function fire(state: SimState, path: Path, rng: Rng, t: Tower, target: Enemy): v
       break;
     }
     case 'chill': {
+      const wasFrozen = target.frozen > 0;
       applyChill(target, st.power, atk.freezeMult ?? 1);
       if (atk.freezeChance && rng.next() < atk.freezeChance)
         forceFreeze(target, atk.freezeMult ?? 1);
+      if (!wasFrozen && target.frozen > 0)
+        emitFx(
+          state,
+          'freeze',
+          target.x,
+          target.y,
+          target.x,
+          target.y,
+          FX_FREEZE_TICKS,
+          target.radius,
+        );
       if (atk.brittleSeconds) target.brittle = BRITTLE_TICKS(atk.brittleSeconds);
       emitFx(state, 'chill', t.x, t.y, target.x, target.y, FX_CHILL_TICKS);
       break;

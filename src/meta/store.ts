@@ -5,7 +5,7 @@ import type { Storage } from '../platform/storage';
 import type { SimSnapshot } from '../sim/snapshot';
 import type { SaveFile } from './migrations';
 import { collectOffline, offlineEarnings, type OfflineEarnings } from './offline';
-import type { Profile } from './profile';
+import type { Profile, Settings } from './profile';
 import { buyResearch } from './research';
 import { applyRunRewards, type RunRewards } from './rewards';
 import { SaveStore } from './save';
@@ -69,9 +69,28 @@ export class MetaStore {
     return this.flush();
   }
 
+  /** Pick the sector for the next run (main menu). */
+  selectMap(mapId: string): void {
+    this.save.profile = { ...this.save.profile, mapId };
+    void this.flush();
+  }
+
+  updateSettings(patch: Partial<Settings>): void {
+    this.save.profile = {
+      ...this.save.profile,
+      settings: { ...this.save.profile.settings, ...patch },
+    };
+    void this.flush();
+  }
+
+  setTutorialDone(done: boolean): void {
+    this.save.profile = { ...this.save.profile, tutorialDone: done };
+    void this.flush();
+  }
+
   /** Run over (base fell or retreat): pay out and clear the run. */
-  finishRun(wave: number, rewards: RunRewards): void {
-    this.save.profile = applyRunRewards(this.save.profile, wave, rewards);
+  finishRun(wave: number, rewards: RunRewards, mapId: string): void {
+    this.save.profile = applyRunRewards(this.save.profile, wave, rewards, mapId);
     this.save.run = null;
     void this.flush();
   }

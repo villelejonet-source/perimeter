@@ -1,4 +1,6 @@
 import map01 from './maps/map-01-s-curve.json';
+import map02 from './maps/map-02-switchbacks.json';
+import map03 from './maps/map-03-spiral.json';
 
 export interface Point {
   x: number;
@@ -63,7 +65,9 @@ export function parseMap(raw: unknown): MapDef {
   };
 }
 
-const ALL: readonly MapDef[] = [parseMap(map01)];
+const ALL: readonly MapDef[] = [parseMap(map01), parseMap(map02), parseMap(map03)];
 
 export const MAPS: Readonly<Record<string, MapDef>> = Object.fromEntries(ALL.map((m) => [m.id, m]));
 export const DEFAULT_MAP_ID = 'map-01-s-curve';
+/** Sector order (main menu); maps 2 and 3 unlock in the Research Lab (decided 2026-10-04). */
+export const MAP_ORDER: readonly string[] = ALL.map((m) => m.id);

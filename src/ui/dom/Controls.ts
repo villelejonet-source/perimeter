@@ -133,6 +133,7 @@ export class Controls {
       'slot',
       `${art}<span class="cost d"><span class="coin"></span><span class="n"></span></span>`,
     );
+    el.dataset.kind = kind;
     const cost = el.querySelector<HTMLElement>('.n')!;
     const slot: Slot = { kind, el, cost };
     this.slots.push(slot);

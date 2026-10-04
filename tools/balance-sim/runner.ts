@@ -49,6 +49,7 @@ export interface RunOptions {
   startArtifacts?: OwnedArtifact[];
   /** Empty the draw pool, so the run gets no post-boss picks. */
   noPicks?: boolean;
+  mapId?: string;
 }
 
 export function runOne(
@@ -60,6 +61,7 @@ export function runOne(
   const meta = META_PRESETS[preset];
   const sim = new Sim({
     seed,
+    mapId: opts.mapId,
     meta: opts.noPicks ? { ...meta, artifactPool: [] } : meta,
     startArtifacts: opts.startArtifacts,
   });

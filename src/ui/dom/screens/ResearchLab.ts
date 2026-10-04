@@ -21,15 +21,15 @@ const TABS: { id: ResearchGroup; label: string }[] = [
 ];
 
 /** Later-phase systems listed on the Unlocks tab (ResearchUnlocks.dc.html), not buyable yet. */
-const COMING: { name: string; note: string }[] = [
-  { name: 'More sectors', note: 'Arrives with new maps' },
-];
+const COMING: { name: string; note: string }[] = [];
 
 /** Sub-line for the non-tower unlocks. */
 const SYSTEM_NOTE: Partial<Record<ResearchDef['id'], string>> = {
   speed3x: 'Adds 3x to the speed toggle',
   artifactChoice4: 'Artifact picks offer 4 instead of 3',
   freeReroll: 'One free artifact reroll per run',
+  'unlock.map2': 'New sector: a long switchback path',
+  'unlock.map3': 'New sector: a tight spiral to the core',
 };
 
 /**

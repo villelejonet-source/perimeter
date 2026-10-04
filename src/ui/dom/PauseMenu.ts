@@ -24,7 +24,7 @@ export class PauseMenu {
   constructor(
     parent: HTMLElement,
     private readonly info: PauseInfo,
-    private readonly actions: { resume(): void; retreat(): void },
+    private readonly actions: { resume(): void; retreat(): void; settings(): void },
   ) {
     this.el = h('div');
     parent.appendChild(this.el);
@@ -64,7 +64,7 @@ export class PauseMenu {
       </div>
       <div class="sheet">
         <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px">
-          <button class="btn-secondary" disabled style="height:48px"><span class="inner btn-md-text" style="gap:8px">${icon.gear(18)}Settings</span></button>
+          <button class="btn-secondary settings" style="height:48px"><span class="inner btn-md-text" style="gap:8px">${icon.gear(18)}Settings</span></button>
           <button class="btn-secondary retreat" style="height:48px"><span class="inner btn-md-text" style="gap:8px">${icon.exit(18)}Retreat</span></button>
         </div>
         <span class="caption muted" style="text-align:center">Retreat ends the run now. You keep everything earned so far.</span>
@@ -72,6 +72,7 @@ export class PauseMenu {
       </div>`;
     this.el.querySelector('.resume')!.addEventListener('click', () => this.actions.resume());
     this.el.querySelector('.retreat')!.addEventListener('click', () => this.showConfirm());
+    this.el.querySelector('.settings')!.addEventListener('click', () => this.actions.settings());
   }
 
   private showConfirm(): void {

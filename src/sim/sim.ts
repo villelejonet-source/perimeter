@@ -44,6 +44,8 @@ export interface SimConfig {
   unlockedTowers?: readonly TowerKind[];
   /** Artifacts active from the start (balance-sim artifact matrix, tests). */
   startArtifacts?: readonly OwnedArtifact[];
+  /** Performance test: the base never falls. */
+  invulnerable?: boolean;
 }
 
 /**
@@ -96,6 +98,7 @@ export class Sim {
       rerolls: 0,
       freeRerolls: meta.freeRerolls,
       dualSpecUsed: false,
+      invulnerable: config.invulnerable ?? false,
       lastRejection: null,
     };
     for (const a of config.startArtifacts ?? []) takeArtifact(this.state, a);

@@ -10,6 +10,7 @@ import { STARTING_UNLOCKS, TOWER_ORDER, type TowerKind } from '../data/towers';
 import { ARTIFACT_TUNING } from '../data/artifacts';
 import { artifactPool } from './artifacts';
 import type { Profile } from './profile';
+import { MAP_ORDER } from '../data/maps';
 
 export function researchLevel(p: Profile, id: ResearchId): number {
   return p.research[id] ?? 0;
@@ -83,4 +84,11 @@ export function metaFromProfile(p: Profile): MetaModifiers {
     artifactChoices: ARTIFACT_TUNING.choices + lvl('artifactChoice4'),
     freeRerolls: lvl('freeReroll'),
   };
+}
+
+/** Maps the player may pick on the main menu: map 1, then the ones researched (in order). */
+export function unlockedMaps(p: Profile): string[] {
+  return MAP_ORDER.filter(
+    (_id, i) => i === 0 || researchLevel(p, `unlock.map${i + 1}` as ResearchId) > 0,
+  );
 }
