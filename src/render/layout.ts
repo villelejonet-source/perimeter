@@ -45,10 +45,9 @@ export function css(c: number): string {
 
 export const FONT_DISPLAY = 'Oxanium, "Chakra Petch", system-ui, sans-serif';
 export const FONT_UI = '"Barlow Semi Condensed", Barlow, system-ui, sans-serif';
-/** @deprecated Pre-design UI font; HUD/panel/run-end move to FONT_DISPLAY / FONT_UI. */
 export const FONT = FONT_DISPLAY;
 
-/** Legacy palette for the pre-design HUD, panel and run-end (replaced in the HUD step). */
+/** Palette for the Phase 0 perf spike scene. */
 export const COLORS = {
   bg: T.void,
   grid: T.grid,

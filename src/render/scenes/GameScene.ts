@@ -1,35 +1,38 @@
 import Phaser from 'phaser';
 import { GAME } from '../../data/game';
+import { TOWERS } from '../../data/towers';
 import { FixedStepDriver, Sim, type Command } from '../../sim';
-import { TowerPanel } from '../../ui/TowerPanel';
-import type { RunEndData } from '../../ui/RunEndScene';
-import { Hud } from '../Hud';
-import { Placement, type PlacementRejection } from '../input/Placement';
+import { Controls } from '../../ui/dom/Controls';
+import { HudBar } from '../../ui/dom/HudBar';
+import { Overlay } from '../../ui/dom/overlay';
+import { PlacementChip } from '../../ui/dom/PlacementChip';
+import { RunEnd } from '../../ui/dom/RunEnd';
+import { TowerPanel } from '../../ui/dom/TowerPanel';
+import { Placement } from '../input/Placement';
 import { S, T, ZONES } from '../layout';
 import { getPlatform } from '../registry';
-import { readSafeArea } from '../safeArea';
 import { WorldView } from '../WorldView';
 
-const SPEEDS = [1, 2] as const; // 3x unlocks via research (Phase 6).
+/** Gap kept between the selected tower's range circle and the top of the tower panel. */
+const PANEL_CLEARANCE = 8;
+const CAMERA_PAN_MS = 220;
 
-/** Copy from docs/design/screens/in-run/Place-*.dc.html. */
-const REJECTION_TEXT: Record<PlacementRejection, string> = {
-  credits: 'NOT ENOUGH CREDITS',
-  onPath: "CAN'T BUILD ON THE PATH",
-  nearPath: 'TOO CLOSE TO THE PATH',
-  overlap: 'SPACE TAKEN BY PULSE LASER',
-  outOfBounds: "CAN'T BUILD THERE",
-};
-
-/** One run. Owns the Sim; input becomes commands, rendering only reads sim state. */
+/**
+ * One run. Owns the Sim. Phaser draws the battlefield; the in-run UI is a DOM overlay
+ * (HUD, controls, tower panel, run end). Both only read sim state and send commands.
+ */
 export class GameScene extends Phaser.Scene {
   private sim!: Sim;
   private driver!: FixedStepDriver;
   private world!: WorldView;
-  private hud!: Hud;
-  private panel!: TowerPanel;
   private placement!: Placement;
-  private speedIndex = 0;
+  private overlay!: Overlay;
+  private hud!: HudBar;
+  private controls!: Controls;
+  private chip!: PlacementChip;
+  private panel!: TowerPanel;
+  private runEnd: RunEnd | null = null;
+  private speed = 1;
   private ended = false;
   private lastBaseHp = 0;
 
@@ -38,39 +41,67 @@ export class GameScene extends Phaser.Scene {
   }
 
   create(): void {
-    this.cameras.main.setBackgroundColor(T.void);
+    this.cameras.main.setBackgroundColor(T.void).setScroll(0, 0);
     this.sim = new Sim({ seed: (Date.now() ^ (performance.now() * 1000)) >>> 0 });
     this.driver = new FixedStepDriver();
-    this.speedIndex = 0;
+    this.speed = 1;
     this.ended = false;
+    this.runEnd = null;
     this.lastBaseHp = this.sim.state.baseHp;
 
     this.world = new WorldView(this, this.sim);
-    const insets = readSafeArea(this.game);
-    this.hud = new Hud(this, this.sim, insets, {
-      callEarly: () => this.send({ type: 'callEarly' }),
-      toggleSpeed: () => (this.speedIndex = (this.speedIndex + 1) % SPEEDS.length),
-      togglePause: () => this.send({ type: 'setPaused', paused: !this.sim.state.paused }),
-      startTowerDrag: (kind, pointer) => {
-        this.selectTower(-1);
-        this.placement.begin(kind, pointer);
-      },
-    });
-    this.panel = new TowerPanel(
-      this,
-      this.sim,
-      this.hud.barY,
-      (cmd) => this.send(cmd),
-      () => this.selectTower(-1),
-    );
     this.placement = new Placement(this, this.sim, {
       place: (kind, x, y) => {
         this.send({ type: 'placeTower', kind, x, y });
         getPlatform(this).haptics.play('place');
       },
-      reject: (reason) => this.hud.showToast(REJECTION_TEXT[reason]),
-      dragChanged: (dragging) => this.world.setDragging(dragging),
+      reject: () => getPlatform(this).haptics.play('tap'),
+      dragChanged: (dragging) => {
+        this.world.setDragging(dragging);
+        this.controls.setDragMode(dragging);
+      },
+      preview: (p) => {
+        if (!p) {
+          this.chip.hide();
+          return;
+        }
+        const cam = this.cameras.main;
+        this.chip.show({
+          kind: p.kind,
+          x: p.x - cam.scrollX / S,
+          y: p.y - cam.scrollY / S,
+          range: TOWERS[p.kind].range,
+          error: p.error,
+          blocker: p.blocker ? TOWERS[p.blocker.kind].name : '',
+        });
+      },
     });
+
+    this.overlay = new Overlay(this.game);
+    this.hud = new HudBar(this.overlay.root);
+    this.controls = new Controls(this.overlay.root, {
+      togglePause: () => this.send({ type: 'setPaused', paused: !this.sim.state.paused }),
+      setSpeed: (n) => (this.speed = n),
+      callEarly: () => this.send({ type: 'callEarly' }),
+      dragStart: (kind, e) => {
+        this.selectTower(-1);
+        this.placement.begin(kind);
+        this.dragMove(e);
+      },
+      dragMove: (e) => this.dragMove(e),
+      dragEnd: (e) => {
+        this.dragMove(e);
+        this.placement.end();
+      },
+      denied: (on) => this.hud.setCreditsAlert(on),
+    });
+    this.chip = new PlacementChip(this.overlay.root);
+    this.panel = new TowerPanel(
+      this.overlay.root,
+      this.sim,
+      (cmd) => this.send(cmd),
+      () => this.selectTower(-1),
+    );
 
     this.input.on('pointerdown', this.onFieldDown, this);
     // GDD §11: leaving the app pauses the run.
@@ -78,22 +109,25 @@ export class GameScene extends Phaser.Scene {
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       this.game.events.off(Phaser.Core.Events.HIDDEN, this.onHidden, this);
       this.input.off('pointerdown', this.onFieldDown, this);
-      this.placement.destroy();
+      this.runEnd?.destroy();
+      this.overlay.destroy();
     });
   }
 
   override update(_time: number, deltaMs: number): void {
     if (!this.ended) {
-      const ticks = this.driver.advance(deltaMs, SPEEDS[this.speedIndex]!);
+      const ticks = this.driver.advance(deltaMs, this.speed);
       for (let i = 0; i < ticks; i++) this.sim.step();
     }
 
+    const now = performance.now();
+    const s = this.sim.state;
     this.world.selectedTowerId = this.panel.selectedId;
     this.world.sync();
-    this.hud.update(SPEEDS[this.speedIndex]!);
+    this.hud.update(s, now);
+    this.controls.update(s, this.speed, now);
     this.panel.update();
 
-    const s = this.sim.state;
     if (s.baseHp < this.lastBaseHp) getPlatform(this).haptics.play('leak');
     this.lastBaseHp = s.baseHp;
 
@@ -104,18 +138,52 @@ export class GameScene extends Phaser.Scene {
     this.sim.enqueue(cmd);
   }
 
-  private selectTower(id: number): void {
-    if (id >= 0) this.panel.show(id);
-    else this.panel.hide();
-    this.hud.setBarVisible(id < 0);
+  /** DOM drag position → placement (logical screen px for the cancel zone, world px for the ghost). */
+  private dragMove(e: PointerEvent): void {
+    const p = this.overlay.toLogical(e.clientX, e.clientY);
+    const cam = this.cameras.main;
+    this.placement.move(
+      p.y,
+      p.x + cam.scrollX / S,
+      p.y + cam.scrollY / S,
+      e.pointerType === 'touch',
+    );
   }
 
-  /** Tap on the playfield: select the tower under the finger, or deselect. */
-  private onFieldDown(pointer: Phaser.Input.Pointer, over: Phaser.GameObjects.GameObject[]): void {
-    if (over.length > 0 || this.placement.active || this.ended) return;
+  /**
+   * Opens the tower panel. If the sheet would cover the tower's range circle, the map scrolls
+   * up just enough to keep it visible, and scrolls back on close (decided 2026-10-04).
+   */
+  private selectTower(id: number): void {
+    let scrollTo = 0;
+    if (id >= 0) {
+      this.panel.show(id);
+      const t = this.sim.findTower(id);
+      if (t) {
+        const sheetTop = GAME.worldHeight - this.panel.height;
+        const circleBottom = t.y + TOWERS[t.kind].range + PANEL_CLEARANCE;
+        scrollTo = Math.max(0, circleBottom - sheetTop);
+      }
+    } else {
+      this.panel.hide();
+    }
+    const cam = this.cameras.main;
+    this.tweens.killTweensOf(cam);
+    this.tweens.add({
+      targets: cam,
+      scrollY: scrollTo * S,
+      duration: CAMERA_PAN_MS,
+      ease: 'Quad.Out',
+    });
+  }
+
+  /** Tap on the battlefield: select the tower under the finger, or deselect. */
+  private onFieldDown(pointer: Phaser.Input.Pointer): void {
+    if (this.placement.active || this.ended) return;
+    const screenY = pointer.y / S;
+    if (screenY >= ZONES.controlRowTop && this.panel.selectedId < 0) return;
     const wx = pointer.worldX / S;
     const wy = pointer.worldY / S;
-    if (wy >= ZONES.controlRowTop) return;
     // Hit the 32 × 32 footprint with a little slack for fingers.
     const reach = GAME.towerFootprint / 2 + 6;
     let best = -1;
@@ -129,7 +197,7 @@ export class GameScene extends Phaser.Scene {
       }
     }
     if (best >= 0) getPlatform(this).haptics.play('tap');
-    this.selectTower(best);
+    if (best !== this.panel.selectedId) this.selectTower(best);
   }
 
   private onHidden(): void {
@@ -141,11 +209,10 @@ export class GameScene extends Phaser.Scene {
     this.selectTower(-1);
     getPlatform(this).haptics.play('runEnd');
     const s = this.sim.state;
-    const data: RunEndData = {
-      wave: s.wave,
-      seconds: s.tick / GAME.tickRate,
-      kills: s.stats.kills,
-    };
-    this.scene.launch('RunEnd', data);
+    this.runEnd = new RunEnd(
+      this.overlay.root,
+      { wave: s.wave, seconds: s.tick / GAME.tickRate, kills: s.stats.kills },
+      () => this.scene.restart(),
+    );
   }
 }

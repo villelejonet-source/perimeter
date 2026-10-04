@@ -11,7 +11,6 @@ import { setPlatform } from './render/registry';
 import { BootScene, NEXT_SCENE_KEY } from './render/scenes/BootScene';
 import { GameScene } from './render/scenes/GameScene';
 import { PerfSpikeScene } from './render/scenes/PerfSpikeScene';
-import { RunEndScene } from './ui/RunEndScene';
 
 const params = new URLSearchParams(window.location.search);
 const next = params.get('scene') === 'perf' ? 'PerfSpike' : 'Game';
@@ -26,7 +25,7 @@ const game = new Phaser.Game({
   fps: { target: 60 },
   render: { antialias: true, powerPreference: 'high-performance' },
   input: { activePointers: 2 },
-  scene: [BootScene, GameScene, RunEndScene, PerfSpikeScene],
+  scene: [BootScene, GameScene, PerfSpikeScene],
 });
 setPlatform(game, createPlatform());
 game.registry.set(NEXT_SCENE_KEY, next);

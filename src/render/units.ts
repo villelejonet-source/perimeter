@@ -38,6 +38,13 @@ const SPECS: readonly UnitSpec[] = [
   { key: 'proj-laser-beam', svg: projLaserBeam, w: 46, h: 12 },
 ];
 
+/** The unit's SVG as a data URI, for DOM UI (build bar, tower panel). */
+export function unitSvgUri(key: string): string {
+  const spec = SPECS.find((s) => s.key === key);
+  if (!spec) throw new Error(`Unknown unit ${key}`);
+  return toDataUri(spec.svg);
+}
+
 /** Logical size of a unit frame. */
 export function unitSize(key: string): { w: number; h: number } {
   const spec = SPECS.find((s) => s.key === key);

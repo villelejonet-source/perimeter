@@ -51,7 +51,7 @@ src/
   sim/       game state, tick loop, combat, waves, economy (pure TS)
   data/      towers, specs, enemies, artifacts, curves, research (typed config)
   render/    Phaser scenes, sprites, VFX, HUD
-  ui/        menus, research lab, artifact codex, shop
+  ui/        DOM overlay UI (ui/dom/): HUD, controls, panels, menus, research lab, codex, shop
   meta/      save/load, currencies, offline income, crafting, migrations
   platform/  storage, ads, iap, haptics (interfaces + Capacitor + web mocks)
 tools/balance-sim/

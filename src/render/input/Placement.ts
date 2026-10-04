@@ -8,6 +8,7 @@ import {
   snapToGrid,
   type PlacementError,
   type Sim,
+  type Tower,
 } from '../../sim';
 import { dashedCircle, dashedRect, hatchRect } from '../draw';
 import { S, T, ZONES } from '../layout';
@@ -15,10 +16,21 @@ import { UNIT_ATLAS } from '../units';
 
 export type PlacementRejection = PlacementError | 'credits';
 
+/** What the ghost currently shows, for the DOM chip. Null when hidden. */
+export interface PlacementPreview {
+  kind: TowerKind;
+  /** Snapped ghost centre, world px. */
+  x: number;
+  y: number;
+  error: PlacementRejection | null;
+  blocker: Tower | null;
+}
+
 export interface PlacementActions {
   place(kind: TowerKind, x: number, y: number): void;
   reject(reason: PlacementRejection): void;
   dragChanged(dragging: boolean): void;
+  preview(p: PlacementPreview | null): void;
 }
 
 /** HANDOFF.md "Placement drag": ghost floats 72 px above the finger on touch. */
@@ -27,8 +39,9 @@ const TOUCH_LIFT = 72;
 const LOCAL_GRID = 96;
 
 /**
- * Drag-to-place, following docs/design/screens/in-run/Place-*.dc.html. Validity uses the
- * same pure `placementError` the sim enforces, so the preview never disagrees with the result.
+ * Drag-to-place, following docs/design/screens/in-run/Place-*.dc.html. Input-agnostic: the
+ * drag source (the DOM build bar) feeds positions in. Validity uses the same pure
+ * `placementError` the sim enforces, so the preview never disagrees with the result.
  */
 export class Placement {
   private kind: TowerKind | null = null;
@@ -40,7 +53,7 @@ export class Placement {
   private readonly ghostTurret: Phaser.GameObjects.Image;
 
   constructor(
-    private readonly scene: Phaser.Scene,
+    scene: Phaser.Scene,
     private readonly sim: Sim,
     private readonly actions: PlacementActions,
   ) {
@@ -53,19 +66,16 @@ export class Placement {
         .setVisible(false);
     this.ghostBase = ghost('tower-pulse-laser-l1-base');
     this.ghostTurret = ghost('tower-pulse-laser-l1-turret');
-    scene.input.on('pointermove', this.onMove, this);
-    scene.input.on('pointerup', this.onUp, this);
-    scene.input.on('pointerupoutside', this.onUp, this);
   }
 
   get active(): boolean {
     return this.kind !== null;
   }
 
-  begin(kind: TowerKind, pointer: Phaser.Input.Pointer): void {
+  begin(kind: TowerKind): void {
     this.kind = kind;
+    this.overField = false;
     this.actions.dragChanged(true);
-    this.onMove(pointer);
   }
 
   private error(): PlacementRejection | null {
@@ -76,14 +86,18 @@ export class Placement {
     return null;
   }
 
-  private onMove(pointer: Phaser.Input.Pointer): void {
+  /**
+   * @param screenY finger y in logical screen px (for the cancel zone)
+   * @param worldX finger position in world px (camera scroll applied)
+   * @param touch lift the ghost above the finger
+   */
+  move(screenY: number, worldX: number, worldY: number, touch: boolean): void {
     if (!this.kind) return;
-    const fingerY = pointer.worldY / S;
     // Dragging back onto the control row / build bar cancels ("DROP HERE TO CANCEL").
-    this.overField = fingerY < ZONES.controlRowTop;
-    const lift = pointer.wasTouch ? TOUCH_LIFT : 0;
-    this.x = snapToGrid(pointer.worldX / S);
-    this.y = snapToGrid(fingerY - lift);
+    this.overField = screenY < ZONES.controlRowTop;
+    const lift = touch ? TOUCH_LIFT : 0;
+    this.x = snapToGrid(worldX);
+    this.y = snapToGrid(worldY - lift);
     this.draw();
   }
 
@@ -93,9 +107,12 @@ export class Placement {
     if (!this.kind || !this.overField) {
       this.ghostBase.setVisible(false);
       this.ghostTurret.setVisible(false);
+      this.actions.preview(null);
       return;
     }
     const err = this.error();
+    const blocker = err === 'overlap' ? blockingTower(this.sim.state, this.x, this.y) : null;
+    this.actions.preview({ kind: this.kind, x: this.x, y: this.y, error: err, blocker });
     const valid = err === null;
     const sx = this.x * S;
     const sy = this.y * S;
@@ -124,12 +141,9 @@ export class Placement {
       hatchRect(g, sx - half, sy - half, half * 2, half * 2, 8 * S);
       g.lineStyle(2 * S, T.danger, 1);
       dashedRect(g, sx - half, sy - half, half * 2, half * 2, 5 * S, 4 * S);
-      if (err === 'overlap') {
-        const t = blockingTower(this.sim.state, this.x, this.y);
-        if (t) {
-          const bh = 20 * S;
-          dashedRect(g, t.x * S - bh, t.y * S - bh, bh * 2, bh * 2, 5 * S, 4 * S);
-        }
+      if (blocker) {
+        const bh = 20 * S;
+        dashedRect(g, blocker.x * S - bh, blocker.y * S - bh, bh * 2, bh * 2, 5 * S, 4 * S);
       }
     }
 
@@ -138,7 +152,8 @@ export class Placement {
     this.ghostTurret.setVisible(true).setPosition(sx, sy).setAlpha(alpha);
   }
 
-  private onUp(): void {
+  /** Finish the drag: place if over a valid field spot, otherwise cancel. */
+  end(): void {
     const kind = this.kind;
     if (!kind) return;
     if (this.overField) {
@@ -150,12 +165,7 @@ export class Placement {
     this.g.clear();
     this.ghostBase.setVisible(false);
     this.ghostTurret.setVisible(false);
+    this.actions.preview(null);
     this.actions.dragChanged(false);
-  }
-
-  destroy(): void {
-    this.scene.input.off('pointermove', this.onMove, this);
-    this.scene.input.off('pointerup', this.onUp, this);
-    this.scene.input.off('pointerupoutside', this.onUp, this);
   }
 }
