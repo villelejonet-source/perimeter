@@ -1,7 +1,9 @@
 import Phaser from 'phaser';
 import { GAME } from '../../data/game';
-import { TOWERS } from '../../data/towers';
+import { TOWER_ORDER, TOWERS } from '../../data/towers';
 import { FixedStepDriver, Sim, type Command } from '../../sim';
+import { bossFor, waveType } from '../../sim/waves';
+import { Alerts } from '../../ui/dom/Alerts';
 import { Controls } from '../../ui/dom/Controls';
 import { HudBar } from '../../ui/dom/HudBar';
 import { Overlay } from '../../ui/dom/overlay';
@@ -10,7 +12,7 @@ import { RunEnd } from '../../ui/dom/RunEnd';
 import { TowerPanel } from '../../ui/dom/TowerPanel';
 import { Placement } from '../input/Placement';
 import { S, T, ZONES } from '../layout';
-import { getPlatform } from '../registry';
+import { DEV_UNLOCK_ALL_KEY, getPlatform } from '../registry';
 import { WorldView } from '../WorldView';
 
 /** Gap kept between the selected tower's range circle and the top of the tower panel. */
@@ -31,7 +33,9 @@ export class GameScene extends Phaser.Scene {
   private controls!: Controls;
   private chip!: PlacementChip;
   private panel!: TowerPanel;
+  private alerts!: Alerts;
   private runEnd: RunEnd | null = null;
+  private lastWave = 0;
   private speed = 1;
   private ended = false;
   private lastBaseHp = 0;
@@ -42,12 +46,18 @@ export class GameScene extends Phaser.Scene {
 
   create(): void {
     this.cameras.main.setBackgroundColor(T.void).setScroll(0, 0);
-    this.sim = new Sim({ seed: (Date.now() ^ (performance.now() * 1000)) >>> 0 });
+    // Dev builds: `?unlock=all` makes every tower buildable for playtesting (research is Phase 6).
+    const unlockAll = this.registry.get(DEV_UNLOCK_ALL_KEY) === true;
+    this.sim = new Sim({
+      seed: (Date.now() ^ (performance.now() * 1000)) >>> 0,
+      ...(unlockAll ? { unlockedTowers: TOWER_ORDER } : {}),
+    });
     this.driver = new FixedStepDriver();
     this.speed = 1;
     this.ended = false;
     this.runEnd = null;
     this.lastBaseHp = this.sim.state.baseHp;
+    this.lastWave = 0;
 
     this.world = new WorldView(this, this.sim);
     this.placement = new Placement(this, this.sim, {
@@ -79,7 +89,8 @@ export class GameScene extends Phaser.Scene {
 
     this.overlay = new Overlay(this.game);
     this.hud = new HudBar(this.overlay.root);
-    this.controls = new Controls(this.overlay.root, {
+    this.alerts = new Alerts(this.overlay.root);
+    this.controls = new Controls(this.overlay.root, this.sim.state.unlocked, {
       togglePause: () => this.send({ type: 'setPaused', paused: !this.sim.state.paused }),
       setSpeed: (n) => (this.speed = n),
       callEarly: () => this.send({ type: 'callEarly' }),
@@ -110,6 +121,7 @@ export class GameScene extends Phaser.Scene {
       this.game.events.off(Phaser.Core.Events.HIDDEN, this.onHidden, this);
       this.input.off('pointerdown', this.onFieldDown, this);
       this.runEnd?.destroy();
+      this.alerts.destroy();
       this.overlay.destroy();
     });
   }
@@ -128,10 +140,29 @@ export class GameScene extends Phaser.Scene {
     this.controls.update(s, this.speed, now);
     this.panel.update();
 
-    if (s.baseHp < this.lastBaseHp) getPlatform(this).haptics.play('leak');
+    if (s.wave > this.lastWave) {
+      this.lastWave = s.wave;
+      this.announceWave(s.wave);
+    }
+    if (s.baseHp < this.lastBaseHp) {
+      getPlatform(this).haptics.play('leak');
+      const b = this.sim.map.base;
+      const cam = this.cameras.main;
+      this.alerts.baseHit(this.lastBaseHp - s.baseHp, b.x - cam.scrollX / S, b.y - cam.scrollY / S);
+    }
     this.lastBaseHp = s.baseHp;
 
     if (s.gameOver && !this.ended) this.endRun();
+  }
+
+  private announceWave(wave: number): void {
+    const type = waveType(wave);
+    if (type === 'elite') this.alerts.elite(wave);
+    else if (type === 'boss') {
+      const boss = bossFor(wave);
+      this.alerts.boss(wave, boss.kind, boss.also);
+      getPlatform(this).haptics.play('boss');
+    }
   }
 
   private send(cmd: Command): void {

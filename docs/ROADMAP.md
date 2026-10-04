@@ -33,13 +33,14 @@ A scripted test run is deterministic (same seed → identical result).
 _Accepted 2026-10-04: verified in the browser and on device._
 
 ## Phase 3 — Full combat content
-- [ ] All 6 towers with base stats
-- [ ] Damage types, shields (with regen), armor (flat with 10% floor), freeze + kinetic bonus
-- [ ] Full enemy roster including flying and Splitter/Medic behaviors
-- [ ] Elite waves and the 3 rotating bosses
-- [ ] Wave composition generator (introduces types gradually, mixes defenses)
+- [x] All 6 towers with base stats
+- [x] Damage types, shields (with regen), armor (flat with 10% floor), freeze + kinetic bonus
+- [x] Full enemy roster including flying and Splitter/Medic behaviors
+- [x] Elite waves and the 3 rotating bosses
+- [x] Wave composition generator (introduces types gradually, mixes defenses)
 
 **Accept:** tests per tower/enemy mechanic; mixed waves demonstrably need mixed damage types.
+_Accepted 2026-10-04: per-mechanic tests in `src/sim/*.test.ts`; `mixedDamage.test.ts` shows equal-budget mixed loadouts beat energy-only and kinetic-only on mixed waves. Arc Coil, Cryo and Swarm are locked until the Research Lab (Phase 6); `?unlock=all` in dev builds._
 
 ## Phase 4 — Specializations
 - [ ] Spec choice UI at level 5 (3 cards, locked after pick)

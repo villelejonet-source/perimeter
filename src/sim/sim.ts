@@ -1,19 +1,32 @@
 import { GAME } from '../data/game';
 import { DEFAULT_MAP_ID, MAPS, type MapDef } from '../data/maps';
-import { TOWERS } from '../data/towers';
-import { moveEnemies, updateProjectiles, updateTowers } from './combat';
+import { STARTING_UNLOCKS, TOWERS, type TowerKind } from '../data/towers';
 import type { Command } from './commands';
 import { placeCost, sellValue, upgradeCostFor } from './economy';
 import { Path } from './path';
 import { placementError, snapToGrid } from './placement';
 import { Rng } from './rng';
-import { newEnemy, newProjectile, newTower, type SimState, type Tower } from './state';
+import { updateEnemies } from './enemies';
+import { updateFx } from './fx';
+import { updateProjectiles } from './projectiles';
+import {
+  newEnemy,
+  newFx,
+  newProjectile,
+  newStats,
+  newTower,
+  type SimState,
+  type Tower,
+} from './state';
+import { updateTowers } from './towers';
 import { Pool } from './pool';
 import { callEarly, updateWaves } from './waves';
 
 export interface SimConfig {
   seed: number;
   mapId?: string;
+  /** Tower kinds the player may build (default: the GDD's starting three). */
+  unlockedTowers?: readonly TowerKind[];
 }
 
 /**
@@ -45,8 +58,10 @@ export class Sim {
       enemies: new Pool(newEnemy, 128),
       towers: new Pool(newTower, 32),
       projectiles: new Pool(newProjectile, 256),
+      fx: new Pool(newFx, 64),
       spawns: [],
-      stats: { kills: 0, leaks: 0, creditsEarned: 0, damageDealt: 0 },
+      unlocked: config.unlockedTowers ?? STARTING_UNLOCKS,
+      stats: newStats(),
       lastRejection: null,
     };
   }
@@ -60,10 +75,11 @@ export class Sim {
     const s = this.state;
     if (s.paused || s.gameOver) return;
 
-    updateWaves(s, this.path);
-    moveEnemies(s, this.path);
-    updateTowers(s);
-    updateProjectiles(s);
+    updateWaves(s, this.path, this.rng);
+    updateEnemies(s, this.path);
+    updateTowers(s, this.path);
+    updateProjectiles(s, this.path);
+    updateFx(s);
 
     if (s.baseHp <= 0) s.gameOver = true;
     s.tick++;
@@ -93,6 +109,7 @@ export class Sim {
 
     switch (cmd.type) {
       case 'placeTower': {
+        if (!s.unlocked.includes(cmd.kind)) return this.reject('locked');
         const cost = placeCost(cmd.kind);
         if (s.credits < cost) return this.reject('credits');
         const x = snapToGrid(cmd.x);
@@ -136,7 +153,7 @@ export class Sim {
         break;
       }
       case 'callEarly':
-        callEarly(s);
+        callEarly(s, this.rng);
         break;
     }
     s.lastRejection = null;

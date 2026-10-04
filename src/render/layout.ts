@@ -33,6 +33,8 @@ export const T = {
   dmgKinetic: 0xff7a33,
   dmgCryo: 0x8ff3ff,
   hp: 0xeaf0fa,
+  defShield: 0x5b8cff,
+  defArmor: 0xc3ccd9,
   credits: 0xffd84d,
   danger: 0xff3355,
   warning: 0xffd23f,

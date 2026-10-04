@@ -18,6 +18,7 @@
   --dmg-energy: #ff4fd8;
   --credits: #ffd84d;
   --danger: #ff3355;
+  --warning: #ffd23f;
   --font-display: 'Oxanium', 'Chakra Petch', system-ui, sans-serif;
   --font-ui: 'Barlow Semi Condensed', 'Barlow', system-ui, sans-serif;
   --chamfer-md: polygon(
@@ -583,4 +584,88 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
+}
+
+/* Alerts (Alert-*.dc.html) */
+.alert-elite {
+  position: absolute;
+  left: 16px;
+  top: 168px;
+  width: 358px;
+  height: 76px;
+  box-sizing: border-box;
+  padding: 3px;
+  background: var(--ink);
+  clip-path: var(--chamfer-md);
+}
+.alert-elite > .inner {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 0 14px 0 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--surface-200);
+  clip-path: var(--chamfer-md-inner);
+}
+.alert-title {
+  font-size: 28px;
+  line-height: 30px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+.alert-boss-frame {
+  position: absolute;
+  inset: 0;
+  box-sizing: border-box;
+  border: 4px solid var(--warning);
+}
+.alert-boss {
+  position: absolute;
+  left: 0;
+  top: 196px;
+  width: 390px;
+  display: flex;
+  flex-direction: column;
+}
+.hazard {
+  height: 14px;
+  background: repeating-linear-gradient(135deg, var(--warning) 0 10px, var(--void) 10px 20px);
+}
+.alert-boss .body {
+  padding: 16px 16px 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--void);
+}
+.alert-boss h2 {
+  margin: 0;
+  font-size: 40px;
+  line-height: 40px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: var(--warning);
+}
+.base-hit-edge {
+  position: absolute;
+  inset: 0;
+  box-sizing: border-box;
+  border: 2px solid var(--danger);
+}
+.base-hit-edge > div {
+  position: absolute;
+  background: repeating-linear-gradient(135deg, var(--danger) 0 4px, transparent 4px 10px);
+}
+.base-hit-amount {
+  position: absolute;
+  font-size: 22px;
+  line-height: 22px;
+  font-weight: 800;
+  color: var(--danger);
+}
+.fade-out {
+  transition: opacity 250ms ease-out;
+  opacity: 0;
 }

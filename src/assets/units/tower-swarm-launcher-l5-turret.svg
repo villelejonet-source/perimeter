@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="84" height="84" viewBox="-10 -10 84 84">
+<title>tower-swarm-launcher-l5-turret</title>
+<g id="halo-far">
+<path d="M14 18 L45 18 L54 32 L45 46 L14 46 Z" fill="none" stroke="#ff7a33" stroke-width="19" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.12"/>
+<path d="M19 26 A3 3 0 1 0 25 26 A3 3 0 1 0 19 26 Z" fill="none" stroke="#ff7a33" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.12"/>
+<path d="M28 26 A3 3 0 1 0 34 26 A3 3 0 1 0 28 26 Z" fill="none" stroke="#ff7a33" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.12"/>
+<path d="M37 26 A3 3 0 1 0 43 26 A3 3 0 1 0 37 26 Z" fill="none" stroke="#ff7a33" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.12"/>
+<path d="M19 38 A3 3 0 1 0 25 38 A3 3 0 1 0 19 38 Z" fill="none" stroke="#ff7a33" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.12"/>
+<path d="M28 38 A3 3 0 1 0 34 38 A3 3 0 1 0 28 38 Z" fill="none" stroke="#ff7a33" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.12"/>
+<path d="M37 38 A3 3 0 1 0 43 38 A3 3 0 1 0 37 38 Z" fill="none" stroke="#ff7a33" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.12"/>
+</g>
+<g id="halo-near">
+<path d="M14 18 L45 18 L54 32 L45 46 L14 46 Z" fill="none" stroke="#ff7a33" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.35"/>
+<path d="M19 26 A3 3 0 1 0 25 26 A3 3 0 1 0 19 26 Z" fill="none" stroke="#ff7a33" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.35"/>
+<path d="M28 26 A3 3 0 1 0 34 26 A3 3 0 1 0 28 26 Z" fill="none" stroke="#ff7a33" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.35"/>
+<path d="M37 26 A3 3 0 1 0 43 26 A3 3 0 1 0 37 26 Z" fill="none" stroke="#ff7a33" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.35"/>
+<path d="M19 38 A3 3 0 1 0 25 38 A3 3 0 1 0 19 38 Z" fill="none" stroke="#ff7a33" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.35"/>
+<path d="M28 38 A3 3 0 1 0 34 38 A3 3 0 1 0 28 38 Z" fill="none" stroke="#ff7a33" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.35"/>
+<path d="M37 38 A3 3 0 1 0 43 38 A3 3 0 1 0 37 38 Z" fill="none" stroke="#ff7a33" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.35"/>
+</g>
+<g id="body">
+<path d="M14 18 L45 18 L54 32 L45 46 L14 46 Z" fill="#06080d" stroke="#ff7a33" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill-opacity="1"/>
+<path d="M19 26 A3 3 0 1 0 25 26 A3 3 0 1 0 19 26 Z" fill="none" stroke="#ff7a33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M28 26 A3 3 0 1 0 34 26 A3 3 0 1 0 28 26 Z" fill="none" stroke="#ff7a33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M37 26 A3 3 0 1 0 43 26 A3 3 0 1 0 37 26 Z" fill="none" stroke="#ff7a33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M19 38 A3 3 0 1 0 25 38 A3 3 0 1 0 19 38 Z" fill="none" stroke="#ff7a33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M28 38 A3 3 0 1 0 34 38 A3 3 0 1 0 28 38 Z" fill="none" stroke="#ff7a33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M37 38 A3 3 0 1 0 43 38 A3 3 0 1 0 37 38 Z" fill="none" stroke="#ff7a33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+<g id="hot-core">
+<path d="M14 18 L45 18 L54 32 L45 46 L14 46 Z" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.55"/>
+<path d="M19 26 A3 3 0 1 0 25 26 A3 3 0 1 0 19 26 Z" fill="none" stroke="#ffffff" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.55"/>
+<path d="M28 26 A3 3 0 1 0 34 26 A3 3 0 1 0 28 26 Z" fill="none" stroke="#ffffff" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.55"/>
+<path d="M37 26 A3 3 0 1 0 43 26 A3 3 0 1 0 37 26 Z" fill="none" stroke="#ffffff" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.55"/>
+<path d="M19 38 A3 3 0 1 0 25 38 A3 3 0 1 0 19 38 Z" fill="none" stroke="#ffffff" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.55"/>
+<path d="M28 38 A3 3 0 1 0 34 38 A3 3 0 1 0 28 38 Z" fill="none" stroke="#ffffff" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.55"/>
+<path d="M37 38 A3 3 0 1 0 43 38 A3 3 0 1 0 37 38 Z" fill="none" stroke="#ffffff" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.55"/>
+</g>
+</svg>

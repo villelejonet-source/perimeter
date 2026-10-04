@@ -1,20 +1,11 @@
 import { callEarlyBonus } from '../../data/curves';
 import { GAME } from '../../data/game';
-import { TOWERS, type TowerKind } from '../../data/towers';
+import { TOWER_ORDER, TOWERS, type TowerKind } from '../../data/towers';
 import { placeCost, type SimState } from '../../sim';
+import { towerFrames } from '../../render/unitArt';
 import { unitSvgUri } from '../../render/units';
 import { icon, C } from './icons';
 import { fmt, h, setText, toggleClass } from './overlay';
-
-/** Build-bar order (Controls.dc.html). Only Pulse Laser exists in Phase 2; the rest show LOCKED. */
-const SLOTS: readonly { kind: TowerKind | null; name: string }[] = [
-  { kind: 'pulseLaser', name: 'Pulse Laser' },
-  { kind: null, name: 'Railgun' },
-  { kind: null, name: 'Cryo Projector' },
-  { kind: null, name: 'Arc Coil' },
-  { kind: null, name: 'Plasma Mortar' },
-  { kind: null, name: 'Swarm Launcher' },
-];
 
 /** How long the "not enough Credits" state stays up after a denied tap. */
 const DENIED_MS = 1800;
@@ -58,6 +49,7 @@ export class Controls {
 
   constructor(
     parent: HTMLElement,
+    unlocked: readonly TowerKind[],
     private readonly actions: ControlsActions,
   ) {
     this.el = h('div', 'controls');
@@ -104,8 +96,9 @@ export class Controls {
 
     const bar = h('div', 'build-bar');
     this.slotsEl = h('div', 'slots');
-    for (const def of SLOTS) {
-      if (def.kind) this.slotsEl.appendChild(this.buildSlot(def.kind));
+    // Build bar in tower order (Controls.dc.html); towers not yet researched show LOCKED.
+    for (const kind of TOWER_ORDER) {
+      if (unlocked.includes(kind)) this.slotsEl.appendChild(this.buildSlot(kind));
       else {
         const b = h(
           'button',
@@ -113,7 +106,7 @@ export class Controls {
           `<span class="art" style="display:flex;align-items:center;justify-content:center">${icon.lock(24, C.inkFaint, 2)}</span><span class="lock-label">LOCKED</span>`,
         );
         b.disabled = true;
-        b.setAttribute('aria-label', `${def.name}, locked`);
+        b.setAttribute('aria-label', `${TOWERS[kind].name}, locked`);
         this.slotsEl.appendChild(b);
       }
     }
@@ -130,7 +123,8 @@ export class Controls {
   }
 
   private buildSlot(kind: TowerKind): HTMLElement {
-    const art = `<span class="art"><img alt="" src="${unitSvgUri('tower-pulse-laser-l1-base')}"><img alt="" src="${unitSvgUri('tower-pulse-laser-l1-turret')}"></span>`;
+    const frames = towerFrames(kind, 1);
+    const art = `<span class="art"><img alt="" src="${unitSvgUri(frames.base)}"><img alt="" src="${unitSvgUri(frames.turret)}"></span>`;
     const el = h(
       'button',
       'slot',

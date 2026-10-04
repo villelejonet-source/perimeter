@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="84" height="84" viewBox="-10 -10 84 84">
+<title>tower-swarm-launcher-l1-base</title>
+<g id="halo-far">
+<path d="M10 10 L54 10 L54 54 L10 54 Z" fill="none" stroke="#ff7a33" stroke-width="19" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.12"/>
+<path d="M10 10 L17 10 L17 17 L10 17 Z" fill="none" stroke="#ff7a33" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.12"/>
+<path d="M47 10 L54 10 L54 17 L47 17 Z" fill="none" stroke="#ff7a33" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.12"/>
+<path d="M47 47 L54 47 L54 54 L47 54 Z" fill="none" stroke="#ff7a33" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.12"/>
+<path d="M10 47 L17 47 L17 54 L10 54 Z" fill="none" stroke="#ff7a33" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.12"/>
+</g>
+<g id="halo-near">
+<path d="M10 10 L54 10 L54 54 L10 54 Z" fill="none" stroke="#ff7a33" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.35"/>
+<path d="M10 10 L17 10 L17 17 L10 17 Z" fill="none" stroke="#ff7a33" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.35"/>
+<path d="M47 10 L54 10 L54 17 L47 17 Z" fill="none" stroke="#ff7a33" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.35"/>
+<path d="M47 47 L54 47 L54 54 L47 54 Z" fill="none" stroke="#ff7a33" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.35"/>
+<path d="M10 47 L17 47 L17 54 L10 54 Z" fill="none" stroke="#ff7a33" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.35"/>
+</g>
+<g id="body">
+<path d="M10 10 L54 10 L54 54 L10 54 Z" fill="#06080d" stroke="#ff7a33" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill-opacity="1"/>
+<path d="M10 10 L17 10 L17 17 L10 17 Z" fill="none" stroke="#ff7a33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M47 10 L54 10 L54 17 L47 17 Z" fill="none" stroke="#ff7a33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M47 47 L54 47 L54 54 L47 54 Z" fill="none" stroke="#ff7a33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M10 47 L17 47 L17 54 L10 54 Z" fill="none" stroke="#ff7a33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+<g id="hot-core">
+<path d="M10 10 L54 10 L54 54 L10 54 Z" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.55"/>
+<path d="M10 10 L17 10 L17 17 L10 17 Z" fill="none" stroke="#ffffff" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.55"/>
+<path d="M47 10 L54 10 L54 17 L47 17 Z" fill="none" stroke="#ffffff" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.55"/>
+<path d="M47 47 L54 47 L54 54 L47 54 Z" fill="none" stroke="#ffffff" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.55"/>
+<path d="M10 47 L17 47 L17 54 L10 54 Z" fill="none" stroke="#ffffff" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.55"/>
+</g>
+</svg>

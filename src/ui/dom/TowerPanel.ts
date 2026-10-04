@@ -1,4 +1,5 @@
-import { CURVES, towerDamage } from '../../data/curves';
+import { CURVES } from '../../data/curves';
+import { CHILL, type DamageType } from '../../data/damage';
 import { GAME } from '../../data/game';
 import { TOWERS } from '../../data/towers';
 import {
@@ -9,9 +10,22 @@ import {
   type Sim,
   type Tower,
 } from '../../sim';
+import { towerFrames } from '../../render/unitArt';
 import { unitSvgUri } from '../../render/units';
+import { towerPower } from '../../sim/towers';
 import { icon, C } from './icons';
 import { fmt, h, setText, toggleClass } from './overlay';
+
+/** Damage-type chip: colour + shape twin + label (design-system README). */
+function damageTypeChip(type: DamageType): string {
+  const [ico, label] =
+    type === 'energy'
+      ? [icon.energy(), 'ENERGY']
+      : type === 'kinetic'
+        ? [icon.kinetic(), 'KINETIC']
+        : [icon.cryo(), 'CRYO'];
+  return `${ico}<span class="label">${label}</span>`;
+}
 
 /** Ranges show in 16-px grid tiles (decided 2026-10-04). */
 const tiles = (px: number): string => (px / GAME.gridSize).toFixed(1);
@@ -25,6 +39,8 @@ export class TowerPanel {
   private readonly title: HTMLElement;
   private readonly level: HTMLElement;
   private readonly pips: HTMLElement[];
+  private readonly dmgType: HTMLElement;
+  private readonly statLabels: Record<'dmg' | 'dps', HTMLElement>;
   private readonly stats: Record<
     'dmg' | 'rate' | 'range' | 'dps',
     { now: HTMLElement; next: HTMLElement }
@@ -37,7 +53,8 @@ export class TowerPanel {
   private readonly upgradeSub: HTMLElement;
   private readonly upgradeCost: HTMLElement;
   private readonly upgradeCoin: HTMLElement;
-  private l5: boolean | null = null;
+  private artKey = '';
+  private kindShown = '';
   private lastAfford: boolean | null = null;
 
   constructor(
@@ -57,7 +74,7 @@ export class TowerPanel {
          <h2 class="panel-title"></h2>
          <div style="display:flex;align-items:center;gap:10px">
            <span style="display:flex;align-items:center;gap:6px"><span class="d lvl" style="font-size:15px;font-weight:700"></span><span class="pips">${'<span class="pip"></span>'.repeat(5)}</span></span>
-           <span style="display:flex;align-items:center;gap:4px">${icon.energy()}<span class="label">ENERGY</span></span>
+           <span class="dmg-type" style="display:flex;align-items:center;gap:4px"></span>
          </div>
        </div>`,
     );
@@ -71,8 +88,10 @@ export class TowerPanel {
     this.title = head.querySelector('.panel-title')!;
     this.level = head.querySelector('.lvl')!;
     this.pips = [...head.querySelectorAll<HTMLElement>('.pip')];
+    this.dmgType = head.querySelector('.dmg-type')!;
 
     const statsEl = h('div', 'stats');
+    const labels: HTMLElement[] = [];
     const stat = (label: string): { now: HTMLElement; next: HTMLElement } => {
       const s = h(
         'div',
@@ -80,6 +99,7 @@ export class TowerPanel {
         `<span class="label muted">${label}</span><span class="d now"></span><span class="d next"></span>`,
       );
       statsEl.appendChild(s);
+      labels.push(s.querySelector('.label')!);
       return { now: s.querySelector('.now')!, next: s.querySelector('.next')! };
     };
     this.stats = {
@@ -88,6 +108,7 @@ export class TowerPanel {
       range: stat('RANGE'),
       dps: stat('DPS'),
     };
+    this.statLabels = { dmg: labels[0]!, dps: labels[3]! };
 
     const targetingEl = h('div', '', '<span class="label muted">TARGETING</span>');
     targetingEl.style.cssText = 'display:flex;flex-direction:column;gap:6px';
@@ -143,7 +164,8 @@ export class TowerPanel {
   show(towerId: number): void {
     this.towerId = towerId;
     this.el.hidden = false;
-    this.l5 = null;
+    this.artKey = '';
+    this.kindShown = '';
     this.lastAfford = null;
     this.update();
   }
@@ -165,27 +187,45 @@ export class TowerPanel {
 
   private render(t: Tower): void {
     const def = TOWERS[t.kind];
-    const l5 = t.level >= 5;
-    if (l5 !== this.l5) {
-      this.l5 = l5;
-      const lvl = l5 ? 'l5' : 'l1';
-      this.baseImg.src = unitSvgUri(`tower-pulse-laser-${lvl}-base`);
-      this.turretImg.src = unitSvgUri(`tower-pulse-laser-${lvl}-turret`);
+    const frames = towerFrames(t.kind, t.level);
+    if (frames.base !== this.artKey) {
+      this.artKey = frames.base;
+      this.baseImg.src = unitSvgUri(frames.base);
+      this.turretImg.src = unitSvgUri(frames.turret);
+    }
+    if (t.kind !== this.kindShown) {
+      this.kindShown = t.kind;
+      this.dmgType.innerHTML = damageTypeChip(def.damageType);
+      const chill = def.attack.type === 'chill';
+      setText(this.statLabels.dmg, chill ? 'CHILL' : 'DAMAGE');
+      setText(this.statLabels.dps, chill ? 'MAX SLOW' : 'DPS');
     }
     setText(this.title, def.name);
     setText(this.level, `LV ${t.level}`);
     this.pips.forEach((p, i) => toggleClass(p, 'on', i < Math.min(t.level, 5)));
 
-    const dmg = towerDamage(def.damage, t.level);
-    const nextDmg = towerDamage(def.damage, t.level + 1);
-    setText(this.stats.dmg.now, dmg.toFixed(1));
-    setText(this.stats.dmg.next, `→ ${nextDmg.toFixed(1)}`);
+    const power = towerPower(def, t.level);
+    const next = towerPower(def, t.level + 1);
+    const atk = def.attack;
     setText(this.stats.rate.now, `${def.fireRate.toFixed(1)}/s`);
     this.noChange(this.stats.rate.next);
     setText(this.stats.range.now, tiles(def.range));
     this.noChange(this.stats.range.next);
-    setText(this.stats.dps.now, fmt.int(dmg * def.fireRate));
-    setText(this.stats.dps.next, `→ ${fmt.int(nextDmg * def.fireRate)}`);
+    if (atk.type === 'chill') {
+      setText(this.stats.dmg.now, `${Math.round(power * 100)}%`);
+      setText(this.stats.dmg.next, `→ ${Math.round(next * 100)}%`);
+      setText(this.stats.dps.now, `${Math.round(CHILL.maxSlow * 100)}%`);
+      this.noChange(this.stats.dps.next);
+    } else {
+      // Per-shot multipliers: missiles per salvo, enemies per rail line.
+      const shots = atk.type === 'missiles' ? atk.count : 1;
+      setText(this.stats.dmg.now, shots > 1 ? `${power.toFixed(1)}×${shots}` : power.toFixed(1));
+      setText(this.stats.dmg.next, `→ ${next.toFixed(1)}`);
+      toggleClass(this.stats.dmg.next, 'none', false);
+      setText(this.stats.dps.now, fmt.int(power * shots * def.fireRate));
+      setText(this.stats.dps.next, `→ ${fmt.int(next * shots * def.fireRate)}`);
+      toggleClass(this.stats.dps.next, 'none', false);
+    }
 
     this.targeting.forEach((b, i) => {
       const on = String(TARGETING_MODES[i] === t.targeting);
@@ -203,7 +243,7 @@ export class TowerPanel {
     setText(
       this.upgradeSub,
       afford
-        ? `Damage +${Math.round((CURVES.towerDamageGrowth - 1) * 100)}%`
+        ? `${def.attack.type === 'chill' ? 'Chill' : 'Damage'} +${Math.round((CURVES.towerDamageGrowth - 1) * 100)}%`
         : `Need ${fmt.int(cost - this.sim.state.credits)} more Credits`,
     );
     if (afford !== this.lastAfford) {

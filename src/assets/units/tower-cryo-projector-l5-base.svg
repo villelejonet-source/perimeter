@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="84" height="84" viewBox="-10 -10 84 84">
+<title>tower-cryo-projector-l5-base</title>
+<g id="halo-far">
+<path d="M59 32 L45.5 55.38 L18.5 55.38 L5 32 L18.5 8.62 L45.5 8.62 Z" fill="none" stroke="#8ff3ff" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.12"/>
+<path d="M53 32 L42.5 50.19 L21.5 50.19 L11 32 L21.5 13.81 L42.5 13.81 Z" fill="none" stroke="#8ff3ff" stroke-width="19" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.12"/>
+<path d="M53 32 L59 32" fill="none" stroke="#8ff3ff" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.12"/>
+<path d="M42.5 50.19 L45.5 55.38" fill="none" stroke="#8ff3ff" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.12"/>
+<path d="M21.5 50.19 L18.5 55.38" fill="none" stroke="#8ff3ff" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.12"/>
+<path d="M11 32 L5 32" fill="none" stroke="#8ff3ff" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.12"/>
+<path d="M21.5 13.81 L18.5 8.62" fill="none" stroke="#8ff3ff" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.12"/>
+<path d="M42.5 13.81 L45.5 8.62" fill="none" stroke="#8ff3ff" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.12"/>
+</g>
+<g id="halo-near">
+<path d="M59 32 L45.5 55.38 L18.5 55.38 L5 32 L18.5 8.62 L45.5 8.62 Z" fill="none" stroke="#8ff3ff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.35"/>
+<path d="M53 32 L42.5 50.19 L21.5 50.19 L11 32 L21.5 13.81 L42.5 13.81 Z" fill="none" stroke="#8ff3ff" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.35"/>
+<path d="M53 32 L59 32" fill="none" stroke="#8ff3ff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.35"/>
+<path d="M42.5 50.19 L45.5 55.38" fill="none" stroke="#8ff3ff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.35"/>
+<path d="M21.5 50.19 L18.5 55.38" fill="none" stroke="#8ff3ff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.35"/>
+<path d="M11 32 L5 32" fill="none" stroke="#8ff3ff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.35"/>
+<path d="M21.5 13.81 L18.5 8.62" fill="none" stroke="#8ff3ff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.35"/>
+<path d="M42.5 13.81 L45.5 8.62" fill="none" stroke="#8ff3ff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.35"/>
+</g>
+<g id="body">
+<path d="M59 32 L45.5 55.38 L18.5 55.38 L5 32 L18.5 8.62 L45.5 8.62 Z" fill="#06080d" stroke="#8ff3ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill-opacity="1"/>
+<path d="M53 32 L42.5 50.19 L21.5 50.19 L11 32 L21.5 13.81 L42.5 13.81 Z" fill="none" stroke="#8ff3ff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M53 32 L59 32" fill="none" stroke="#8ff3ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M42.5 50.19 L45.5 55.38" fill="none" stroke="#8ff3ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M21.5 50.19 L18.5 55.38" fill="none" stroke="#8ff3ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M11 32 L5 32" fill="none" stroke="#8ff3ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M21.5 13.81 L18.5 8.62" fill="none" stroke="#8ff3ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M42.5 13.81 L45.5 8.62" fill="none" stroke="#8ff3ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+<g id="hot-core">
+<path d="M59 32 L45.5 55.38 L18.5 55.38 L5 32 L18.5 8.62 L45.5 8.62 Z" fill="none" stroke="#ffffff" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.55"/>
+<path d="M53 32 L42.5 50.19 L21.5 50.19 L11 32 L21.5 13.81 L42.5 13.81 Z" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.55"/>
+<path d="M53 32 L59 32" fill="none" stroke="#ffffff" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.55"/>
+<path d="M42.5 50.19 L45.5 55.38" fill="none" stroke="#ffffff" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.55"/>
+<path d="M21.5 50.19 L18.5 55.38" fill="none" stroke="#ffffff" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.55"/>
+<path d="M11 32 L5 32" fill="none" stroke="#ffffff" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.55"/>
+<path d="M21.5 13.81 L18.5 8.62" fill="none" stroke="#ffffff" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.55"/>
+<path d="M42.5 13.81 L45.5 8.62" fill="none" stroke="#ffffff" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.55"/>
+</g>
+</svg>

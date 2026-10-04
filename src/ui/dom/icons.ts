@@ -12,6 +12,9 @@ export const C = {
   credits: '#ffd84d',
   danger: '#ff3355',
   energy: '#ff4fd8',
+  kinetic: '#ff7a33',
+  cryo: '#8ff3ff',
+  warning: '#ffd23f',
 } as const;
 
 export const icon = {
@@ -41,6 +44,20 @@ export const icon = {
   play: () => svg(24, C.ink, 2.5, '<path d="M8 5.5l11 6.5-11 6.5z"/>'),
   close: (size = 24, color: string = C.inkMuted) =>
     svg(size, color, 2.5, '<path d="M6 6l12 12M18 6L6 18"/>'),
+  /** Damage-type twins (design-system README): diamond+bolt, square+slug, hexagon+snowflake. */
   energy: (size = 16) =>
     svg(size, C.energy, 2.5, '<path d="M12 2l10 10-10 10L2 12z"/><path d="M13 7l-3 5h4l-3 5"/>'),
+  kinetic: (size = 16) =>
+    svg(size, C.kinetic, 2.5, '<rect x="4" y="4" width="16" height="16"/><path d="M9 12h6"/>'),
+  cryo: (size = 16) =>
+    svg(
+      size,
+      C.cryo,
+      2,
+      '<path d="M12 2.5l8.2 4.75v9.5L12 21.5l-8.2-4.75v-9.5z"/><path d="M12 7.5v9M8.1 9.75l7.8 4.5M15.9 9.75l-7.8 4.5"/>',
+    ),
+  /** Fast-forward chevrons (elite banner). */
+  chevrons: () => svg(28, C.ink, 2.5, '<path d="M6 6l6 6-6 6M12 6l6 6-6 6"/>'),
+  warning: (size = 28) =>
+    svg(size, C.warning, 2.5, '<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18v.5"/>'),
 } as const;

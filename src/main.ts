@@ -7,7 +7,7 @@ import '@fontsource/barlow-semi-condensed/latin-700.css';
 import Phaser from 'phaser';
 import { createPlatform } from './platform';
 import { VIEW_HEIGHT, VIEW_WIDTH } from './render/layout';
-import { setPlatform } from './render/registry';
+import { DEV_UNLOCK_ALL_KEY, setPlatform } from './render/registry';
 import { BootScene, NEXT_SCENE_KEY } from './render/scenes/BootScene';
 import { GameScene } from './render/scenes/GameScene';
 import { PerfSpikeScene } from './render/scenes/PerfSpikeScene';
@@ -29,6 +29,7 @@ const game = new Phaser.Game({
 });
 setPlatform(game, createPlatform());
 game.registry.set(NEXT_SCENE_KEY, next);
+game.registry.set(DEV_UNLOCK_ALL_KEY, import.meta.env.DEV && params.get('unlock') === 'all');
 
 // Dev-only handle for console profiling and automated playtests.
 if (import.meta.env.DEV) (window as unknown as { __game: Phaser.Game }).__game = game;

@@ -1,6 +1,10 @@
 /** Scaling curves, GDD §5. Wave numbers start at 1. */
 export const CURVES = {
   enemyHpGrowth: 1.08, // tune 1.07–1.10
+  /** Shields scale separately from hull (GDD §5). TODO(balance) */
+  shieldGrowth: 1.075,
+  /** Armor grows roughly linearly: base × (1 + armorPerWave × w) (GDD §5). TODO(balance) */
+  armorPerWave: 0.08,
   bountyGrowth: 1.045,
   upgradeCostGrowth: 1.18,
   /** Per-level tower damage multiplier. TODO(balance): not in GDD */
@@ -15,6 +19,14 @@ export const CURVES = {
 
 export function enemyHp(baseHp: number, wave: number): number {
   return baseHp * CURVES.enemyHpGrowth ** wave;
+}
+
+export function enemyShield(baseShield: number, wave: number): number {
+  return baseShield * CURVES.shieldGrowth ** wave;
+}
+
+export function enemyArmor(baseArmor: number, wave: number): number {
+  return baseArmor * (1 + CURVES.armorPerWave * wave);
 }
 
 export function bounty(baseBounty: number, wave: number): number {

@@ -12,6 +12,7 @@ import {
 } from '../../sim';
 import { dashedCircle, dashedRect, hatchRect } from '../draw';
 import { S, T, ZONES } from '../layout';
+import { towerFrames } from '../unitArt';
 import { UNIT_ATLAS } from '../units';
 
 export type PlacementRejection = PlacementError | 'credits';
@@ -74,6 +75,9 @@ export class Placement {
 
   begin(kind: TowerKind): void {
     this.kind = kind;
+    const frames = towerFrames(kind, 1);
+    this.ghostBase.setFrame(frames.base);
+    this.ghostTurret.setFrame(frames.turret);
     this.overField = false;
     this.actions.dragChanged(true);
   }

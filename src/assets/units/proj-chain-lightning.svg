@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="76" height="36" viewBox="-6 -6 76 36">
+<title>proj-chain-lightning</title>
+<g id="halo-far">
+<path d="M2 12 L12 4 L22 18 L32 6 L42 20 L52 8 L62 12" fill="none" stroke="#ff4fd8" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.12"/>
+</g>
+<g id="halo-near">
+<path d="M2 12 L12 4 L22 18 L32 6 L42 20 L52 8 L62 12" fill="none" stroke="#ff4fd8" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.35"/>
+</g>
+<g id="body">
+<path d="M2 12 L12 4 L22 18 L32 6 L42 20 L52 8 L62 12" fill="none" stroke="#ff4fd8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+</svg>

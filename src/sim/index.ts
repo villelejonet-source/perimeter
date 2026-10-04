@@ -11,6 +11,7 @@ export {
 export { placeCost, sellValue, upgradeCostFor } from './economy';
 export {
   TARGETING_MODES,
+  type Fx,
   type Enemy,
   type Projectile,
   type SimState,

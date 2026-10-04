@@ -1,58 +1,61 @@
 import type Phaser from 'phaser';
-import baseCritical from '../assets/units/base-critical.svg?raw';
-import baseDamaged from '../assets/units/base-damaged.svg?raw';
-import baseHealthy from '../assets/units/base-healthy.svg?raw';
-import enemyDrone from '../assets/units/enemy-drone.svg?raw';
-import projLaserBeam from '../assets/units/proj-laser-beam.svg?raw';
-import pulseL1Base from '../assets/units/tower-pulse-laser-l1-base.svg?raw';
-import pulseL1Turret from '../assets/units/tower-pulse-laser-l1-turret.svg?raw';
-import pulseL5Base from '../assets/units/tower-pulse-laser-l5-base.svg?raw';
-import pulseL5Turret from '../assets/units/tower-pulse-laser-l5-turret.svg?raw';
+import manifest from '../assets/units/manifest.json';
 import { S } from './layout';
 
 /** One atlas for every unit sprite, so the whole battlefield batches under one blend mode. */
 export const UNIT_ATLAS = 'units';
 
+/** Every unit SVG from the Claude Design handoff (synced by `npm run sync:design`). */
+const SOURCES = import.meta.glob<string>('../assets/units/*.svg', {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+});
+
+interface ManifestEntry {
+  key: string;
+  frame: number[];
+  glowPad: number;
+}
+
 interface UnitSpec {
   key: string;
-  /** SVG source text. */
   svg: string;
-  /** On-screen size in logical px of the glow-padded SVG frame (docs/design/units/manifest.json). */
+  /** On-screen size in logical px of the glow-padded SVG. */
   w: number;
   h: number;
 }
 
 /**
- * Display sizes from HANDOFF.md "Map geometry": towers 84 → 42 px (0.5), enemies 52 → 32 px,
- * base 120 → 72 px (0.6). The beam is 76 × 20 → 46 × 12 px and is stretched at runtime.
+ * On-screen scale of the glow-padded art (HANDOFF.md "Map geometry"): towers 84 → 42 px,
+ * enemies and status overlays 52 → 32 px, bosses 136 → 68 px, base 120 → 72 px.
+ * Projectiles and effects use 0.6 and are stretched at runtime.
  */
-const SPECS: readonly UnitSpec[] = [
-  { key: 'enemy-drone', svg: enemyDrone, w: 32, h: 32 },
-  { key: 'tower-pulse-laser-l1-base', svg: pulseL1Base, w: 42, h: 42 },
-  { key: 'tower-pulse-laser-l1-turret', svg: pulseL1Turret, w: 42, h: 42 },
-  { key: 'tower-pulse-laser-l5-base', svg: pulseL5Base, w: 42, h: 42 },
-  { key: 'tower-pulse-laser-l5-turret', svg: pulseL5Turret, w: 42, h: 42 },
-  { key: 'base-healthy', svg: baseHealthy, w: 72, h: 72 },
-  { key: 'base-damaged', svg: baseDamaged, w: 72, h: 72 },
-  { key: 'base-critical', svg: baseCritical, w: 72, h: 72 },
-  { key: 'proj-laser-beam', svg: projLaserBeam, w: 46, h: 12 },
-];
-
-/** The unit's SVG as a data URI, for DOM UI (build bar, tower panel). */
-export function unitSvgUri(key: string): string {
-  const spec = SPECS.find((s) => s.key === key);
-  if (!spec) throw new Error(`Unknown unit ${key}`);
-  return toDataUri(spec.svg);
+function displayScale(key: string): number {
+  if (key.startsWith('tower-') || key.startsWith('boss-')) return 0.5;
+  if (key.startsWith('enemy-') || key.startsWith('state-')) return 32 / 52;
+  return 0.6;
 }
 
-/** Logical size of a unit frame. */
-export function unitSize(key: string): { w: number; h: number } {
-  const spec = SPECS.find((s) => s.key === key);
-  if (!spec) throw new Error(`Unknown unit ${key}`);
-  return { w: spec.w, h: spec.h };
-}
+const SPECS: readonly UnitSpec[] = (manifest satisfies ManifestEntry[]).map((m) => {
+  const svg = SOURCES[`../assets/units/${m.key}.svg`];
+  if (!svg) throw new Error(`Unit SVG missing for ${m.key}`);
+  const scale = displayScale(m.key);
+  return {
+    key: m.key,
+    svg,
+    w: ((m.frame[0] ?? 0) + m.glowPad * 2) * scale,
+    h: ((m.frame[1] ?? 0) + m.glowPad * 2) * scale,
+  };
+});
 
-const srcKey = (key: string): string => `svg:${key}`;
+const BY_KEY = new Map(SPECS.map((s) => [s.key, s]));
+
+function spec(key: string): UnitSpec {
+  const s = BY_KEY.get(key);
+  if (!s) throw new Error(`Unknown unit ${key}`);
+  return s;
+}
 
 /**
  * SVGs are imported as text (`?raw`) and handed to Phaser as base64 data URIs: Vite would
@@ -60,6 +63,19 @@ const srcKey = (key: string): string => `svg:${key}`;
  * The unit SVGs are plain ASCII, so btoa is safe.
  */
 const toDataUri = (svg: string): string => `data:image/svg+xml;base64,${btoa(svg)}`;
+
+/** The unit's SVG as a data URI, for DOM UI (build bar, tower panel, alerts). */
+export function unitSvgUri(key: string): string {
+  return toDataUri(spec(key).svg);
+}
+
+/** Logical on-screen size of a unit frame. */
+export function unitSize(key: string): { w: number; h: number } {
+  const s = spec(key);
+  return { w: s.w, h: s.h };
+}
+
+const srcKey = (key: string): string => `svg:${key}`;
 
 /** Queue every unit SVG, rasterised at canvas resolution (logical size × S). */
 export function preloadUnits(scene: Phaser.Scene): void {
@@ -72,18 +88,19 @@ export function preloadUnits(scene: Phaser.Scene): void {
 }
 
 /**
- * Packs the rasterised SVGs into one dynamic-texture atlas (simple shelf packing) and
- * registers each as a named frame. Call once after preloadUnits has finished.
+ * Packs the rasterised SVGs into one dynamic-texture atlas (shelf packing, tallest first)
+ * and registers each as a named frame. Call once after preloadUnits has finished.
  */
 export function bakeUnitAtlas(scene: Phaser.Scene): void {
   if (scene.textures.exists(UNIT_ATLAS)) return;
   const pad = 2;
-  const maxW = 512;
+  const maxW = 1024;
+  const sorted = [...SPECS].sort((a, b) => b.h - a.h);
   const placed: { key: string; x: number; y: number; w: number; h: number }[] = [];
   let x = 0;
   let y = 0;
   let rowH = 0;
-  for (const s of SPECS) {
+  for (const s of sorted) {
     const w = Math.round(s.w * S);
     const h = Math.round(s.h * S);
     if (x + w > maxW) {

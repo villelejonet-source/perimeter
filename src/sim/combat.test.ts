@@ -3,7 +3,7 @@ import { towerDamage } from '../data/curves';
 import { ENEMIES } from '../data/enemies';
 import { GAME } from '../data/game';
 import { TOWERS } from '../data/towers';
-import { findTarget } from './combat';
+import { findTarget } from './targeting';
 import { Sim } from './sim';
 import { freezeWaves, runTicks, spawnAt, spotNear } from './testUtils';
 
@@ -107,7 +107,7 @@ describe('damage', () => {
   it('respects fire rate', () => {
     const { sim } = simWithTower(200);
     const e = spawnAt(sim, 200, 1e9);
-    e.speed = 0;
+    e.baseSpeed = 0;
     runTicks(sim, GAME.tickRate * 4 + 30);
     const hits = (1e9 - e.hp) / towerDamage(TOWERS.pulseLaser.damage, 1);
     // ~fireRate shots per second over 4 s (plus travel-time slack).
@@ -119,7 +119,7 @@ describe('damage', () => {
     const { sim } = simWithTower(200);
     const credits = sim.state.credits;
     const e = spawnAt(sim, 200, 1);
-    e.speed = 0;
+    e.baseSpeed = 0;
     runTicks(sim, 30);
     expect(e.alive).toBe(false);
     expect(sim.state.credits).toBe(credits + 5);
@@ -129,7 +129,7 @@ describe('damage', () => {
   it('projectiles fizzle when the target dies first', () => {
     const { sim } = simWithTower(200);
     const e = spawnAt(sim, 200, 1000);
-    e.speed = 0;
+    e.baseSpeed = 0;
     sim.step(); // fires
     expect(sim.state.projectiles.countAlive()).toBe(1);
     e.alive = false;

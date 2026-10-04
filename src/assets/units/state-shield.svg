@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="52" height="52" viewBox="-10 -10 52 52">
+<title>state-shield</title>
+<g id="halo-far">
+<path d="M2 16 A14 14 0 1 0 30 16 A14 14 0 1 0 2 16 Z" fill="none" stroke="#5b8cff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.12"/>
+</g>
+<g id="halo-near">
+<path d="M2 16 A14 14 0 1 0 30 16 A14 14 0 1 0 2 16 Z" fill="none" stroke="#5b8cff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.35"/>
+</g>
+<g id="body">
+<path d="M2 16 A14 14 0 1 0 30 16 A14 14 0 1 0 2 16 Z" fill="none" stroke="#5b8cff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+</svg>

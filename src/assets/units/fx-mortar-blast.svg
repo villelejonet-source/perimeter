@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="76" height="76" viewBox="-6 -6 76 76">
+<title>fx-mortar-blast</title>
+<g id="halo-far">
+<path d="M3 32 A29 29 0 1 0 61 32 A29 29 0 1 0 3 32 Z" fill="none" stroke="#ff4fd8" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.12"/>
+<path d="M12 32 A20 20 0 1 0 52 32 A20 20 0 1 0 12 32 Z" fill="none" stroke="#ff4fd8" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.12" stroke-dasharray="5 5"/>
+</g>
+<g id="halo-near">
+<path d="M3 32 A29 29 0 1 0 61 32 A29 29 0 1 0 3 32 Z" fill="none" stroke="#ff4fd8" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.35"/>
+<path d="M12 32 A20 20 0 1 0 52 32 A20 20 0 1 0 12 32 Z" fill="none" stroke="#ff4fd8" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.35" stroke-dasharray="5 5"/>
+</g>
+<g id="body">
+<path d="M3 32 A29 29 0 1 0 61 32 A29 29 0 1 0 3 32 Z" fill="none" stroke="#ff4fd8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M12 32 A20 20 0 1 0 52 32 A20 20 0 1 0 12 32 Z" fill="none" stroke="#ff4fd8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="5 5"/>
+</g>
+</svg>

@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="76" height="28" viewBox="-6 -6 76 28">
+<title>proj-cryo-beam</title>
+<g id="halo-far">
+<path d="M2 8 L62 8" fill="none" stroke="#8ff3ff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.12"/>
+<path d="M11 8 A5 5 0 1 0 21 8 A5 5 0 1 0 11 8 Z" fill="none" stroke="#8ff3ff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.12"/>
+<path d="M29 8 A5 5 0 1 0 39 8 A5 5 0 1 0 29 8 Z" fill="none" stroke="#8ff3ff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.12"/>
+<path d="M47 8 A5 5 0 1 0 57 8 A5 5 0 1 0 47 8 Z" fill="none" stroke="#8ff3ff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.12"/>
+</g>
+<g id="halo-near">
+<path d="M2 8 L62 8" fill="none" stroke="#8ff3ff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.35"/>
+<path d="M11 8 A5 5 0 1 0 21 8 A5 5 0 1 0 11 8 Z" fill="none" stroke="#8ff3ff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.35"/>
+<path d="M29 8 A5 5 0 1 0 39 8 A5 5 0 1 0 29 8 Z" fill="none" stroke="#8ff3ff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.35"/>
+<path d="M47 8 A5 5 0 1 0 57 8 A5 5 0 1 0 47 8 Z" fill="none" stroke="#8ff3ff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.35"/>
+</g>
+<g id="body">
+<path d="M2 8 L62 8" fill="none" stroke="#8ff3ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M11 8 A5 5 0 1 0 21 8 A5 5 0 1 0 11 8 Z" fill="none" stroke="#8ff3ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M29 8 A5 5 0 1 0 39 8 A5 5 0 1 0 29 8 Z" fill="none" stroke="#8ff3ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M47 8 A5 5 0 1 0 57 8 A5 5 0 1 0 47 8 Z" fill="none" stroke="#8ff3ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+</svg>

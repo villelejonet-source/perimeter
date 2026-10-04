@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="84" height="84" viewBox="-10 -10 84 84">
+<title>tower-arc-coil-l5-turret</title>
+<g id="halo-far">
+<path d="M19.5 32 A12.5 12.5 0 1 0 44.5 32 A12.5 12.5 0 1 0 19.5 32 Z" fill="none" stroke="#ff4fd8" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.12"/>
+<path d="M39 32 L54 32" fill="none" stroke="#ff4fd8" stroke-width="19" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.12"/>
+<path d="M28.5 38.06 L21 51.05" fill="none" stroke="#ff4fd8" stroke-width="19" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.12"/>
+<path d="M28.5 25.94 L21 12.95" fill="none" stroke="#ff4fd8" stroke-width="19" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.12"/>
+<path d="M50 32 A4 4 0 1 0 58 32 A4 4 0 1 0 50 32 Z" fill="none" stroke="#ff4fd8" stroke-width="19" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.12"/>
+<path d="M17 51.05 A4 4 0 1 0 25 51.05 A4 4 0 1 0 17 51.05 Z" fill="none" stroke="#ff4fd8" stroke-width="19" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.12"/>
+<path d="M17 12.95 A4 4 0 1 0 25 12.95 A4 4 0 1 0 17 12.95 Z" fill="none" stroke="#ff4fd8" stroke-width="19" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.12"/>
+<path d="M25 32 A7 7 0 1 0 39 32 A7 7 0 1 0 25 32 Z" fill="none" stroke="#ff4fd8" stroke-width="19" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.12"/>
+</g>
+<g id="halo-near">
+<path d="M19.5 32 A12.5 12.5 0 1 0 44.5 32 A12.5 12.5 0 1 0 19.5 32 Z" fill="none" stroke="#ff4fd8" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.35"/>
+<path d="M39 32 L54 32" fill="none" stroke="#ff4fd8" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.35"/>
+<path d="M28.5 38.06 L21 51.05" fill="none" stroke="#ff4fd8" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.35"/>
+<path d="M28.5 25.94 L21 12.95" fill="none" stroke="#ff4fd8" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.35"/>
+<path d="M50 32 A4 4 0 1 0 58 32 A4 4 0 1 0 50 32 Z" fill="none" stroke="#ff4fd8" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.35"/>
+<path d="M17 51.05 A4 4 0 1 0 25 51.05 A4 4 0 1 0 17 51.05 Z" fill="none" stroke="#ff4fd8" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.35"/>
+<path d="M17 12.95 A4 4 0 1 0 25 12.95 A4 4 0 1 0 17 12.95 Z" fill="none" stroke="#ff4fd8" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.35"/>
+<path d="M25 32 A7 7 0 1 0 39 32 A7 7 0 1 0 25 32 Z" fill="none" stroke="#ff4fd8" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.35"/>
+</g>
+<g id="body">
+<path d="M19.5 32 A12.5 12.5 0 1 0 44.5 32 A12.5 12.5 0 1 0 19.5 32 Z" fill="none" stroke="#ff4fd8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M39 32 L54 32" fill="none" stroke="#ff4fd8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M28.5 38.06 L21 51.05" fill="none" stroke="#ff4fd8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M28.5 25.94 L21 12.95" fill="none" stroke="#ff4fd8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M50 32 A4 4 0 1 0 58 32 A4 4 0 1 0 50 32 Z" fill="#06080d" stroke="#ff4fd8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill-opacity="1"/>
+<path d="M17 51.05 A4 4 0 1 0 25 51.05 A4 4 0 1 0 17 51.05 Z" fill="#06080d" stroke="#ff4fd8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill-opacity="1"/>
+<path d="M17 12.95 A4 4 0 1 0 25 12.95 A4 4 0 1 0 17 12.95 Z" fill="#06080d" stroke="#ff4fd8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill-opacity="1"/>
+<path d="M25 32 A7 7 0 1 0 39 32 A7 7 0 1 0 25 32 Z" fill="#06080d" stroke="#ff4fd8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill-opacity="1"/>
+</g>
+<g id="hot-core">
+<path d="M19.5 32 A12.5 12.5 0 1 0 44.5 32 A12.5 12.5 0 1 0 19.5 32 Z" fill="none" stroke="#ffffff" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.55"/>
+<path d="M39 32 L54 32" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.55"/>
+<path d="M28.5 38.06 L21 51.05" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.55"/>
+<path d="M28.5 25.94 L21 12.95" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.55"/>
+<path d="M50 32 A4 4 0 1 0 58 32 A4 4 0 1 0 50 32 Z" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.55"/>
+<path d="M17 51.05 A4 4 0 1 0 25 51.05 A4 4 0 1 0 17 51.05 Z" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.55"/>
+<path d="M17 12.95 A4 4 0 1 0 25 12.95 A4 4 0 1 0 17 12.95 Z" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.55"/>
+<path d="M25 32 A7 7 0 1 0 39 32 A7 7 0 1 0 25 32 Z" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.55"/>
+</g>
+</svg>

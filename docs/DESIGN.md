@@ -38,8 +38,8 @@ maps → `src/data/maps.ts`.
 | 2 (built) | Tower panel | `screens/in-run/Panel-Railgun.dc.html` | `src/ui/dom/TowerPanel.ts` | applied |
 | 2 (built) | Pause | `screens/in-run/Pause.dc.html` | none (only a pause toggle exists) | ready |
 | 2 (built) | Run end | `screens/in-run/RunEnd.dc.html` | `src/ui/dom/RunEnd.ts` | applied |
-| 2–3 | Unit art: towers L1/L5, enemies, bosses, base states, projectiles, status overlays | `units/` | `src/render/textures.ts` | ready, not applied |
-| 3 | Elite / boss / base-hit alerts | `screens/in-run/Alert-*.dc.html` | none | ready |
+| 2–3 | Unit art: towers L1/L5, enemies, bosses, base states, projectiles, status overlays | `units/` | `src/render/units.ts`, `WorldView.ts` | applied |
+| 3 | Elite / boss / base-hit alerts | `screens/in-run/Alert-*.dc.html` | `src/ui/dom/Alerts.ts` | applied |
 | 4 | Tower panel at LV 4 (specialization preview) | `screens/in-run/Panel-Level4.dc.html` | none | ready |
 | 4 | Specialization pick | `screens/meta/Specialization.dc.html` | none | ready |
 | 6 | Main menu | `screens/meta/Main.dc.html` | none | ready |
@@ -71,6 +71,10 @@ Decided 2026-10-04:
 - When the tower panel would cover the selected tower's range circle, the map scrolls up just enough and scrolls back on close.
 - Map 1's build area is clamped to y 646 in code until the JSON's `playArea.bottom` is fixed.
 
+- Phase 3: starting towers are Pulse Laser, Railgun and Plasma Mortar. Shields absorb first, then armor applies to hull. Cryo chill builds to a freeze (bosses only slow). Boss waves are a short escort plus the boss.
+- Elites other than the Drone (which has `enemy-drone-elite`) draw at 1.2× until a generic elite overlay exists (INVENTORY request 6).
+- The Wraith and Hive Carrier shadows render as grey glow under additive blending (INVENTORY request 5).
+
 Open: the remaining requests in `design/INVENTORY.md` §3.
 
 ## Applied
@@ -87,4 +91,7 @@ Log when a design has been implemented, so drift is visible later.
 | 2026-10-04 | `screens/in-run/Controls.dc.html` | Pause, 1x/2x/locked 3x, CALL EARLY, build bar (available / can't afford / denied / locked), drop-to-cancel (`src/ui/dom/Controls.ts`) |
 | 2026-10-04 | `screens/in-run/Place-*.dc.html` chip, `Place-NoCredits.dc.html` | Placement chip and not-enough-Credits status (`src/ui/dom/PlacementChip.ts`, `Controls.ts`) |
 | 2026-10-04 | `screens/in-run/Panel-Railgun.dc.html` | Tower panel for the Pulse Laser. The LV 4 spec hint waits for Phase 4 (`src/ui/dom/TowerPanel.ts`) |
+| 2026-10-04 | `units/glow/` (all 50) | Every unit baked into one atlas from `manifest.json`; tower art per kind/level, enemy + boss art, shield/armor/frozen/slowed overlays, projectiles, rail/chain/cryo beams, mortar blast (`src/render/units.ts`, `WorldView.ts`) |
+| 2026-10-04 | `screens/in-run/Alert-*.dc.html` | Elite banner, boss banner with hazard stripes and frame, base-hit edges + ring + "−N" (`src/ui/dom/Alerts.ts`) |
+| 2026-10-04 | `screens/in-run/Controls.dc.html` build bar | All 6 towers; locked slots for Arc Coil, Cryo, Swarm |
 | 2026-10-04 | `screens/in-run/RunEnd.dc.html` | Run end with wave reached, run time, kills, Play Again. Best, Cores/Shards and Menu wait for Phase 6; Double Cores waits for Phase 9 (`src/ui/dom/RunEnd.ts`) |
