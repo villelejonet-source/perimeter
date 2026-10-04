@@ -130,8 +130,10 @@ export const ENEMIES: Record<EnemyKind, EnemyDef> = {
     kind: 'aegis',
     name: 'Aegis',
     baseHp: 220,
-    baseShield: 260,
-    shieldRegen: 0.15,
+    // Phase 5: 180 / 0.10 (was 260 / 0.15): at wave 20 it regenerated ~165 shield/s, so any
+    // kinetic-leaning build lost to it and Ion Rail became the must-pick Railgun spec.
+    baseShield: 180,
+    shieldRegen: 0.1,
     speed: 22,
     baseBounty: 80,
     radius: 16,

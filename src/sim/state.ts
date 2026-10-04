@@ -1,5 +1,6 @@
 import type { DamageType } from '../data/damage';
 import type { EnemyKind } from '../data/enemies';
+import type { MetaModifiers } from '../data/meta';
 import type { SpecId } from '../data/specs';
 import type { TowerKind } from '../data/towers';
 import { Pool } from './pool';
@@ -168,6 +169,8 @@ export interface RunStats {
   damageDealt: number;
   damageByType: Record<DamageType, number>;
   damageByTower: Partial<Record<TowerKind, number>>;
+  /** Enemies that reached the base, by kind (balance analysis). */
+  leaksByKind: Partial<Record<EnemyKind, number>>;
 }
 
 export interface SimState {
@@ -175,6 +178,12 @@ export interface SimState {
   paused: boolean;
   gameOver: boolean;
   baseHp: number;
+  /** Base HP at the start of the run (20 + research). */
+  maxBaseHp: number;
+  /** Research applied to this run. */
+  meta: MetaModifiers;
+  /** Ticks between automatic waves (20 s + research). */
+  waveIntervalTicks: number;
   credits: number;
   /** Highest wave started so far (0 before the first wave). */
   wave: number;
@@ -254,8 +263,8 @@ export function newTower(): Tower {
 }
 
 /** Recompute a tower's cached stats after placement, an upgrade or a specialization. */
-export function refreshStats(t: Tower): void {
-  t.stats = towerStats(t.kind, t.level, t.spec);
+export function refreshStats(t: Tower, meta?: MetaModifiers): void {
+  t.stats = towerStats(t.kind, t.level, t.spec, meta);
 }
 
 export function newProjectile(): Projectile {
@@ -307,5 +316,6 @@ export function newStats(): RunStats {
     damageDealt: 0,
     damageByType: { energy: 0, kinetic: 0, utility: 0 },
     damageByTower: {},
+    leaksByKind: {},
   };
 }

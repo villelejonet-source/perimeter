@@ -84,7 +84,7 @@ export function towerAt(
   t.spec = spec;
   t.heat = 0;
   t.idle = 0;
-  refreshStats(t);
+  refreshStats(t, sim.state.meta);
   return t;
 }
 

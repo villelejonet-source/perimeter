@@ -281,7 +281,7 @@ export class WorldView {
 
   private syncBase(): void {
     const s = this.sim.state;
-    const frac = s.baseHp / GAME.baseHp;
+    const frac = s.baseHp / s.maxBaseHp;
     const frame =
       frac <= BASE_CRITICAL_AT
         ? 'base-critical'

@@ -2,6 +2,7 @@ import { towerDamage } from '../data/curves';
 import type { DamageType } from '../data/damage';
 import { GAME } from '../data/game';
 import { SPEC_TUNING as T, SPECS, type SpecId } from '../data/specs';
+import { FRESH_ACCOUNT, type MetaModifiers } from '../data/meta';
 import { TOWERS, type Attack, type TowerKind } from '../data/towers';
 
 /** A tower's effective numbers at a level, with its specialization applied. */
@@ -16,17 +17,23 @@ export interface TowerStats {
 }
 
 /**
- * Base stats scaled by level, then modified by the specialization. Pure: shared by the sim
- * (cached on each tower when it's placed, upgraded or specialized) and the tower panel.
+ * Base stats scaled by level, then modified by research (`meta`) and the specialization.
+ * Pure: shared by the sim (cached on each tower when it's placed, upgraded or specialized)
+ * and the tower panel.
  */
-export function towerStats(kind: TowerKind, level: number, spec: SpecId | null): TowerStats {
+export function towerStats(
+  kind: TowerKind,
+  level: number,
+  spec: SpecId | null,
+  meta: MetaModifiers = FRESH_ACCOUNT,
+): TowerStats {
   const def = TOWERS[kind];
   const base = def.attack.type === 'chill' ? def.attack.chillPerHit : def.damage;
   const s: TowerStats = {
     damageType: spec ? (SPECS[spec].damageType ?? def.damageType) : def.damageType,
-    power: towerDamage(base, level),
-    fireRate: def.fireRate,
-    range: def.range,
+    power: towerDamage(base, level) * meta.towerDamageMult,
+    fireRate: def.fireRate * meta.towerFireRateMult,
+    range: def.range * meta.towerRangeMult,
     canHitFlying: def.canHitFlying,
     attack: { ...def.attack },
   };
@@ -52,7 +59,8 @@ export function towerStats(kind: TowerKind, level: number, spec: SpecId | null):
       }
       break;
     case 'ionRail':
-      if (a.type === 'rail') a.strip = true;
+      if (a.type === 'rail') a.strip = T.ionRail.shieldStripMult;
+      s.power *= T.ionRail.damageMult;
       break;
     case 'plasmaPools':
       if (a.type === 'shell') a.pool = { ...T.plasmaPools };

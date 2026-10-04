@@ -12,9 +12,10 @@ export type Attack =
   /**
    * Instant line to max range; hits up to `maxHits` ground enemies within `width / 2` of it,
    * nearest first. `bonusPerPierce` adds damage per enemy already pierced (Accelerator);
-   * `strip` removes the shield of every enemy on the line (Ion Rail).
+   * `strip` removes that multiple of the hit's damage from the shield of every enemy on the
+   * line (Ion Rail).
    */
-  | { type: 'rail'; width: number; maxHits: number; bonusPerPierce?: number; strip?: boolean }
+  | { type: 'rail'; width: number; maxHits: number; bonusPerPierce?: number; strip?: number }
   /** Lobbed shell to the target's position; splash on landing. Specs add pools or bomblets. */
   | {
       type: 'shell';

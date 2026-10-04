@@ -54,15 +54,25 @@ export const TOWER_SPECS: Record<TowerKind, readonly [SpecId, SpecId, SpecId]> =
  * starting values. TODO(balance): tune in Phase 5.
  */
 export const SPEC_TUNING = {
-  overclock: { ratePerSecond: 0.1, maxBonus: 1, idleResetSeconds: 2 },
-  flechette: { pierce: 2, speed: 520 },
-  prism: { beams: 3, damageShare: 0.45 },
-  accelerator: { extraHits: 2, bonusPerPierce: 0.25 },
-  executioner: { threshold: 0.15, bossBonus: 0.5 },
-  ionRail: {},
+  // Phase 5: max 0.7 (mockup said +100%); at +100% it was the best Pulse spec in every strategy.
+  overclock: { ratePerSecond: 0.1, maxBonus: 0.7, idleResetSeconds: 2 },
+  // Phase 5: +25% damage makes up for giving up energy's shield bonus.
+  flechette: { pierce: 2, speed: 520, damageMult: 1.25 },
+  // Phase 5: 0.65 (mockup said 45%); Prism was the weakest Pulse spec in every strategy.
+  prism: { beams: 3, damageShare: 0.65 },
+  // Phase 5: +3 pierce, 0.4 per pierce (was +2, 0.25): weakest Railgun spec for focused builds.
+  accelerator: { extraHits: 3, bonusPerPierce: 0.4 },
+  // Phase 5: 0.2 / 0.75 (was 0.15 / 0.5): Ion Rail out-performed it in every strategy.
+  executioner: { threshold: 0.2, bossBonus: 0.75 },
+  // Phase 5: strips shield = 4 × hit damage (was: all of it); deleting boss shields outright
+  // made it the best Railgun spec in every strategy.
+  // Phase 5: 70% damage. Big hits barely notice armor, so switching to energy cost it nothing
+  // and Ion Rail was the best Railgun spec in every strategy.
+  ionRail: { shieldStripMult: 4, damageMult: 0.7 },
   plasmaPools: { seconds: 3, radius: 24, dpsShare: 0.5 },
   cluster: { count: 5, ringRadius: 22, damageShare: 0.35, radius: 14 },
-  siege: { rangeMult: 1.6, splashMult: 1.5, rateMult: 0.6, damageMult: 1.5 },
+  // Phase 5: damage 1.65 (was 1.5); the extra range didn't make up for the slower rate.
+  siege: { rangeMult: 1.6, splashMult: 1.5, rateMult: 0.6, damageMult: 1.65 },
   storm: { extraJumps: 3 },
   overload: { stunSeconds: 0.4 },
   capacitor: { chargeSeconds: 4, damageMult: 6 },
@@ -121,8 +131,8 @@ export const SPECS: Record<SpecId, SpecDef> = {
     id: 'ionRail',
     tower: 'railgun',
     name: 'Ion Rail',
-    description: 'Fires an ion beam that strips the shield off every enemy on its line.',
-    statLine: 'STRIPS SHIELDS ON THE LINE',
+    description: 'Fires an ion beam that tears the shields off every enemy on its line.',
+    statLine: `STRIPS ${T.ionRail.shieldStripMult}× DMG OF SHIELD · ${pct(T.ionRail.damageMult)} DMG`,
     damageType: 'energy',
     shapeNote: 'Slug → ion beam',
     strongVs: 'Shield',

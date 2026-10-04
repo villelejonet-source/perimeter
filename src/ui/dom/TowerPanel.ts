@@ -232,7 +232,7 @@ export class TowerPanel {
     this.renderSpecSlot(t);
 
     const now = t.stats;
-    const next = towerStats(t.kind, t.level + 1, t.spec);
+    const next = towerStats(t.kind, t.level + 1, t.spec, this.sim.state.meta);
     setText(this.stats.rate.now, now.attack.type === 'aura' ? '—' : `${now.fireRate.toFixed(1)}/s`);
     this.noChange(this.stats.rate.next);
     setText(this.stats.range.now, tiles(now.range));

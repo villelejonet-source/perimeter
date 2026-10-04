@@ -1,5 +1,4 @@
 import type { DamageType } from '../../data/damage';
-import { GAME } from '../../data/game';
 import { SPECS, TOWER_SPECS, type SpecDef, type SpecId } from '../../data/specs';
 import { TOWERS, type TowerKind } from '../../data/towers';
 import type { SimState } from '../../sim';
@@ -28,13 +27,13 @@ export class SpecPicker {
     this.el.setAttribute('aria-label', 'Specialization pick');
     const col = h('div', 'col');
 
-    const baseFrac = Math.max(0, state.baseHp / GAME.baseHp);
+    const baseFrac = Math.max(0, state.baseHp / state.maxBaseHp);
     col.append(
       h(
         'div',
         'spec-hud',
         `<div style="display:flex;flex-direction:column"><span class="label muted">Wave</span><span class="d" style="font-size:20px;line-height:24px;font-weight:700">${state.wave}</span></div>
-         <div style="display:flex;flex-direction:column;gap:4px;width:110px"><span class="label muted">Base ${state.baseHp} / ${GAME.baseHp}</span><span class="base-bar"><span style="width:${Math.round(baseFrac * 100)}%"></span></span></div>
+         <div style="display:flex;flex-direction:column;gap:4px;width:110px"><span class="label muted">Base ${state.baseHp} / ${state.maxBaseHp}</span><span class="base-bar"><span style="width:${Math.round(baseFrac * 100)}%"></span></span></div>
          <div style="display:flex;align-items:center;gap:4px">${icon.coin(20)}<span class="d" style="font-size:20px;line-height:24px;font-weight:700">${fmt.int(state.credits)}</span></div>
          <span class="label paused">Paused</span>`,
       ),

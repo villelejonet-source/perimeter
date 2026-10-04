@@ -1,5 +1,6 @@
 import { GAME } from '../data/game';
 import { DEFAULT_MAP_ID, MAPS, type MapDef } from '../data/maps';
+import { FRESH_ACCOUNT, type MetaModifiers } from '../data/meta';
 import { SPEC_LEVEL, TOWER_SPECS } from '../data/specs';
 import { STARTING_UNLOCKS, TOWERS, type TowerKind } from '../data/towers';
 import type { Command } from './commands';
@@ -28,7 +29,9 @@ import { callEarly, updateWaves } from './waves';
 export interface SimConfig {
   seed: number;
   mapId?: string;
-  /** Tower kinds the player may build (default: the GDD's starting three). */
+  /** Research applied to this run (default: a fresh account). */
+  meta?: MetaModifiers;
+  /** Override the meta's unlocked towers (dev `?unlock=all`, tests). */
   unlockedTowers?: readonly TowerKind[];
 }
 
@@ -49,12 +52,19 @@ export class Sim {
     this.map = map;
     this.path = new Path(map.path);
     this.rng = new Rng(config.seed);
+    const meta = config.meta ?? FRESH_ACCOUNT;
+    const maxBaseHp = GAME.baseHp + meta.baseHpBonus;
     this.state = {
       tick: 0,
       paused: false,
       gameOver: false,
-      baseHp: GAME.baseHp,
-      credits: GAME.startCredits,
+      baseHp: maxBaseHp,
+      maxBaseHp,
+      meta,
+      waveIntervalTicks: Math.round(
+        (GAME.waveIntervalSeconds + meta.waveTimerBonusSeconds) * GAME.tickRate,
+      ),
+      credits: GAME.startCredits + meta.startCreditsBonus,
       wave: 0,
       nextWaveIn: Math.round(GAME.firstWaveDelaySeconds * GAME.tickRate),
       nextId: 1,
@@ -64,7 +74,7 @@ export class Sim {
       fx: new Pool(newFx, 64),
       zones: new Pool(newZone, 16),
       spawns: [],
-      unlocked: config.unlockedTowers ?? STARTING_UNLOCKS,
+      unlocked: config.unlockedTowers ?? meta.unlockedTowers ?? STARTING_UNLOCKS,
       stats: newStats(),
       lastRejection: null,
     };
@@ -126,7 +136,7 @@ export class Sim {
         t.kind = cmd.kind;
         t.x = x;
         t.y = y;
-        t.level = 1;
+        t.level = s.meta.startingLevel;
         t.cooldown = 0;
         t.targeting = 'first';
         t.invested = cost;
@@ -134,7 +144,7 @@ export class Sim {
         t.spec = null;
         t.heat = 0;
         t.idle = 0;
-        refreshStats(t);
+        refreshStats(t, s.meta);
         s.credits -= cost;
         break;
       }
@@ -146,7 +156,7 @@ export class Sim {
         s.credits -= cost;
         t.invested += cost;
         t.level++;
-        refreshStats(t);
+        refreshStats(t, s.meta);
         break;
       }
       case 'sellTower': {
@@ -169,7 +179,7 @@ export class Sim {
         if (t.spec) return this.reject('specialized');
         if (!TOWER_SPECS[t.kind].includes(cmd.spec)) return this.reject('wrongSpec');
         t.spec = cmd.spec;
-        refreshStats(t);
+        refreshStats(t, s.meta);
         break;
       }
       case 'callEarly':

@@ -101,26 +101,29 @@ describe('Pulse Laser specs', () => {
 });
 
 describe('Railgun specs', () => {
-  it('Accelerator pierces 2 more, and each pierce adds damage', () => {
+  it('Accelerator pierces more, and each pierce adds damage', () => {
     const sim = labSim();
     const t = towerInLine(sim, 'railgun', 40, 'accelerator');
     t.targeting = 'last';
-    const es = [0, 8, 16, 24, 32].map((o) => spawnAt(sim, 40 + o, 1000));
+    const atk = t.stats.attack;
+    if (atk.type !== 'rail') throw new Error('rail');
+    expect(atk.maxHits).toBe(2 + T.accelerator.extraHits);
+    const es = Array.from({ length: atk.maxHits + 1 }, (_, i) => spawnAt(sim, 40 + i * 8, 1000));
     hold(...es);
     sim.step();
     const dmg = es.map((e) => 1000 - e.hp);
-    const base = t.stats.power;
-    for (let i = 0; i < 4; i++)
-      expect(dmg[i]).toBeCloseTo(base * (1 + T.accelerator.bonusPerPierce * i));
-    expect(dmg[4]).toBe(0);
+    for (let i = 0; i < atk.maxHits; i++) {
+      expect(dmg[i]).toBeCloseTo(t.stats.power * (1 + T.accelerator.bonusPerPierce * i));
+    }
+    expect(dmg[atk.maxHits]).toBe(0);
   });
 
-  it('Executioner kills non-bosses left below 15% and hits bosses harder', () => {
+  it('Executioner kills non-bosses left below the threshold and hits bosses harder', () => {
     const sim = labSim();
     const t = towerInLine(sim, 'railgun', 40, 'executioner');
     const power = t.stats.power;
     const e = spawnAt(sim, 50, 1000);
-    e.hp = power + e.maxHp * 0.1; // the hit leaves it at 10%
+    e.hp = power + e.maxHp * (T.executioner.threshold - 0.05); // the hit leaves it just under
     hold(e);
     sim.step();
     expect(e.alive).toBe(false);
@@ -135,17 +138,28 @@ describe('Railgun specs', () => {
     expect(hp - boss.hp).toBeCloseTo(t2.stats.power * (1 + T.executioner.bossBonus));
   });
 
-  it('Ion Rail is energy and strips the shield of every enemy on its line', () => {
+  it('Ion Rail is energy and strips shields along its whole line (bounded on bosses)', () => {
     const sim = labSim();
     const t = towerInLine(sim, 'railgun', 40, 'ionRail');
     t.targeting = 'last';
     const ws = [0, 8, 16, 24].map((o) => spawnAt(sim, 40 + o, 0, 'warden', { wave: 12 }));
     hold(...ws);
     sim.step();
-    // Beyond maxHits too: all shields gone.
+    // Beyond maxHits too: regular shields are gone.
     for (const w of ws) expect(w.shield).toBe(0);
     expect(sim.state.stats.damageByType.energy).toBeGreaterThan(0);
     expect(sim.state.fx.items.some((f) => f.alive && f.kind === 'ion')).toBe(true);
+    // A boss shield loses strip × damage, not all of it.
+    const sim2 = labSim();
+    const t2 = towerInLine(sim2, 'railgun', 40, 'ionRail');
+    const aegis = spawnAt(sim2, 50, 0, 'aegis', { wave: 20 });
+    hold(aegis);
+    const s0 = aegis.shield;
+    sim2.step();
+    expect(aegis.shield).toBeGreaterThan(0);
+    expect(s0 - aegis.shield).toBeGreaterThanOrEqual(
+      t2.stats.power * T.ionRail.shieldStripMult - 1e-6,
+    );
   });
 });
 

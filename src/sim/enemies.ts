@@ -50,7 +50,9 @@ export function spawnEnemy(
   e.armor = enemyArmor(baseArmor, wave) * eliteMult(ELITE.armorMult);
   e.baseSpeed = def.speed;
   e.speed = def.speed;
-  e.bounty = Math.round(bounty(def.baseBounty, wave) * eliteMult(ELITE.bountyMult));
+  e.bounty = Math.round(
+    bounty(def.baseBounty, wave) * eliteMult(ELITE.bountyMult) * state.meta.bountyMult,
+  );
   e.radius = def.radius;
   e.flying = def.flying || (also?.flying ?? false);
   e.leakDamage = def.boss ? -1 : elite ? ELITE.leakDamage : def.leakDamage;
@@ -135,6 +137,7 @@ function leak(state: SimState, e: Enemy): void {
   const dmg = e.leakDamage < 0 ? Math.max(state.baseHp - 1, 1) : e.leakDamage;
   state.baseHp = Math.max(0, state.baseHp - dmg);
   state.stats.leaks++;
+  state.stats.leaksByKind[e.kind] = (state.stats.leaksByKind[e.kind] ?? 0) + 1;
 }
 
 export function updateEnemies(state: SimState, path: Path): void {

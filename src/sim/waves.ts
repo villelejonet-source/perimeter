@@ -8,7 +8,6 @@ import type { Rng } from './rng';
 import type { SimState, SpawnSpec } from './state';
 
 const spawnSpacingTicks = Math.round(CURVES.spawnSpacingSeconds * GAME.tickRate);
-const waveIntervalTicks = Math.round(GAME.waveIntervalSeconds * GAME.tickRate);
 const bossDelayTicks = Math.round(WAVES.bossDelaySeconds * GAME.tickRate);
 
 export type WaveType = 'normal' | 'elite' | 'boss';
@@ -74,14 +73,17 @@ export function buildWave(wave: number, rng: Rng): SpawnSpec[] {
 
 export function startWave(state: SimState, rng: Rng): void {
   state.wave++;
-  state.nextWaveIn = waveIntervalTicks;
+  state.nextWaveIn = state.waveIntervalTicks;
   state.spawns.push({ wave: state.wave, queue: buildWave(state.wave, rng), next: 0, cooldown: 0 });
 }
 
 /** Start the next wave now, paying a bonus proportional to the remaining timer. */
 export function callEarly(state: SimState, rng: Rng): void {
   const remainingSeconds = state.nextWaveIn / GAME.tickRate;
-  const bonus = callEarlyBonus(remainingSeconds, GAME.callEarlyCreditsPerSecond, state.wave + 1);
+  const bonus = Math.floor(
+    callEarlyBonus(remainingSeconds, GAME.callEarlyCreditsPerSecond, state.wave + 1) *
+      state.meta.callEarlyMult,
+  );
   state.credits += bonus;
   state.stats.creditsEarned += bonus;
   startWave(state, rng);

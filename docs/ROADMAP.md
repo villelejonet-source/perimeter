@@ -51,13 +51,16 @@ _Accepted 2026-10-04: per-mechanic tests in `src/sim/*.test.ts`; `mixedDamage.te
 _Accepted 2026-10-04: `src/sim/specs.test.ts` (one test per spec plus command rules). Spec data in `src/data/specs.ts`, behaviour in `src/sim/specs.ts` + `towers.ts`/`projectiles.ts`; pick screen `src/ui/dom/SpecPicker.ts`._
 
 ## Phase 5 — Balance simulator
-- [ ] `tools/balance-sim`: runs the sim headless in Node at max speed
-- [ ] Bot strategies: greedy-DPS, balanced-mix, spec-focused
-- [ ] Output CSV + summary: wall wave, run duration, Credits curve, damage per tower/type
-- [ ] Meta-level presets (fresh account, 10 h progress, 50 h progress)
+- [x] `tools/balance-sim`: runs the sim headless in Node at max speed
+- [x] Bot strategies: greedy-DPS, balanced-mix, spec-focused
+- [x] Output CSV + summary: wall wave, run duration, Credits curve, damage per tower/type
+- [x] Meta-level presets (fresh account, 10 h progress, 50 h progress)
 
 **Accept:** fresh-account bots hit the wall at wave 30–40 within 10–15 min of game time;
 no single tower/spec dominates every strategy. Report the numbers.
+_Accepted 2026-10-04: fresh medians wave 37 / 32 / 32 (greedy / balanced / spec-focused) at
+11:42 / 10:12 / 10:03; no tower or spec ranks first in every strategy. Full numbers and the
+tuning log in `docs/BALANCE.md`._
 
 ## Phase 6 — Meta layer and persistence
 - [ ] Save/load with schemaVersion and migrations; autosave each wave and on app pause

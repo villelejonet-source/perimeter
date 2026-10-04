@@ -2,7 +2,7 @@ import { GAME } from '../data/game';
 import { SPEC_TUNING } from '../data/specs';
 import type { TowerDef } from '../data/towers';
 import { applyHit } from './damage';
-import { applyChill, forceFreeze } from './enemies';
+import { applyChill, forceFreeze, SHIELD_REGEN_DELAY_TICKS } from './enemies';
 import { emitFx } from './fx';
 import type { Path } from './path';
 import type { Rng } from './rng';
@@ -129,8 +129,11 @@ function fire(state: SimState, path: Path, rng: Rng, t: Tower, target: Enemy): v
       for (const e of state.enemies.items) {
         if (!e.alive || e.flying || e.id >= bornAfter) continue;
         if (distToSegment(e.x, e.y, t.x, t.y, ex, ey) > half + e.radius) continue;
-        // Ion Rail strips the shield of everything on the line, not just what it damages.
-        if (atk.strip && e.shield > 0) e.shield = 0;
+        // Ion Rail strips shields along the whole line, not just on the enemies it damages.
+        if (atk.strip && e.shield > 0) {
+          e.shield = Math.max(0, e.shield - st.power * atk.strip);
+          e.shieldDelay = SHIELD_REGEN_DELAY_TICKS;
+        }
         lineHits[hits] = e;
         lineDist[hits] = (e.x - t.x) ** 2 + (e.y - t.y) ** 2;
         if (++hits === lineHits.length) break;

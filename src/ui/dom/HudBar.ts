@@ -14,6 +14,7 @@ export class HudBar {
   private readonly baseLabel: HTMLElement;
   private readonly baseIcon: HTMLElement;
   private readonly base: HTMLElement;
+  private readonly baseMax: HTMLElement;
   private readonly creditsCell: HTMLElement;
   private readonly credits: HTMLElement;
   private readonly next: HTMLElement;
@@ -31,12 +32,13 @@ export class HudBar {
     this.wave = cell('WAVE', '<span class="d hud-num"></span>').querySelector('.hud-num')!;
     this.baseCell = cell(
       'BASE',
-      `<div class="hud-value"><span class="ico"></span><span class="d hud-num"></span><span class="d hud-sub">/${GAME.baseHp}</span></div>`,
+      `<div class="hud-value"><span class="ico"></span><span class="d hud-num"></span><span class="d hud-sub max"></span></div>`,
     );
     this.baseLabel = this.baseCell.querySelector('.label')!;
     this.baseIcon = this.baseCell.querySelector('.ico')!;
     this.baseIcon.innerHTML = icon.base();
     this.base = this.baseCell.querySelector('.hud-num')!;
+    this.baseMax = this.baseCell.querySelector('.max')!;
     this.creditsCell = cell(
       'CREDITS',
       `<div class="hud-value">${icon.coin()}<span class="d hud-num"></span></div>`,
@@ -56,6 +58,7 @@ export class HudBar {
   update(s: SimState, now: number): void {
     setText(this.wave, String(s.wave));
     setText(this.base, String(s.baseHp));
+    setText(this.baseMax, `/${s.maxBaseHp}`);
     setText(this.credits, fmt.int(s.credits));
     setText(this.next, fmt.clock(s.nextWaveIn / GAME.tickRate));
 
