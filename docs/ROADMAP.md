@@ -43,11 +43,12 @@ _Accepted 2026-10-04: verified in the browser and on device._
 _Accepted 2026-10-04: per-mechanic tests in `src/sim/*.test.ts`; `mixedDamage.test.ts` shows equal-budget mixed loadouts beat energy-only and kinetic-only on mixed waves. Arc Coil, Cryo and Swarm are locked until the Research Lab (Phase 6); `?unlock=all` in dev builds._
 
 ## Phase 4 — Specializations
-- [ ] Spec choice UI at level 5 (3 cards, locked after pick)
-- [ ] All 18 specs implemented as data + behavior modules
-- [ ] Type-changing specs (Flechette, Ion Rail, EMP Warheads) integrate with the damage model
+- [x] Spec choice UI at level 5 (3 cards, locked after pick)
+- [x] All 18 specs implemented as data + behavior modules
+- [x] Type-changing specs (Flechette, Ion Rail, EMP Warheads) integrate with the damage model
 
 **Accept:** each spec has a test showing its distinct behavior.
+_Accepted 2026-10-04: `src/sim/specs.test.ts` (one test per spec plus command rules). Spec data in `src/data/specs.ts`, behaviour in `src/sim/specs.ts` + `towers.ts`/`projectiles.ts`; pick screen `src/ui/dom/SpecPicker.ts`._
 
 ## Phase 5 — Balance simulator
 - [ ] `tools/balance-sim`: runs the sim headless in Node at max speed

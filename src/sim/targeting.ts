@@ -1,4 +1,3 @@
-import { TOWERS } from '../data/towers';
 import type { Enemy, SimState, TargetingMode, Tower } from './state';
 
 /** Better-than comparison per targeting mode; ties break on lower id for determinism. */
@@ -32,13 +31,16 @@ function isBetter(
  * can't hit them; the Swarm Launcher (anti-air) picks a flying target first when one is in range.
  */
 export function findTarget(state: SimState, tower: Tower): Enemy | null {
-  const def = TOWERS[tower.kind];
-  const prefersFlying = def.attack.type === 'missiles';
+  const def = tower.stats;
+  // Swarm Launcher is anti-air; Hunter-Killer goes for bosses and elites instead.
+  const hunts = def.attack.type === 'missiles' && def.attack.hunt === true;
+  const prefersFlying = def.attack.type === 'missiles' && !hunts;
   const rangeSq = def.range * def.range;
+  // Flying enemies are skipped by towers that can't hit them.
   let best: Enemy | null = null;
   let bestSq = 0;
-  let bestFlying: Enemy | null = null;
-  let bestFlyingSq = 0;
+  let bestPreferred: Enemy | null = null;
+  let bestPreferredSq = 0;
   for (const e of state.enemies.items) {
     if (!e.alive) continue;
     if (e.flying && !def.canHitFlying) continue;
@@ -50,16 +52,16 @@ export function findTarget(state: SimState, tower: Tower): Enemy | null {
       best = e;
       bestSq = dSq;
     }
+    const preferred = hunts ? e.boss || e.elite : prefersFlying && e.flying;
     if (
-      prefersFlying &&
-      e.flying &&
-      (bestFlying === null || isBetter(tower.targeting, e, dSq, bestFlying, bestFlyingSq))
+      preferred &&
+      (bestPreferred === null || isBetter(tower.targeting, e, dSq, bestPreferred, bestPreferredSq))
     ) {
-      bestFlying = e;
-      bestFlyingSq = dSq;
+      bestPreferred = e;
+      bestPreferredSq = dSq;
     }
   }
-  return bestFlying ?? best;
+  return bestPreferred ?? best;
 }
 
 /**

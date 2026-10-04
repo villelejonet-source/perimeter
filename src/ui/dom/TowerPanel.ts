@@ -12,7 +12,9 @@ import {
 } from '../../sim';
 import { towerFrames } from '../../render/unitArt';
 import { unitSvgUri } from '../../render/units';
-import { towerPower } from '../../sim/towers';
+import { SPEC_LEVEL, SPECS, TOWER_SPECS } from '../../data/specs';
+import { towerStats, type TowerStats } from '../../sim/specs';
+import { specIcon } from './specIcons';
 import { icon, C } from './icons';
 import { fmt, h, setText, toggleClass } from './overlay';
 
@@ -25,6 +27,16 @@ function damageTypeChip(type: DamageType): string {
         ? [icon.kinetic(), 'KINETIC']
         : [icon.cryo(), 'CRYO'];
   return `${ico}<span class="label">${label}</span>`;
+}
+
+/** First spec of the tower, for the choose card's icon. */
+const SPECS_FOR_HINT = (t: Tower) => TOWER_SPECS[t.kind][0];
+
+/** Hits per shot: missiles per salvo, Prism beams. */
+function shotsPer(s: TowerStats): number {
+  if (s.attack.type === 'missiles') return s.attack.count;
+  if (s.attack.type === 'bolt') return s.attack.beams ?? 1;
+  return 1;
 }
 
 /** Ranges show in 16-px grid tiles (decided 2026-10-04). */
@@ -40,6 +52,9 @@ export class TowerPanel {
   private readonly level: HTMLElement;
   private readonly pips: HTMLElement[];
   private readonly dmgType: HTMLElement;
+  private readonly specName: HTMLElement;
+  private readonly specSlot: HTMLElement;
+  private specKey = '';
   private readonly statLabels: Record<'dmg' | 'dps', HTMLElement>;
   private readonly stats: Record<
     'dmg' | 'rate' | 'range' | 'dps',
@@ -62,6 +77,7 @@ export class TowerPanel {
     private readonly sim: Sim,
     private readonly send: (cmd: Command) => void,
     private readonly onClose: () => void,
+    private readonly onChooseSpec: (towerId: number) => void,
   ) {
     this.el = h('section', 'panel');
     this.el.hidden = true;
@@ -71,9 +87,9 @@ export class TowerPanel {
       'panel-head',
       `<div class="panel-art"><img alt=""><img alt=""></div>
        <div style="flex:1;display:flex;flex-direction:column;gap:4px">
-         <h2 class="panel-title"></h2>
+         <div style="display:flex;align-items:baseline;gap:8px;min-width:0"><h2 class="panel-title"></h2><span class="label spec-name" style="color:var(--accent);white-space:nowrap"></span></div>
          <div style="display:flex;align-items:center;gap:10px">
-           <span style="display:flex;align-items:center;gap:6px"><span class="d lvl" style="font-size:15px;font-weight:700"></span><span class="pips">${'<span class="pip"></span>'.repeat(5)}</span></span>
+           <span style="display:flex;align-items:center;gap:6px"><span class="d lvl" style="font-size:15px;font-weight:700;white-space:nowrap"></span><span class="pips">${'<span class="pip"></span>'.repeat(5)}</span></span>
            <span class="dmg-type" style="display:flex;align-items:center;gap:4px"></span>
          </div>
        </div>`,
@@ -89,6 +105,7 @@ export class TowerPanel {
     this.level = head.querySelector('.lvl')!;
     this.pips = [...head.querySelectorAll<HTMLElement>('.pip')];
     this.dmgType = head.querySelector('.dmg-type')!;
+    this.specName = head.querySelector('.spec-name')!;
 
     const statsEl = h('div', 'stats');
     const labels: HTMLElement[] = [];
@@ -148,7 +165,13 @@ export class TowerPanel {
     );
     actions.append(this.sellBtn, this.upgradeBtn);
 
-    this.el.append(head, statsEl, targetingEl, actions);
+    // LV 4 hint (Panel-Level4.dc.html), or a choose card for an unspecialized LV 5+ tower.
+    this.specSlot = h('div');
+    this.specSlot.addEventListener('click', (e) => {
+      if ((e.target as HTMLElement).closest('button.spec-hint')) this.onChooseSpec(this.towerId);
+    });
+
+    this.el.append(head, statsEl, targetingEl, this.specSlot, actions);
     parent.appendChild(this.el);
   }
 
@@ -166,6 +189,7 @@ export class TowerPanel {
     this.el.hidden = false;
     this.artKey = '';
     this.kindShown = '';
+    this.specKey = '';
     this.lastAfford = null;
     this.update();
   }
@@ -193,38 +217,49 @@ export class TowerPanel {
       this.baseImg.src = unitSvgUri(frames.base);
       this.turretImg.src = unitSvgUri(frames.turret);
     }
-    if (t.kind !== this.kindShown) {
-      this.kindShown = t.kind;
-      this.dmgType.innerHTML = damageTypeChip(def.damageType);
-      const chill = def.attack.type === 'chill';
-      setText(this.statLabels.dmg, chill ? 'CHILL' : 'DAMAGE');
-      setText(this.statLabels.dps, chill ? 'MAX SLOW' : 'DPS');
+    const kindKey = `${t.kind}|${t.spec}`;
+    if (kindKey !== this.kindShown) {
+      this.kindShown = kindKey;
+      this.dmgType.innerHTML = damageTypeChip(t.stats.damageType);
+      setText(this.specName, t.spec ? SPECS[t.spec].name : '');
+      const atk = t.stats.attack.type;
+      setText(this.statLabels.dmg, atk === 'chill' ? 'CHILL' : atk === 'aura' ? 'AURA' : 'DAMAGE');
+      setText(this.statLabels.dps, atk === 'chill' || atk === 'aura' ? 'MAX SLOW' : 'DPS');
     }
     setText(this.title, def.name);
     setText(this.level, `LV ${t.level}`);
     this.pips.forEach((p, i) => toggleClass(p, 'on', i < Math.min(t.level, 5)));
+    this.renderSpecSlot(t);
 
-    const power = towerPower(def, t.level);
-    const next = towerPower(def, t.level + 1);
-    const atk = def.attack;
-    setText(this.stats.rate.now, `${def.fireRate.toFixed(1)}/s`);
+    const now = t.stats;
+    const next = towerStats(t.kind, t.level + 1, t.spec);
+    setText(this.stats.rate.now, now.attack.type === 'aura' ? '—' : `${now.fireRate.toFixed(1)}/s`);
     this.noChange(this.stats.rate.next);
-    setText(this.stats.range.now, tiles(def.range));
+    setText(this.stats.range.now, tiles(now.range));
     this.noChange(this.stats.range.next);
+    const atk = now.attack;
     if (atk.type === 'chill') {
-      setText(this.stats.dmg.now, `${Math.round(power * 100)}%`);
-      setText(this.stats.dmg.next, `→ ${Math.round(next * 100)}%`);
+      setText(this.stats.dmg.now, `${Math.round(now.power * 100)}%`);
+      this.setNext(this.stats.dmg.next, `→ ${Math.round(next.power * 100)}%`);
       setText(this.stats.dps.now, `${Math.round(CHILL.maxSlow * 100)}%`);
       this.noChange(this.stats.dps.next);
+    } else if (atk.type === 'aura') {
+      setText(this.stats.dmg.now, `${Math.round(atk.chill * CHILL.maxSlow * 100)}%`);
+      this.noChange(this.stats.dmg.next);
+      setText(this.stats.dps.now, `${Math.round(atk.chill * CHILL.maxSlow * 100)}%`);
+      this.noChange(this.stats.dps.next);
     } else {
-      // Per-shot multipliers: missiles per salvo, enemies per rail line.
-      const shots = atk.type === 'missiles' ? atk.count : 1;
-      setText(this.stats.dmg.now, shots > 1 ? `${power.toFixed(1)}×${shots}` : power.toFixed(1));
-      setText(this.stats.dmg.next, `→ ${next.toFixed(1)}`);
-      toggleClass(this.stats.dmg.next, 'none', false);
-      setText(this.stats.dps.now, fmt.int(power * shots * def.fireRate));
-      setText(this.stats.dps.next, `→ ${fmt.int(next * shots * def.fireRate)}`);
-      toggleClass(this.stats.dps.next, 'none', false);
+      const shots = shotsPer(now);
+      setText(
+        this.stats.dmg.now,
+        shots > 1 ? `${now.power.toFixed(1)}×${shots}` : now.power.toFixed(1),
+      );
+      this.setNext(this.stats.dmg.next, `→ ${next.power.toFixed(1)}`);
+      setText(this.stats.dps.now, fmt.int(now.power * shots * now.fireRate));
+      this.setNext(
+        this.stats.dps.next,
+        `→ ${fmt.int(next.power * shotsPer(next) * next.fireRate)}`,
+      );
     }
 
     this.targeting.forEach((b, i) => {
@@ -243,7 +278,7 @@ export class TowerPanel {
     setText(
       this.upgradeSub,
       afford
-        ? `${def.attack.type === 'chill' ? 'Chill' : 'Damage'} +${Math.round((CURVES.towerDamageGrowth - 1) * 100)}%`
+        ? `${t.stats.attack.type === 'chill' ? 'Chill' : 'Damage'} +${Math.round((CURVES.towerDamageGrowth - 1) * 100)}%`
         : `Need ${fmt.int(cost - this.sim.state.credits)} more Credits`,
     );
     if (afford !== this.lastAfford) {
@@ -256,6 +291,39 @@ export class TowerPanel {
       'aria-label',
       `Upgrade to level ${t.level + 1} for ${cost} Credits${afford ? '' : `. Need ${cost - this.sim.state.credits} more.`}`,
     );
+  }
+
+  /** LV 4: what's coming at LV 5. LV 5+ without a spec: a card that opens the pick. */
+  private renderSpecSlot(t: Tower): void {
+    const state = t.spec
+      ? 'done'
+      : t.level >= SPEC_LEVEL
+        ? 'choose'
+        : t.level === SPEC_LEVEL - 1
+          ? 'hint'
+          : 'none';
+    const key = `${t.id}|${state}`;
+    if (key === this.specKey) return;
+    this.specKey = key;
+    if (state === 'hint') {
+      const l5 = towerFrames(t.kind, SPEC_LEVEL);
+      this.specSlot.innerHTML = `<div class="spec-hint">
+        <div class="panel-art"><img alt="" src="${unitSvgUri(l5.base)}"><img alt="" src="${unitSvgUri(l5.turret)}"></div>
+        <div style="display:flex;flex-direction:column;gap:2px"><span class="label">SPECIALIZATION AT LV ${SPEC_LEVEL}</span><span class="caption muted">Next upgrade lets you pick a path for this tower.</span></div>
+      </div>`;
+    } else if (state === 'choose') {
+      this.specSlot.innerHTML = `<button class="spec-hint" style="width:100%">
+        ${specIcon(SPECS_FOR_HINT(t), t.stats.damageType)}
+        <div style="display:flex;flex-direction:column;gap:2px;flex:1"><span class="label" style="color:var(--accent)">CHOOSE SPECIALIZATION</span><span class="caption muted">Pick a path for this tower. Locked once chosen.</span></div>
+      </button>`;
+    } else {
+      this.specSlot.innerHTML = '';
+    }
+  }
+
+  private setNext(el: HTMLElement, text: string): void {
+    setText(el, text);
+    toggleClass(el, 'none', false);
   }
 
   private noChange(el: HTMLElement): void {

@@ -58,6 +58,8 @@ export function spawnEnemy(
   e.maxChill = def.boss ? CHILL.bossMaxChill : 1;
   e.frozen = 0;
   e.freezeImmune = 0;
+  e.stunned = 0;
+  e.brittle = 0;
   e.healRadius = def.heal?.radius ?? 0;
   e.healPerTick = (def.heal?.perSecond ?? 0) * dt;
   e.spawnKind = spawns?.kind ?? null;
@@ -69,15 +71,25 @@ export function spawnEnemy(
   return e;
 }
 
-/** Adds chill; at full chill the enemy freezes (bosses cap below full, so they only slow). */
-export function applyChill(e: Enemy, amount: number): void {
+/**
+ * Adds chill; at full chill the enemy freezes (bosses cap below full, so they only slow).
+ * `freezeMult` lengthens the freeze (Deep Freeze).
+ */
+export function applyChill(e: Enemy, amount: number, freezeMult = 1): void {
   if (!e.alive || e.frozen > 0) return;
   const cap = e.freezeImmune > 0 ? Math.min(e.maxChill, 0.99) : e.maxChill;
   e.chill = Math.min(cap, e.chill + amount);
   if (e.chill >= 1) {
     e.chill = 1;
-    e.frozen = FREEZE_TICKS;
+    e.frozen = Math.round(FREEZE_TICKS * freezeMult);
   }
+}
+
+/** Freezes outright if the enemy can be frozen right now (Deep Freeze proc). */
+export function forceFreeze(e: Enemy, freezeMult = 1): void {
+  if (!e.alive || e.frozen > 0 || e.freezeImmune > 0 || e.maxChill < 1) return;
+  e.chill = 1;
+  e.frozen = Math.round(FREEZE_TICKS * freezeMult);
 }
 
 /** Shield regen, chill decay and freeze timers; sets the current speed. */
@@ -96,7 +108,13 @@ function updateStatus(e: Enemy): void {
     return;
   }
   if (e.freezeImmune > 0) e.freezeImmune--;
+  if (e.brittle > 0) e.brittle--;
   if (e.chill > 0) e.chill = Math.max(0, e.chill - CHILL_DECAY_PER_TICK);
+  if (e.stunned > 0) {
+    e.stunned--;
+    e.speed = 0;
+    return;
+  }
   e.speed = e.baseSpeed * (1 - e.chill * CHILL.maxSlow);
 }
 

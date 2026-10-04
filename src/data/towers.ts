@@ -3,23 +3,50 @@ import type { DamageType } from './damage';
 export type TowerKind =
   'pulseLaser' | 'railgun' | 'plasmaMortar' | 'arcCoil' | 'cryoProjector' | 'swarmLauncher';
 
-/** How a tower delivers its effect. */
+/** How a tower delivers its effect. Optional fields are set by specializations (specs.ts). */
 export type Attack =
-  /** Homing bolt, single target. */
-  | { type: 'bolt'; speed: number }
+  /** Homing bolt; `beams` splits it across that many targets (Prism). */
+  | { type: 'bolt'; speed: number; beams?: number }
+  /** Straight slug that pierces `pierce` extra enemies (Flechette). */
+  | { type: 'slug'; speed: number; pierce: number }
   /**
    * Instant line to max range; hits up to `maxHits` ground enemies within `width / 2` of it,
-   * nearest first (the Accelerator spec raises this, GDD §7).
+   * nearest first. `bonusPerPierce` adds damage per enemy already pierced (Accelerator);
+   * `strip` removes the shield of every enemy on the line (Ion Rail).
    */
-  | { type: 'rail'; width: number; maxHits: number }
-  /** Lobbed shell to the target's position; splash on landing. */
-  | { type: 'shell'; speed: number; splashRadius: number }
+  | { type: 'rail'; width: number; maxHits: number; bonusPerPierce?: number; strip?: boolean }
+  /** Lobbed shell to the target's position; splash on landing. Specs add pools or bomblets. */
+  | {
+      type: 'shell';
+      speed: number;
+      splashRadius: number;
+      pool?: { seconds: number; radius: number; dpsShare: number };
+      cluster?: { count: number; ringRadius: number; damageShare: number; radius: number };
+    }
   /** Instant hit that jumps to nearby enemies, losing damage each jump. */
   | { type: 'chain'; jumps: number; jumpRadius: number; falloff: number }
-  /** No damage; adds chill (slow → freeze). */
-  | { type: 'chill'; chillPerHit: number }
-  /** Salvo of homing missiles; prefers flying targets. */
-  | { type: 'missiles'; count: number; speed: number; lifetimeSeconds: number };
+  /** Charges, then hits every enemy in range at once (Capacitor). */
+  | { type: 'burst' }
+  /** No damage; adds chill (slow → freeze). Specs add freeze chance or brittleness. */
+  | {
+      type: 'chill';
+      chillPerHit: number;
+      freezeChance?: number;
+      freezeMult?: number;
+      brittleSeconds?: number;
+    }
+  /** No shots: slows every enemy in range (Stasis Field). */
+  | { type: 'aura'; chill: number }
+  /** Salvo of homing missiles; prefers flying targets, or bosses/elites when hunting. */
+  | {
+      type: 'missiles';
+      count: number;
+      speed: number;
+      lifetimeSeconds: number;
+      hunt?: boolean;
+      critChance?: number;
+      critMult?: number;
+    };
 
 export interface TowerDef {
   kind: TowerKind;

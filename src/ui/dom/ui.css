@@ -669,3 +669,158 @@
   transition: opacity 250ms ease-out;
   opacity: 0;
 }
+
+/* Specialization pick (meta/Specialization.dc.html) */
+.spec-pick {
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 14, 23, 0.86);
+  pointer-events: auto;
+}
+.spec-pick > .col {
+  position: relative;
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  padding: 56px 16px 34px;
+  gap: 16px;
+}
+.spec-hud {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: rgba(17, 23, 38, 0.88);
+  clip-path: var(--chamfer-md);
+}
+.spec-hud .paused {
+  padding: 4px 8px;
+  background: var(--surface-300);
+  color: var(--ink-muted);
+  clip-path: var(--chamfer-sm);
+}
+.base-bar {
+  display: block;
+  height: 4px;
+  background: var(--line);
+}
+.base-bar > span {
+  display: block;
+  height: 4px;
+  background: var(--ink);
+}
+.spec-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+  min-height: 0;
+}
+.spec-card {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 2px;
+  background: var(--line-strong);
+  clip-path: var(--chamfer-md);
+  position: relative;
+}
+.spec-card[aria-pressed='true'] {
+  padding: 3px;
+  background: var(--accent);
+}
+.spec-card > .inner {
+  display: flex;
+  flex-direction: column;
+  background: var(--surface-300);
+  clip-path: var(--chamfer-md);
+}
+.spec-card .body {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr);
+  gap: 12px;
+  padding: 12px;
+}
+.spec-card .name {
+  font-size: 19px;
+  line-height: 24px;
+  font-weight: 700;
+}
+.spec-card .desc {
+  font-size: 16px;
+  line-height: 22px;
+  font-weight: 500;
+}
+.spec-card .stat {
+  font-size: 15px;
+  line-height: 18px;
+  font-weight: 600;
+  color: var(--ink-muted);
+  background: none;
+  padding: 0;
+}
+.type-change {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--surface-200);
+  border-bottom: 1px solid var(--line);
+}
+.type-chip {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  color: var(--on-accent);
+  clip-path: var(--chamfer-sm);
+}
+.tag {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  background: var(--surface-200);
+  clip-path: var(--chamfer-sm);
+}
+.check-badge {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.spec-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* Tower panel: spec hint (Panel-Level4.dc.html) and choose-spec card */
+.spec-hint {
+  height: 64px;
+  box-sizing: border-box;
+  padding: 0 12px 0 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--surface-300);
+  border: 2px solid var(--ink);
+  clip-path: var(--chamfer-sm);
+  text-align: left;
+}
+button.spec-hint {
+  border-color: var(--accent);
+}
+
+/* While the spec pick is up, the in-run UI behind it is hidden (it would show through the scrim). */
+#ui.picking .hud,
+#ui.picking .controls,
+#ui.picking .panel {
+  visibility: hidden;
+}

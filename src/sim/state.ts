@@ -1,7 +1,9 @@
 import type { DamageType } from '../data/damage';
 import type { EnemyKind } from '../data/enemies';
+import type { SpecId } from '../data/specs';
 import type { TowerKind } from '../data/towers';
 import { Pool } from './pool';
+import { towerStats, type TowerStats } from './specs';
 
 export type TargetingMode = 'first' | 'last' | 'strongest' | 'closest';
 export const TARGETING_MODES: readonly TargetingMode[] = ['first', 'last', 'strongest', 'closest'];
@@ -43,6 +45,10 @@ export interface Enemy {
   frozen: number;
   /** Ticks left before it can be frozen again. */
   freezeImmune: number;
+  /** Ticks left stunned (speed 0; Overload, EMP Warheads). */
+  stunned: number;
+  /** Ticks left brittle (reduced armor; Brittle). */
+  brittle: number;
   /** Medic: heal radius (0 = no heal) and fraction of max HP healed per tick. */
   healRadius: number;
   healPerTick: number;
@@ -69,9 +75,17 @@ export interface Tower {
   invested: number;
   /** Current target id, or -1. Exposed so the renderer can aim the tower. */
   targetId: number;
+  /** Specialization chosen at level 5, or null. */
+  spec: SpecId | null;
+  /** Effective stats for level + spec; refresh with `refreshStats` when either changes. */
+  stats: TowerStats;
+  /** Overclock: fire-rate bonus built up while firing (0 to max). */
+  heat: number;
+  /** Overclock: ticks since the tower last had a target. */
+  idle: number;
 }
 
-export type ProjectileKind = 'bolt' | 'missile' | 'shell';
+export type ProjectileKind = 'bolt' | 'missile' | 'shell' | 'slug';
 
 export interface Projectile {
   alive: boolean;
@@ -90,13 +104,31 @@ export interface Projectile {
   damageType: DamageType;
   speed: number;
   splashRadius: number;
-  /** Ticks before a missile without a target expires. */
+  /** Ticks before a missile without a target expires; slug distance left. */
   life: number;
+  source: TowerKind;
+  /** Spec of the tower that fired it (hit modifiers, pools, bomblets). */
+  spec: SpecId | null;
+  /** Slug: enemies it may still pass through, and the ids already hit. */
+  pierceLeft: number;
+  hits: Int32Array;
+  hitCount: number;
+}
+
+/** Burning ground left by Plasma Pools. */
+export interface Zone {
+  alive: boolean;
+  x: number;
+  y: number;
+  radius: number;
+  damagePerTick: number;
+  ttl: number;
+  maxTtl: number;
   source: TowerKind;
 }
 
 /** Short-lived visual record emitted by the sim for the renderer (beams, blasts). */
-export type FxKind = 'rail' | 'chain' | 'chill' | 'blast';
+export type FxKind = 'rail' | 'ion' | 'chain' | 'chill' | 'blast';
 
 export interface Fx {
   alive: boolean;
@@ -153,6 +185,7 @@ export interface SimState {
   towers: Pool<Tower>;
   projectiles: Pool<Projectile>;
   fx: Pool<Fx>;
+  zones: Pool<Zone>;
   spawns: SpawnGroup[];
   /** Tower kinds the player may build this run. */
   unlocked: readonly TowerKind[];
@@ -189,6 +222,8 @@ export function newEnemy(): Enemy {
     maxChill: 1,
     frozen: 0,
     freezeImmune: 0,
+    stunned: 0,
+    brittle: 0,
     healRadius: 0,
     healPerTick: 0,
     spawnKind: null,
@@ -211,7 +246,16 @@ export function newTower(): Tower {
     targeting: 'first',
     invested: 0,
     targetId: -1,
+    spec: null,
+    stats: towerStats('pulseLaser', 1, null),
+    heat: 0,
+    idle: 0,
   };
+}
+
+/** Recompute a tower's cached stats after placement, an upgrade or a specialization. */
+export function refreshStats(t: Tower): void {
+  t.stats = towerStats(t.kind, t.level, t.spec);
 }
 
 export function newProjectile(): Projectile {
@@ -231,6 +275,23 @@ export function newProjectile(): Projectile {
     splashRadius: 0,
     life: 0,
     source: 'pulseLaser',
+    spec: null,
+    pierceLeft: 0,
+    hits: new Int32Array(8),
+    hitCount: 0,
+  };
+}
+
+export function newZone(): Zone {
+  return {
+    alive: false,
+    x: 0,
+    y: 0,
+    radius: 0,
+    damagePerTick: 0,
+    ttl: 0,
+    maxTtl: 1,
+    source: 'plasmaMortar',
   };
 }
 

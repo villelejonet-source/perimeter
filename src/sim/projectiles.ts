@@ -1,11 +1,16 @@
 import { GAME } from '../data/game';
+import { SPEC_TUNING } from '../data/specs';
+import { TOWERS } from '../data/towers';
 import { applyHit } from './damage';
 import { emitFx } from './fx';
 import type { Path } from './path';
 import type { Projectile, SimState } from './state';
+import { hitMods } from './specs';
 import { nearestEnemy } from './targeting';
 
 const dt = 1 / GAME.tickRate;
+const SPEC_POOL = SPEC_TUNING.plasmaPools;
+const SPEC_CLUSTER = SPEC_TUNING.cluster;
 const FX_BLAST_TICKS = 18;
 /** Missile turn rate, radians per second. */
 const MISSILE_TURN = 7;
@@ -29,6 +34,9 @@ export function updateProjectiles(state: SimState, path: Path): void {
       case 'shell':
         updateShell(state, path, p);
         break;
+      case 'slug':
+        updateSlug(state, path, p);
+        break;
     }
   }
 }
@@ -48,7 +56,7 @@ function updateBolt(state: SimState, path: Path, p: Projectile): void {
   if (dist <= step + t.radius) {
     p.alive = false;
     p.target = null;
-    applyHit(state, path, t, p.damage, p.damageType, p.source);
+    applyHit(state, path, t, p.damage, p.damageType, p.source, hitMods(p.spec));
     return;
   }
   p.angle = Math.atan2(dy, dx);
@@ -76,7 +84,7 @@ function updateMissile(state: SimState, path: Path, p: Projectile): void {
     if (Math.hypot(dx, dy) <= step + t.radius) {
       p.alive = false;
       p.target = null;
-      applyHit(state, path, t, p.damage, p.damageType, p.source);
+      applyHit(state, path, t, p.damage, p.damageType, p.source, hitMods(p.spec));
       return;
     }
     let turn = Math.atan2(dy, dx) - p.angle;
@@ -88,7 +96,32 @@ function updateMissile(state: SimState, path: Path, p: Projectile): void {
   p.y += Math.sin(p.angle) * step;
 }
 
-/** Lobbed shell to a fixed point; splash damage to ground enemies on landing. */
+/** Splash damage to every ground enemy within `radius` of (x, y). */
+function splash(
+  state: SimState,
+  path: Path,
+  p: Projectile,
+  x: number,
+  y: number,
+  radius: number,
+  damage: number,
+): void {
+  // Enemies spawned mid-loop (Splitter children) weren't there when the shell landed.
+  const bornAfter = state.nextId;
+  for (const e of state.enemies.items) {
+    if (!e.alive || e.flying || e.id >= bornAfter) continue;
+    const r = radius + e.radius;
+    if ((e.x - x) ** 2 + (e.y - y) ** 2 <= r * r) {
+      applyHit(state, path, e, damage, p.damageType, p.source, hitMods(p.spec));
+    }
+  }
+  emitFx(state, 'blast', x, y, x, y, FX_BLAST_TICKS, radius);
+}
+
+/**
+ * Lobbed shell to a fixed point; splash damage to ground enemies on landing. Plasma Pools
+ * leave burning ground; Cluster scatters bomblets around the impact.
+ */
 function updateShell(state: SimState, path: Path, p: Projectile): void {
   const dx = p.tx - p.x;
   const dy = p.ty - p.y;
@@ -100,14 +133,71 @@ function updateShell(state: SimState, path: Path, p: Projectile): void {
     return;
   }
   p.alive = false;
-  // Enemies spawned mid-loop (Splitter children) weren't there when the shell landed.
-  const bornAfter = state.nextId;
-  for (const e of state.enemies.items) {
-    if (!e.alive || e.flying || e.id >= bornAfter) continue;
-    const r = p.splashRadius + e.radius;
-    if ((e.x - p.tx) ** 2 + (e.y - p.ty) ** 2 <= r * r) {
-      applyHit(state, path, e, p.damage, p.damageType, p.source);
+  splash(state, path, p, p.tx, p.ty, p.splashRadius, p.damage);
+
+  const atk = TOWERS[p.source].attack;
+  const spec = p.spec;
+  if (spec === 'plasmaPools' && atk.type === 'shell') {
+    const pool = SPEC_POOL;
+    const z = state.zones.acquire();
+    z.x = p.tx;
+    z.y = p.ty;
+    z.radius = pool.radius;
+    z.damagePerTick = (p.damage * pool.dpsShare) / GAME.tickRate;
+    z.ttl = Math.round(pool.seconds * GAME.tickRate);
+    z.maxTtl = z.ttl;
+    z.source = p.source;
+  } else if (spec === 'cluster') {
+    const c = SPEC_CLUSTER;
+    for (let i = 0; i < c.count; i++) {
+      const a = (i / c.count) * Math.PI * 2;
+      splash(
+        state,
+        path,
+        p,
+        p.tx + Math.cos(a) * c.ringRadius,
+        p.ty + Math.sin(a) * c.ringRadius,
+        c.radius,
+        p.damage * c.damageShare,
+      );
     }
   }
-  emitFx(state, 'blast', p.tx, p.ty, p.tx, p.ty, FX_BLAST_TICKS, p.splashRadius);
+}
+
+/** Flechette slug: flies straight, damaging each enemy it passes through once. */
+function updateSlug(state: SimState, path: Path, p: Projectile): void {
+  const step = p.speed * dt;
+  p.x += Math.cos(p.angle) * step;
+  p.y += Math.sin(p.angle) * step;
+  p.life -= step;
+  const bornAfter = state.nextId;
+  outer: for (const e of state.enemies.items) {
+    if (!e.alive || e.id >= bornAfter) continue;
+    const r = e.radius + 3;
+    if ((e.x - p.x) ** 2 + (e.y - p.y) ** 2 > r * r) continue;
+    for (let i = 0; i < p.hitCount; i++) if (p.hits[i] === e.id) continue outer;
+    if (p.hitCount < p.hits.length) p.hits[p.hitCount++] = e.id;
+    applyHit(state, path, e, p.damage, p.damageType, p.source, hitMods(p.spec));
+    if (--p.pierceLeft <= 0) {
+      p.alive = false;
+      return;
+    }
+  }
+  if (p.life <= 0) p.alive = false;
+}
+
+/** Plasma Pools: burning ground damages ground enemies standing in it. */
+export function updateZones(state: SimState, path: Path): void {
+  for (const z of state.zones.items) {
+    if (!z.alive) continue;
+    const bornAfter = state.nextId;
+    for (const e of state.enemies.items) {
+      if (!e.alive || e.flying || e.id >= bornAfter) continue;
+      const r = z.radius + e.radius;
+      if ((e.x - z.x) ** 2 + (e.y - z.y) ** 2 <= r * r) {
+        applyHit(state, path, e, z.damagePerTick, TOWERS[z.source].damageType, z.source);
+      }
+    }
+    if (--z.ttl <= 0) z.alive = false;
+  }
 }

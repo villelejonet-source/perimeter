@@ -4,7 +4,8 @@ import { GAME } from '../data/game';
 import { placementError, snapToGrid } from './placement';
 import { TOWER_ORDER, type TowerKind } from '../data/towers';
 import { Sim } from './sim';
-import type { Enemy, Tower } from './state';
+import { refreshStats, type Enemy, type Tower } from './state';
+import type { SpecId } from '../data/specs';
 
 /**
  * Spawn an enemy directly at `dist` along the path (test setup only). `hp` overrides hull HP;
@@ -62,7 +63,14 @@ export function labSim(seed = 1): Sim {
  * Puts a tower straight into state at (x, y), bypassing placement rules, so tests can put it
  * exactly where a mechanic needs it.
  */
-export function towerAt(sim: Sim, kind: TowerKind, x: number, y: number, level = 1): Tower {
+export function towerAt(
+  sim: Sim,
+  kind: TowerKind,
+  x: number,
+  y: number,
+  level = 1,
+  spec: SpecId | null = null,
+): Tower {
   const t = sim.state.towers.acquire();
   t.id = sim.state.nextId++;
   t.kind = kind;
@@ -73,6 +81,10 @@ export function towerAt(sim: Sim, kind: TowerKind, x: number, y: number, level =
   t.targeting = 'first';
   t.invested = 0;
   t.targetId = -1;
+  t.spec = spec;
+  t.heat = 0;
+  t.idle = 0;
+  refreshStats(t);
   return t;
 }
 

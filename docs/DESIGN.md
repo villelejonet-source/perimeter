@@ -40,8 +40,8 @@ maps → `src/data/maps.ts`.
 | 2 (built) | Run end | `screens/in-run/RunEnd.dc.html` | `src/ui/dom/RunEnd.ts` | applied |
 | 2–3 | Unit art: towers L1/L5, enemies, bosses, base states, projectiles, status overlays | `units/` | `src/render/units.ts`, `WorldView.ts` | applied |
 | 3 | Elite / boss / base-hit alerts | `screens/in-run/Alert-*.dc.html` | `src/ui/dom/Alerts.ts` | applied |
-| 4 | Tower panel at LV 4 (specialization preview) | `screens/in-run/Panel-Level4.dc.html` | none | ready |
-| 4 | Specialization pick | `screens/meta/Specialization.dc.html` | none | ready |
+| 4 | Tower panel at LV 4 (specialization preview) | `screens/in-run/Panel-Level4.dc.html` | `src/ui/dom/TowerPanel.ts` | applied |
+| 4 | Specialization pick | `screens/meta/Specialization.dc.html` | `src/ui/dom/SpecPicker.ts` | applied |
 | 6 | Main menu | `screens/meta/Main.dc.html` | none | ready |
 | 6 | Research Lab: towers / base & idle / unlocks | `screens/meta/Research{Towers,Base,Unlocks}.dc.html` | none | ready |
 | 6 | Welcome back (offline income) | `screens/meta/WelcomeBack.dc.html` | none | ready |
@@ -75,6 +75,8 @@ Decided 2026-10-04:
 - Elites other than the Drone (which has `enemy-drone-elite`) draw at 1.2× until a generic elite overlay exists (INVENTORY request 6).
 - The Wraith and Hive Carrier shadows render as grey glow under additive blending (INVENTORY request 5).
 
+- Phase 4: reaching LV 5 opens the pick and pauses the run; LATER defers it (the panel then offers it). Towers can keep upgrading unspecialized. Specs reuse existing art: Flechette slugs use the rail trail, Ion Rail and EMP use the laser beam, Plasma Pools and the Stasis aura are drawn shapes (no art in the handoff, INVENTORY request 12).
+
 Open: the remaining requests in `design/INVENTORY.md` §3.
 
 ## Applied
@@ -94,4 +96,6 @@ Log when a design has been implemented, so drift is visible later.
 | 2026-10-04 | `units/glow/` (all 50) | Every unit baked into one atlas from `manifest.json`; tower art per kind/level, enemy + boss art, shield/armor/frozen/slowed overlays, projectiles, rail/chain/cryo beams, mortar blast (`src/render/units.ts`, `WorldView.ts`) |
 | 2026-10-04 | `screens/in-run/Alert-*.dc.html` | Elite banner, boss banner with hazard stripes and frame, base-hit edges + ring + "−N" (`src/ui/dom/Alerts.ts`) |
 | 2026-10-04 | `screens/in-run/Controls.dc.html` build bar | All 6 towers; locked slots for Arc Coil, Cryo, Swarm |
+| 2026-10-04 | `screens/meta/Specialization.dc.html` | Pick screen: paused HUD card, 3 cards, type-change strip, LATER / LOCK IN. Spec icons for the 15 specs the mockup didn't draw follow its style (`src/ui/dom/specIcons.ts`) |
+| 2026-10-04 | `screens/in-run/Panel-Level4.dc.html` | LV 4 hint card; LV 5+ choose card after LATER; spec name in the panel header |
 | 2026-10-04 | `screens/in-run/RunEnd.dc.html` | Run end with wave reached, run time, kills, Play Again. Best, Cores/Shards and Menu wait for Phase 6; Double Cores waits for Phase 9 (`src/ui/dom/RunEnd.ts`) |

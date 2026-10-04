@@ -1,7 +1,6 @@
 import Phaser from 'phaser';
 import { GAME } from '../data/game';
 import type { Point } from '../data/maps';
-import { TOWERS } from '../data/towers';
 import type { Enemy, Fx, Projectile, Sim, Tower } from '../sim';
 import { cornerBrackets, dashedCircle } from './draw';
 import { FONT_UI, S, T, VIEW_HEIGHT, VIEW_WIDTH, css } from './layout';
@@ -201,24 +200,31 @@ export class WorldView {
     }
   }
 
+  /**
+   * Shots keep their damage type's shape twin: energy = beam, kinetic = slug/missile.
+   * Flechette slugs use the rail trail; EMP missiles (energy) use the beam.
+   */
   private drawShot(img: Phaser.GameObjects.Image, p: Projectile): void {
+    const energyMissile = p.kind === 'missile' && p.damageType === 'energy';
     const frame =
-      p.kind === 'bolt'
+      p.kind === 'bolt' || energyMissile
         ? 'proj-laser-beam'
-        : p.kind === 'missile'
-          ? 'proj-missile'
-          : 'proj-mortar-shell';
+        : p.kind === 'slug'
+          ? 'proj-rail-trail'
+          : p.kind === 'missile'
+            ? 'proj-missile'
+            : 'proj-mortar-shell';
     if (img.frame.name !== frame) img.setFrame(frame);
     img
       .setVisible(true)
       .setPosition(p.x * S, p.y * S)
       .setRotation(p.angle)
       .setAlpha(1);
-    if (p.kind === 'bolt') {
-      // Head at the bolt's position, tail trailing behind.
-      img.setOrigin(1, 0.5).setScale(BOLT_LENGTH / unitSize('proj-laser-beam').w, 1);
+    if (frame === 'proj-laser-beam' || frame === 'proj-rail-trail') {
+      // Head at the shot's position, tail trailing behind.
+      img.setOrigin(1, 0.5).setScale(BOLT_LENGTH / unitSize(frame).w, energyMissile ? 0.8 : 1);
     } else {
-      img.setOrigin(0.5).setScale(1);
+      img.setOrigin(0.5).setScale(p.spec === 'saturation' ? 0.7 : 1);
     }
   }
 
@@ -300,6 +306,23 @@ export class WorldView {
   private drawOverlay(): void {
     const g = this.overlay;
     g.clear();
+    // Plasma Pools: burning ground (no art in the handoff; dashed energy ring + soft fill).
+    for (const z of this.sim.state.zones.items) {
+      if (!z.alive) continue;
+      const a = Math.min(1, z.ttl / 20);
+      g.fillStyle(T.dmgEnergy, 0.12 * a);
+      g.fillCircle(z.x * S, z.y * S, z.radius * S);
+      g.lineStyle(2 * S, T.dmgEnergy, 0.7 * a);
+      dashedCircle(g, z.x * S, z.y * S, z.radius * S, 5 * S, 4 * S);
+    }
+    // Stasis Field: dashed cryo aura at the tower's range.
+    for (const t of this.sim.state.towers.items) {
+      if (!t.alive || t.stats.attack.type !== 'aura') continue;
+      g.fillStyle(T.dmgCryo, 0.05);
+      g.fillCircle(t.x * S, t.y * S, t.stats.range * S);
+      g.lineStyle(2 * S, T.dmgCryo, 0.45);
+      dashedCircle(g, t.x * S, t.y * S, t.stats.range * S, 6 * S, 6 * S);
+    }
     for (const e of this.sim.state.enemies.items) {
       if (e.alive) this.drawBars(g, e);
     }
@@ -351,7 +374,7 @@ export class WorldView {
 
   /** Selected tower: accent corner brackets + range circle (HANDOFF.md "Tower panel"). */
   private drawSelection(g: Phaser.GameObjects.Graphics, t: Tower): void {
-    const r = TOWERS[t.kind].range * S;
+    const r = t.stats.range * S;
     g.fillStyle(T.accent, 0.07);
     g.fillCircle(t.x * S, t.y * S, r);
     g.lineStyle(2 * S, T.accent, 1);

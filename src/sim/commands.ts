@@ -1,3 +1,4 @@
+import type { SpecId } from '../data/specs';
 import type { TowerKind } from '../data/towers';
 import type { TargetingMode } from './state';
 
@@ -7,5 +8,6 @@ export type Command =
   | { type: 'upgradeTower'; towerId: number }
   | { type: 'sellTower'; towerId: number }
   | { type: 'setTargeting'; towerId: number; mode: TargetingMode }
+  | { type: 'specialize'; towerId: number; spec: SpecId }
   | { type: 'callEarly' }
   | { type: 'setPaused'; paused: boolean };

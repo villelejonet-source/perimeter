@@ -1,5 +1,6 @@
 import { GAME } from '../data/game';
 import { DEFAULT_MAP_ID, MAPS, type MapDef } from '../data/maps';
+import { SPEC_LEVEL, TOWER_SPECS } from '../data/specs';
 import { STARTING_UNLOCKS, TOWERS, type TowerKind } from '../data/towers';
 import type { Command } from './commands';
 import { placeCost, sellValue, upgradeCostFor } from './economy';
@@ -8,13 +9,15 @@ import { placementError, snapToGrid } from './placement';
 import { Rng } from './rng';
 import { updateEnemies } from './enemies';
 import { updateFx } from './fx';
-import { updateProjectiles } from './projectiles';
+import { updateProjectiles, updateZones } from './projectiles';
 import {
   newEnemy,
   newFx,
   newProjectile,
   newStats,
   newTower,
+  newZone,
+  refreshStats,
   type SimState,
   type Tower,
 } from './state';
@@ -59,6 +62,7 @@ export class Sim {
       towers: new Pool(newTower, 32),
       projectiles: new Pool(newProjectile, 256),
       fx: new Pool(newFx, 64),
+      zones: new Pool(newZone, 16),
       spawns: [],
       unlocked: config.unlockedTowers ?? STARTING_UNLOCKS,
       stats: newStats(),
@@ -77,8 +81,9 @@ export class Sim {
 
     updateWaves(s, this.path, this.rng);
     updateEnemies(s, this.path);
-    updateTowers(s, this.path);
+    updateTowers(s, this.path, this.rng);
     updateProjectiles(s, this.path);
+    updateZones(s, this.path);
     updateFx(s);
 
     if (s.baseHp <= 0) s.gameOver = true;
@@ -126,6 +131,10 @@ export class Sim {
         t.targeting = 'first';
         t.invested = cost;
         t.targetId = -1;
+        t.spec = null;
+        t.heat = 0;
+        t.idle = 0;
+        refreshStats(t);
         s.credits -= cost;
         break;
       }
@@ -137,6 +146,7 @@ export class Sim {
         s.credits -= cost;
         t.invested += cost;
         t.level++;
+        refreshStats(t);
         break;
       }
       case 'sellTower': {
@@ -150,6 +160,16 @@ export class Sim {
         const t = this.findTower(cmd.towerId);
         if (!t) return this.reject('noTower');
         t.targeting = cmd.mode;
+        break;
+      }
+      case 'specialize': {
+        const t = this.findTower(cmd.towerId);
+        if (!t) return this.reject('noTower');
+        if (t.level < SPEC_LEVEL) return this.reject('level');
+        if (t.spec) return this.reject('specialized');
+        if (!TOWER_SPECS[t.kind].includes(cmd.spec)) return this.reject('wrongSpec');
+        t.spec = cmd.spec;
+        refreshStats(t);
         break;
       }
       case 'callEarly':

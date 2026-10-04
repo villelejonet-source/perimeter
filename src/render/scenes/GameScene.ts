@@ -4,6 +4,8 @@ import { TOWER_ORDER, TOWERS } from '../../data/towers';
 import { FixedStepDriver, Sim, type Command } from '../../sim';
 import { bossFor, waveType } from '../../sim/waves';
 import { Alerts } from '../../ui/dom/Alerts';
+import { SpecPicker } from '../../ui/dom/SpecPicker';
+import { SPEC_LEVEL } from '../../data/specs';
 import { Controls } from '../../ui/dom/Controls';
 import { HudBar } from '../../ui/dom/HudBar';
 import { Overlay } from '../../ui/dom/overlay';
@@ -35,6 +37,10 @@ export class GameScene extends Phaser.Scene {
   private panel!: TowerPanel;
   private alerts!: Alerts;
   private runEnd: RunEnd | null = null;
+  private picker: SpecPicker | null = null;
+  /** Towers already offered the spec pick (LATER doesn't re-open it automatically). */
+  private offered = new Set<number>();
+  private pausedByPicker = false;
   private lastWave = 0;
   private speed = 1;
   private ended = false;
@@ -58,6 +64,9 @@ export class GameScene extends Phaser.Scene {
     this.runEnd = null;
     this.lastBaseHp = this.sim.state.baseHp;
     this.lastWave = 0;
+    this.picker = null;
+    this.offered = new Set();
+    this.pausedByPicker = false;
 
     this.world = new WorldView(this, this.sim);
     this.placement = new Placement(this, this.sim, {
@@ -112,6 +121,7 @@ export class GameScene extends Phaser.Scene {
       this.sim,
       (cmd) => this.send(cmd),
       () => this.selectTower(-1),
+      (id) => this.openPicker(id),
     );
 
     this.input.on('pointerdown', this.onFieldDown, this);
@@ -121,6 +131,7 @@ export class GameScene extends Phaser.Scene {
       this.game.events.off(Phaser.Core.Events.HIDDEN, this.onHidden, this);
       this.input.off('pointerdown', this.onFieldDown, this);
       this.runEnd?.destroy();
+      this.picker?.destroy();
       this.alerts.destroy();
       this.overlay.destroy();
     });
@@ -152,7 +163,45 @@ export class GameScene extends Phaser.Scene {
     }
     this.lastBaseHp = s.baseHp;
 
+    if (!this.picker && !this.ended) this.offerSpecs();
     if (s.gameOver && !this.ended) this.endRun();
+  }
+
+  /** GDD §7: a tower reaching level 5 offers its specialization pick once. */
+  private offerSpecs(): void {
+    for (const t of this.sim.state.towers.items) {
+      if (t.alive && t.level >= SPEC_LEVEL && !t.spec && !this.offered.has(t.id)) {
+        this.openPicker(t.id);
+        return;
+      }
+    }
+  }
+
+  /** Spec pick screen; the run pauses while it's open (meta/README.md). */
+  private openPicker(towerId: number): void {
+    const t = this.sim.findTower(towerId);
+    if (!t || t.spec || this.picker) return;
+    this.offered.add(towerId);
+    if (!this.sim.state.paused) {
+      this.send({ type: 'setPaused', paused: true });
+      this.pausedByPicker = true;
+    }
+    const close = (): void => {
+      this.picker?.destroy();
+      this.picker = null;
+      if (this.pausedByPicker) {
+        this.send({ type: 'setPaused', paused: false });
+        this.pausedByPicker = false;
+      }
+    };
+    this.picker = new SpecPicker(this.overlay.root, t.kind, this.sim.state, {
+      pick: (spec) => {
+        this.send({ type: 'specialize', towerId, spec });
+        getPlatform(this).haptics.play('place');
+        close();
+      },
+      later: close,
+    });
   }
 
   private announceWave(wave: number): void {
@@ -192,7 +241,7 @@ export class GameScene extends Phaser.Scene {
       const t = this.sim.findTower(id);
       if (t) {
         const sheetTop = GAME.worldHeight - this.panel.height;
-        const circleBottom = t.y + TOWERS[t.kind].range + PANEL_CLEARANCE;
+        const circleBottom = t.y + t.stats.range + PANEL_CLEARANCE;
         scrollTo = Math.max(0, circleBottom - sheetTop);
       }
     } else {
