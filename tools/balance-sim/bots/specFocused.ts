@@ -1,6 +1,7 @@
 import type { TowerKind } from '../../../src/data/towers';
 import {
   maybeCallEarly,
+  pickArtifact,
   observe,
   specializeAll,
   towers,
@@ -31,6 +32,7 @@ export function specFocused(choice: SpecChoice, override: SpecOverride = {}): Bo
     decide(ctx: BotContext) {
       observe(ctx, threat);
       specializeAll(ctx, choice, threat, override);
+      pickArtifact(ctx, 'best', threat);
       maybeCallEarly(ctx);
       const s = ctx.sim.state;
       const plan = PLAN.filter((k) => s.unlocked.includes(k));

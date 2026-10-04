@@ -1,4 +1,6 @@
+import { ARTIFACT_ORDER, craftCost } from '../../src/data/artifacts';
 import { RESEARCH, researchCost } from '../../src/data/research';
+import { artifactTier, craftArtifact, craftBlock } from '../../src/meta/artifacts';
 import { collectOffline, offlineEarnings } from '../../src/meta/offline';
 import { newProfile, type Profile } from '../../src/meta/profile';
 import { buyBlock, buyResearch, metaFromProfile, researchLevel } from '../../src/meta/research';
@@ -22,6 +24,9 @@ export interface CareerPoint {
   startCredits: number;
   baseHp: number;
   startLevel: number;
+  /** Artifacts crafted, and the sum of their tiers. */
+  crafted: number;
+  tiers: number;
 }
 
 /**
@@ -92,6 +97,15 @@ export function career(untilHours: number, seed: number, awayHours = 4): CareerP
       spent += researchCost(d, researchLevel(p, d.id));
       p = buyResearch(p, d.id);
     }
+    // Shards: craft the cheapest available artifact or tier, until out of Shards.
+    for (;;) {
+      const options = ARTIFACT_ORDER.filter((id) => craftBlock(p, id) === null);
+      if (!options.length) break;
+      const id = options.reduce((a, b) =>
+        craftCost(a, artifactTier(p, a))! <= craftCost(b, artifactTier(p, b))! ? a : b,
+      );
+      p = craftArtifact(p, id);
+    }
     const m = metaFromProfile(p);
     points.push({
       hours: played / HOUR,
@@ -106,6 +120,8 @@ export function career(untilHours: number, seed: number, awayHours = 4): CareerP
       startCredits: m.startCreditsBonus,
       baseHp: m.baseHpBonus,
       startLevel: m.towers.pulseLaser.startingLevel,
+      crafted: m.artifactPool.length,
+      tiers: m.artifactPool.reduce((a, x) => a + x.tier, 0),
     });
   }
   return points;

@@ -1,7 +1,8 @@
 import type { Command } from './commands';
+import { recomputeArtifactValues } from './artifacts';
 import { Sim, type SimConfig } from './sim';
 import {
-  refreshStats,
+  refreshAllStats,
   type Enemy,
   type Fx,
   type Projectile,
@@ -20,7 +21,7 @@ export interface SimSnapshot {
   config: SimConfig;
   rng: number;
   pending: Command[];
-  state: Omit<SimState, 'enemies' | 'towers' | 'projectiles' | 'fx' | 'zones'> & {
+  state: Omit<SimState, 'enemies' | 'towers' | 'projectiles' | 'fx' | 'zones' | 'art'> & {
     enemies: Enemy[];
     towers: Omit<Tower, 'stats'>[];
     projectiles: (Omit<Projectile, 'target' | 'hits'> & { hits: number[] })[];
@@ -33,7 +34,7 @@ const clone = <T>(v: T): T => structuredClone(v);
 
 export function snapshotSim(sim: Sim): SimSnapshot {
   const s = sim.state;
-  const { enemies, towers, projectiles, fx, zones, ...rest } = s;
+  const { enemies, towers, projectiles, fx, zones, art: _art, ...rest } = s;
   return {
     v: 1,
     config: clone(sim.config),
@@ -63,12 +64,10 @@ export function restoreSim(snap: SimSnapshot): Sim {
 
   s.enemies.items.length = 0;
   s.enemies.items.push(...enemies);
+  recomputeArtifactValues(s);
   s.towers.items.length = 0;
-  for (const t of towers) {
-    const tower = t as Tower;
-    refreshStats(tower, s.meta);
-    s.towers.items.push(tower);
-  }
+  for (const t of towers) s.towers.items.push(t as Tower);
+  refreshAllStats(s);
   s.projectiles.items.length = 0;
   for (const p of projectiles) {
     const target =

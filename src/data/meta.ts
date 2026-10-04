@@ -1,3 +1,12 @@
+import {
+  ARTIFACT_ORDER,
+  ARTIFACT_TUNING,
+  entryTier,
+  STARTER_ARTIFACTS,
+  type ArtifactId,
+  type ArtifactTier,
+  type OwnedArtifact,
+} from './artifacts';
 import { STARTING_UNLOCKS, TOWER_ORDER, type TowerKind } from './towers';
 
 /** Research effects on one tower kind (GDD §10 per-tower tracks). */
@@ -23,6 +32,17 @@ export interface MetaModifiers {
   callEarlyMult: number;
   /** 3x game speed unlocked. */
   speed3x: boolean;
+  /** Crafted artifacts at their tiers: what post-boss picks draw from (GDD §9). */
+  artifactPool: readonly OwnedArtifact[];
+  /** Choices per artifact pick (3, or 4 with research). */
+  artifactChoices: number;
+  /** Free rerolls per run (research). */
+  freeRerolls: number;
+}
+
+/** Artifacts at a tier (presets). */
+function pool(ids: readonly ArtifactId[], tier: ArtifactTier): OwnedArtifact[] {
+  return ids.map((id) => ({ id, tier: Math.max(tier, entryTier(id)) as ArtifactTier }));
 }
 
 export const NO_TOWER_META: TowerMeta = {
@@ -46,6 +66,9 @@ export const FRESH_ACCOUNT: MetaModifiers = {
   bountyMult: 1,
   callEarlyMult: 1,
   speed3x: false,
+  artifactPool: pool(STARTER_ARTIFACTS, 0),
+  artifactChoices: ARTIFACT_TUNING.choices,
+  freeRerolls: 0,
 };
 
 export type MetaPresetId = 'fresh' | '10h' | '50h';
@@ -70,6 +93,13 @@ export const META_PRESETS: Record<MetaPresetId, MetaModifiers> = {
     bountyMult: 1.15,
     callEarlyMult: 1.2,
     speed3x: true,
+    // ~10 h: the starters at Rare plus a dozen more crafted.
+    artifactPool: [
+      ...pool(STARTER_ARTIFACTS, 1),
+      ...pool(ARTIFACT_ORDER.filter((id) => !STARTER_ARTIFACTS.includes(id)).slice(0, 12), 0),
+    ],
+    artifactChoices: ARTIFACT_TUNING.choices,
+    freeRerolls: 0,
   },
   '50h': {
     unlockedTowers: TOWER_ORDER,
@@ -80,6 +110,13 @@ export const META_PRESETS: Record<MetaPresetId, MetaModifiers> = {
     bountyMult: 1.4,
     callEarlyMult: 1.5,
     speed3x: true,
+    // ~50 h: everything crafted, mostly Rare/Epic.
+    artifactPool: ARTIFACT_ORDER.map((id, i) => ({
+      id,
+      tier: Math.max(entryTier(id), i % 3 === 0 ? 2 : 1) as ArtifactTier,
+    })),
+    artifactChoices: ARTIFACT_TUNING.choices + 1,
+    freeRerolls: 1,
   },
 };
 

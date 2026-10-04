@@ -6,7 +6,12 @@ export type TowerTrack = 'damage' | 'fireRate' | 'range' | 'startingLevel';
 export type GlobalTrack =
   'startCredits' | 'baseHp' | 'waveTimer' | 'bounty' | 'callEarly' | 'offlineRate' | 'offlineCap';
 export type UnlockId =
-  'unlock.arcCoil' | 'unlock.cryoProjector' | 'unlock.swarmLauncher' | 'speed3x';
+  | 'unlock.arcCoil'
+  | 'unlock.cryoProjector'
+  | 'unlock.swarmLauncher'
+  | 'speed3x'
+  | 'artifactChoice4'
+  | 'freeReroll';
 export type ResearchId = `${TowerKind}.${TowerTrack}` | GlobalTrack | UnlockId;
 
 export interface ResearchDef {
@@ -165,6 +170,9 @@ const UNLOCKS: Omit<ResearchDef, 'group' | 'maxLevel' | 'growth' | 'perLevel' | 
     requires: 'unlock.cryoProjector',
   },
   { id: 'speed3x', name: '3x game speed', baseCost: 750 },
+  // GDD §10 unlocks for artifact picks (Phase 7). TODO(balance): costs are starting values.
+  { id: 'artifactChoice4', name: '4th artifact choice', baseCost: 2500 },
+  { id: 'freeReroll', name: 'Free reroll', baseCost: 1500 },
 ];
 
 export const RESEARCH: readonly ResearchDef[] = [

@@ -10,4 +10,8 @@ export type Command =
   | { type: 'setTargeting'; towerId: number; mode: TargetingMode }
   | { type: 'specialize'; towerId: number; spec: SpecId }
   | { type: 'callEarly' }
+  /** Take choice `index` of the pending artifact offer. */
+  | { type: 'pickArtifact'; index: number }
+  /** Redraw the pending offer for Credits (free rerolls first). */
+  | { type: 'rerollArtifacts' }
   | { type: 'setPaused'; paused: boolean };

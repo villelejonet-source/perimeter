@@ -8,6 +8,7 @@ npm run sim -- --strategy=all --preset=all --runs=50   # strategies × presets
 npm run sim -- --mode=specs --runs=24                   # spec matrix
 npm run sim -- --strategy=greedy --runs=200             # one strategy
 npm run sim -- --mode=career --hours=50                 # research pace (Phase 6)
+npm run sim -- --mode=artifacts --preset=10h --tier=1   # artifact matrix (Phase 7)
 ```
 
 Each run writes `tools/out/balance-<time>-runs.csv` (one row per run, including damage by
@@ -118,6 +119,50 @@ Against the presets (10 h: ×1.3 / ×1.1 / 5 towers / +100 / +5 HP; 50 h: ×2.0 
 +15 / Lv 3) the damage and Credits tracks land on target. The cheap-first bot spreads Cores
 across all six towers, so per-tower depth and Base HP run a little behind at 50 h; a player who
 focuses a few towers will be ahead of the bot.
+
+## Artifacts (Phase 7)
+
+Bots now take artifacts after each boss: greedy and spec-focused by estimated value, and balanced
+in rotation (bots never reroll). Dual Spec goes to the highest-level specialized tower.
+
+**With artifacts in play, the fresh account still hits the wall at 30–40 in 10–15 min** (30 runs
+each): greedy 37 / 11:51 → 37 / 12:02, balanced 36 / 11:33 → 36 / 11:32, spec-focused 36 / 11:24
+→ 36 / 11:23 (median wall / run time, before → after tuning). The 10 h preset's medians rose to
+62 / 52 / 53 and the 50 h preset's to 96 / 96 / 92 (~33–35 min runs).
+
+**No artifact is a strictly dominant pick.** Artifact matrix: 10 h preset, each artifact held at
+Rare from wave 1 with no other picks, mean wall over 12 runs (Δ vs no artifact):
+
+| artifact | greedy | balanced | spec-focused |
+|---|---|---|---|
+| (none) | 56.1 | 44.8 | 44.0 |
+| Capacitor Bank | **59.3 (+3.3)** | 47.6 (+2.8) | 43.8 (−0.3) |
+| Dual Spec | 58.9 (+2.8) | 50.4 (+5.6) | 48.3 (+4.3) |
+| Last Stand (tuned) | 58.4 (+2.3) | 51.2 (+6.3) | 48.0 (+4.0) |
+| Specialist Doctrine | 58.3 (+2.2) | 50.6 (+5.8) | 48.9 (+4.9) |
+| Long Barrels (tuned) | 56.3 (+0.2) | **51.5 (+6.7)** | **50.4 (+6.4)** |
+| Priority Targeting | 56.7 (+0.6) | 50.0 (+5.2) | 49.0 (+5.0) |
+| Ricochet Matrix | 57.3 (+1.3) | 48.6 (+3.8) | 48.8 (+4.8) |
+| Cryo Lattice | 56.1 (+0.0) | 48.6 (+3.8) | 49.1 (+5.1) |
+| Skyguard | 56.2 (+0.1) | 52.2 (+7.3)* | 43.6 (−0.4) |
+| Bounty Protocol | 56.3 (+0.2) | 50.2 (+5.3) | 43.0 (−1.0) |
+
+\* From the first full matrix (before tuning). The full 30-artifact table is in the first run's
+output; after tuning only the leaders were re-run (`--only=`). Greedy only builds lasers and
+railguns, so Cryo, Mortar and Arc artifacts do nothing for it.
+
+| Change | Why |
+|---|---|
+| Last Stand +20% fire rate at Common (was +30%) | Best in every strategy (60.3 / 51.2 / 49.5). |
+| Long Barrels +5% range at Common (was +6%) | Best in 2 of 3 strategies, by 1–2 waves. |
+
+**Watch:** Reinforced Hull and Salvage Rights show +0.0. Runs end on a boss leak (which leaves
+1 HP whatever the max), and bots never sell. Interest Engine hurts bots that don't bank Credits.
+These need a player-style test, not the bots. 12 runs per cell is noisy (±1–2 waves).
+
+**Career with artifacts** (`--mode=career`): research pace is unchanged within noise (Pulse damage
+×1.35 at 10 h, ×1.80 at 50 h). The bot has 23 artifacts crafted by 10 h and 29 by 50 h, with
+a tier sum of 26.
 
 ## Next balance work
 

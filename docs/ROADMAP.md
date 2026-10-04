@@ -77,12 +77,17 @@ snapshot through JSON and keeps playing identically; `src/meta/meta.test.ts` cov
 `npm run sim -- --mode=career` (`docs/BALANCE.md`). Device check pending._
 
 ## Phase 7 — Artifacts
-- [ ] Artifact data model with tiers, ~30 artifacts
-- [ ] Crafting/upgrading with Shards, artifact codex UI
-- [ ] Post-boss pick 1 of 3 from the crafted pool, weighted by tier, reroll with rising cost
-- [ ] Dual Spec legendary
+- [x] Artifact data model with tiers, ~30 artifacts
+- [x] Crafting/upgrading with Shards, artifact codex UI
+- [x] Post-boss pick 1 of 3 from the crafted pool, weighted by tier, reroll with rising cost
+- [x] Dual Spec legendary
 
 **Accept:** balance sim includes artifact picks; no artifact is a strictly dominant pick.
+_Accepted 2026-10-04: all three bots take artifacts after bosses (`tools/balance-sim/bots/common.ts`).
+The artifact matrix (`--mode=artifacts`) shows no artifact best in every strategy after tuning
+Last Stand and Long Barrels. 30 artifacts in `src/data/artifacts.ts`, effect tests in
+`src/sim/artifacts.test.ts`, crafting and save migration tests in `src/meta/meta.test.ts`.
+Numbers in `docs/BALANCE.md`. Device check pending._
 
 ## Phase 8 — Juice and onboarding
 - [ ] Pooled VFX: beams, rail trails, explosions, chain lightning, freeze

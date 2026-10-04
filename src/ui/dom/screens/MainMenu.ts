@@ -1,12 +1,14 @@
 import { MAPS, DEFAULT_MAP_ID } from '../../../data/maps';
 import type { Profile } from '../../../meta/profile';
 import { affordableCount } from '../../../meta/research';
+import { craftableCount } from '../../../meta/artifacts';
 import { icon } from '../icons';
 import { fmt, h } from '../overlay';
 
 export interface MainMenuActions {
   play(): void;
   research(): void;
+  codex(): void;
 }
 
 /**
@@ -23,6 +25,7 @@ export class MainMenu {
     actions: MainMenuActions,
   ) {
     const affordable = affordableCount(p);
+    const craftable = craftableCount(p);
     const map = MAPS[DEFAULT_MAP_ID]!;
     this.el = h(
       'section',
@@ -49,10 +52,10 @@ export class MainMenu {
              <span class="btn-md-text">Research Lab</span>
              <span class="caption muted">${affordable ? `${affordable} upgrade${affordable === 1 ? '' : 's'} affordable` : 'Spend Cores on upgrades'}</span>
            </span></button>
-           <button class="menu-card" disabled><span class="inner">
-             <span>${icon.shards(24)}</span>
+           <button class="menu-card codex"><span class="inner">
+             <span style="display:flex;align-items:center;justify-content:space-between">${icon.shards(24)}${craftable ? `<span class="badge d">${icon.next(14)}${craftable}</span>` : ''}</span>
              <span class="btn-md-text">Artifact Codex</span>
-             <span class="caption">Arrives with artifacts</span>
+             <span class="caption muted">${craftable ? `${craftable} craftable` : 'Craft artifacts with Shards'}</span>
            </span></button>
          </div>
          <div class="sector">
@@ -64,6 +67,7 @@ export class MainMenu {
        </div>`,
     );
     this.el.querySelector('.research')!.addEventListener('click', () => actions.research());
+    this.el.querySelector('.codex')!.addEventListener('click', () => actions.codex());
     this.el.querySelector('.play')!.addEventListener('click', () => actions.play());
     parent.appendChild(this.el);
   }

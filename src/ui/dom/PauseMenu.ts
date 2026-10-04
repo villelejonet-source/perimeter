@@ -1,3 +1,5 @@
+import { ARTIFACTS, TIER_NAMES, type OwnedArtifact } from '../../data/artifacts';
+import { artifactIcon } from './artifactArt';
 import { icon } from './icons';
 import { fmt, h } from './overlay';
 
@@ -8,6 +10,8 @@ export interface PauseInfo {
   /** What the run would pay if it ended now. */
   cores: number;
   shards: number;
+  /** Artifacts picked this run. */
+  artifacts: readonly OwnedArtifact[];
 }
 
 /**
@@ -44,6 +48,19 @@ export class PauseMenu {
       </div>
       <div style="position:absolute;left:16px;top:236px;width:358px;box-sizing:border-box;padding:16px;display:flex;flex-direction:column;gap:12px;background:var(--surface-200);border:1px solid var(--line)">
         <span class="label muted">EARNED THIS RUN</span>${this.earned('')}
+      </div>
+      <div style="position:absolute;left:16px;top:360px;width:358px;box-sizing:border-box;padding:16px;display:flex;flex-direction:column;gap:12px;background:var(--surface-200);border:1px solid var(--line)">
+        <span class="label muted">ARTIFACTS · ${i.artifacts.length}</span>
+        ${
+          i.artifacts.length
+            ? `<div style="display:flex;flex-wrap:wrap;gap:8px">${i.artifacts
+                .map(
+                  (a) =>
+                    `<span role="img" aria-label="${ARTIFACTS[a.id].name}, ${TIER_NAMES[a.tier]}" title="${ARTIFACTS[a.id].name}">${artifactIcon(a.id, a.tier, 40)}</span>`,
+                )
+                .join('')}</div>`
+            : '<span class="caption muted">None yet. Each boss you defeat offers one.</span>'
+        }
       </div>
       <div class="sheet">
         <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px">

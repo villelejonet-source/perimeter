@@ -1,3 +1,4 @@
+import { ARTIFACT_TUNING, type ArtifactId, type OwnedArtifact } from '../data/artifacts';
 import type { DamageType } from '../data/damage';
 import type { EnemyKind } from '../data/enemies';
 import type { MetaModifiers } from '../data/meta';
@@ -78,7 +79,9 @@ export interface Tower {
   targetId: number;
   /** Specialization chosen at level 5, or null. */
   spec: SpecId | null;
-  /** Effective stats for level + spec; refresh with `refreshStats` when either changes. */
+  /** Second specialization (Dual Spec artifact), or null. */
+  spec2: SpecId | null;
+  /** Effective stats for level, specs, research and artifacts; see `refreshAllStats`. */
   stats: TowerStats;
   /** Overclock: fire-rate bonus built up while firing (0 to max). */
   heat: number;
@@ -108,8 +111,9 @@ export interface Projectile {
   /** Ticks before a missile without a target expires; slug distance left. */
   life: number;
   source: TowerKind;
-  /** Spec of the tower that fired it (hit modifiers, pools, bomblets). */
+  /** Specs of the tower that fired it (hit modifiers, pools, bomblets). */
   spec: SpecId | null;
+  spec2: SpecId | null;
   /** Slug: enemies it may still pass through, and the ids already hit. */
   pierceLeft: number;
   hits: Int32Array;
@@ -175,6 +179,16 @@ export interface RunStats {
   leaksByKind: Partial<Record<EnemyKind, number>>;
 }
 
+/** Post-boss artifact pick waiting for the player (GDD §9). */
+export interface ArtifactOffer {
+  /** Boss wave that triggered it. */
+  wave: number;
+  choices: OwnedArtifact[];
+}
+
+/** Effect value per artifact for this run (0 = not active). Derived from `artifacts`. */
+export type ArtifactValues = Record<ArtifactId, number>;
+
 export interface SimState {
   tick: number;
   paused: boolean;
@@ -201,6 +215,20 @@ export interface SimState {
   /** Tower kinds the player may build this run. */
   unlocked: readonly TowerKind[];
   stats: RunStats;
+  /** Artifacts picked this run, in order. */
+  artifacts: OwnedArtifact[];
+  /** Effect values of the active artifacts (recomputed on pick and restore). */
+  art: ArtifactValues;
+  /** Pick waiting for the player, or null. */
+  offer: ArtifactOffer | null;
+  /** Bosses killed whose pick hasn't been offered yet. */
+  offersQueued: number;
+  /** Rerolls bought this run (drives the rising cost). */
+  rerolls: number;
+  /** Free rerolls left this run (research). */
+  freeRerolls: number;
+  /** Dual Spec already given to a tower this run. */
+  dualSpecUsed: boolean;
   /** Reason the most recent command was rejected, for UI feedback. */
   lastRejection: string | null;
 }
@@ -258,15 +286,38 @@ export function newTower(): Tower {
     invested: 0,
     targetId: -1,
     spec: null,
+    spec2: null,
     stats: towerStats('pulseLaser', 1, null),
     heat: 0,
     idle: 0,
   };
 }
 
-/** Recompute a tower's cached stats after placement, an upgrade or a specialization. */
-export function refreshStats(t: Tower, meta?: MetaModifiers): void {
-  t.stats = towerStats(t.kind, t.level, t.spec, meta);
+/**
+ * Recompute every tower's cached stats. Call after anything that changes them: placement,
+ * selling (Targeting Uplink neighbours), upgrades, specializations, artifact picks.
+ */
+export function refreshAllStats(state: SimState): void {
+  for (const t of state.towers.items) if (t.alive) refreshStats(t, state);
+}
+
+/** Recompute one tower's cached stats. */
+export function refreshStats(t: Tower, state: SimState): void {
+  t.stats = towerStats(t.kind, t.level, t.spec, state.meta, {
+    art: state.art,
+    spec2: t.spec2,
+    uplinked: state.art.targetingUplink > 0 && hasUplink(state, t),
+  });
+}
+
+/** Targeting Uplink: another tower of the same kind close by. */
+function hasUplink(state: SimState, t: Tower): boolean {
+  const r = ARTIFACT_TUNING.uplinkRadius;
+  for (const o of state.towers.items) {
+    if (!o.alive || o === t || o.kind !== t.kind) continue;
+    if ((o.x - t.x) ** 2 + (o.y - t.y) ** 2 <= r * r) return true;
+  }
+  return false;
 }
 
 export function newProjectile(): Projectile {
@@ -287,6 +338,7 @@ export function newProjectile(): Projectile {
     life: 0,
     source: 'pulseLaser',
     spec: null,
+    spec2: null,
     pierceLeft: 0,
     hits: new Int32Array(8),
     hitCount: 0,

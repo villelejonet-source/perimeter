@@ -1,6 +1,7 @@
 import type { TowerKind } from '../../../src/data/towers';
 import {
   maybeCallEarly,
+  pickArtifact,
   specializeAll,
   towers,
   tryPlace,
@@ -31,6 +32,7 @@ export function balancedMix(override: SpecOverride = {}): Bot {
     name: 'balanced-mix',
     decide(ctx: BotContext) {
       specializeAll(ctx, 'varied', undefined, override);
+      pickArtifact(ctx, 'varied');
       maybeCallEarly(ctx);
       const s = ctx.sim.state;
       const plan = PLAN.filter((k) => s.unlocked.includes(k));

@@ -1,9 +1,11 @@
 import { describe, expect, it } from 'vitest';
+import { ARTIFACT_TUNING, STARTER_ARTIFACTS } from '../data/artifacts';
 import { META_PRESETS, REWARDS } from '../data/meta';
 import { RESEARCH_BY_ID, researchCost } from '../data/research';
 import { WebStorage } from '../platform/storage';
 import { Sim } from '../sim/sim';
-import { snapshotSim } from '../sim/snapshot';
+import { restoreSim, snapshotSim } from '../sim/snapshot';
+import { artifactPool, craftableCount, craftArtifact, craftBlock } from './artifacts';
 import { CURRENT_SCHEMA_VERSION, migrate, SaveError } from './migrations';
 import { collectOffline, offlineEarnings } from './offline';
 import { newProfile, type Profile } from './profile';
@@ -205,5 +207,85 @@ describe('save file', () => {
     expect(fresh).toBe(true);
     expect(save.profile.cores).toBe(0);
     expect(await storage.get('perimeter.save.corrupt')).not.toBeNull();
+  });
+});
+
+describe('artifact crafting (GDD §9)', () => {
+  it('new profiles start with the starter set crafted at Common', () => {
+    const p = profile();
+    for (const id of STARTER_ARTIFACTS) expect(p.artifacts[id]).toBe(0);
+    expect(artifactPool(p)).toHaveLength(STARTER_ARTIFACTS.length);
+  });
+
+  it('crafting costs Shards and enters the pool; re-crafting raises the tier', () => {
+    let p = profile({ shards: 1000 });
+    expect(p.artifacts.shieldBreaker).toBeUndefined();
+    p = craftArtifact(p, 'shieldBreaker');
+    expect(p.artifacts.shieldBreaker).toBe(0);
+    expect(p.shards).toBe(1000 - ARTIFACT_TUNING.craftCost);
+    for (let t = 1; t <= 3; t++) p = craftArtifact(p, 'shieldBreaker');
+    expect(p.artifacts.shieldBreaker).toBe(3);
+    expect(craftBlock(p, 'shieldBreaker')).toBe('maxed');
+    const spent =
+      ARTIFACT_TUNING.craftCost + ARTIFACT_TUNING.upgradeCost.reduce((a: number, b) => a + b, 0);
+    expect(p.shards).toBe(1000 - spent);
+    expect(metaFromProfile(p).artifactPool).toContainEqual({ id: 'shieldBreaker', tier: 3 });
+  });
+
+  it('Dual Spec crafts straight to Legendary', () => {
+    const p = craftArtifact(profile({ shards: 100 }), 'dualSpec');
+    expect(p.artifacts.dualSpec).toBe(3);
+    expect(craftBlock(p, 'dualSpec')).toBe('maxed');
+  });
+
+  it("can't craft without the Shards", () => {
+    const p = profile({ shards: ARTIFACT_TUNING.craftCost - 1 });
+    expect(craftBlock(p, 'shieldBreaker')).toBe('shards');
+    expect(() => craftArtifact(p, 'shieldBreaker')).toThrow();
+    expect(craftableCount(profile({ shards: 0 }))).toBe(0);
+  });
+
+  it('4th choice and free reroll research feed the run', () => {
+    const p = profile({ research: { artifactChoice4: 1, freeReroll: 1 } });
+    const m = metaFromProfile(p);
+    expect(m.artifactChoices).toBe(ARTIFACT_TUNING.choices + 1);
+    expect(m.freeRerolls).toBe(1);
+  });
+});
+
+describe('save migration 1 → 2 (artifacts)', () => {
+  it('adds the starter artifacts and upgrades a saved run so it still resumes', () => {
+    const sim = new Sim({ seed: 9, meta: META_PRESETS['10h'] });
+    for (let i = 0; i < 900; i++) sim.step();
+    // Strip everything Phase 7 added, as a v1 save had it.
+    type Loose = Record<string, unknown>;
+    const snap = JSON.parse(JSON.stringify(snapshotSim(sim))) as {
+      config: { meta: Loose };
+      state: Loose & { meta: Loose; towers: Loose[]; projectiles: Loose[] };
+    };
+    const strip = (o: Loose, keys: string[]): void => {
+      for (const k of keys) Reflect.deleteProperty(o, k);
+    };
+    for (const o of [snap.config.meta, snap.state.meta])
+      strip(o, ['artifactPool', 'artifactChoices', 'freeRerolls']);
+    strip(snap.state, [
+      'artifacts',
+      'offer',
+      'offersQueued',
+      'rerolls',
+      'freeRerolls',
+      'dualSpecUsed',
+    ]);
+    for (const o of [...snap.state.towers, ...snap.state.projectiles]) strip(o, ['spec2']);
+    const { artifacts: _a, ...oldProfile } = profile({ cores: 5 });
+
+    const s = migrate({ schemaVersion: 1, profile: oldProfile, run: snap, savedAt: 1 });
+    expect(s.profile.cores).toBe(5);
+    expect(s.profile.artifacts).toEqual(profile().artifacts);
+    const resumed = restoreSim(s.run!);
+    expect(resumed.state.tick).toBe(900);
+    expect(resumed.state.meta.artifactPool).toEqual([]);
+    for (let i = 0; i < 600; i++) resumed.step();
+    expect(resumed.state.tick).toBe(1500);
   });
 });

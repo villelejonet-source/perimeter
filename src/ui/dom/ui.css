@@ -1143,3 +1143,291 @@ button.spec-hint {
   line-height: 24px;
   font-weight: 700;
 }
+
+/* Artifacts (meta/ArtifactPick.dc.html, Codex.dc.html). Tier frames: 0/1/2/4 cut corners,
+   Legendary double-framed; glow none → lg. */
+:root {
+  --cut-1: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%);
+  --cut-4: polygon(
+    10px 0,
+    calc(100% - 10px) 0,
+    100% 10px,
+    100% calc(100% - 10px),
+    calc(100% - 10px) 100%,
+    10px 100%,
+    0 calc(100% - 10px),
+    0 10px
+  );
+}
+.tf,
+.tf-gap,
+.tf-line,
+.tf-in {
+  display: block;
+}
+.tf {
+  padding: 2px;
+}
+.tf-in {
+  background: var(--surface-300);
+}
+.tf0 {
+  background: #a3afc6;
+}
+.tf1 {
+  background: #4fa8ff;
+}
+.tf1,
+.tf1 .tf-in {
+  clip-path: var(--cut-1);
+}
+.tf2 {
+  background: #c06bff;
+}
+.tf2,
+.tf2 .tf-in {
+  clip-path: var(--chamfer-md);
+}
+.tf3 {
+  background: #ffb33d;
+}
+.tf3,
+.tf3 .tf-gap,
+.tf3 .tf-line,
+.tf3 .tf-in {
+  clip-path: var(--cut-4);
+}
+.tf3 .tf-gap {
+  background: var(--surface-100);
+  padding: 2px;
+}
+.tf3 .tf-line {
+  background: #ffb33d;
+  padding: 1px;
+}
+.glow1 {
+  filter: drop-shadow(0 0 4px rgba(79, 168, 255, 0.35))
+    drop-shadow(0 0 8px rgba(79, 168, 255, 0.12));
+}
+.glow2 {
+  filter: drop-shadow(0 0 8px rgba(192, 107, 255, 0.35))
+    drop-shadow(0 0 16px rgba(192, 107, 255, 0.12));
+}
+.glow3 {
+  filter: drop-shadow(0 0 12px rgba(255, 179, 61, 0.35))
+    drop-shadow(0 0 24px rgba(255, 179, 61, 0.12));
+}
+.pips {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.pip {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+}
+.art-pick {
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 14, 23, 0.86);
+  pointer-events: auto;
+}
+.art-pick > .col {
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  padding: 56px 16px 34px;
+  gap: 16px;
+}
+.art-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+}
+.chip-boss {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: var(--surface-200);
+  clip-path: var(--chamfer-sm);
+}
+.art-cards {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  justify-content: center;
+}
+.art-card {
+  position: relative;
+}
+.art-card > button {
+  display: block;
+  width: 100%;
+  text-align: left;
+}
+.art-card.selected {
+  outline: 3px solid var(--accent);
+  outline-offset: 4px;
+}
+.art-card .check-badge {
+  top: -14px;
+  right: -10px;
+  bottom: auto;
+  width: 28px;
+  height: 28px;
+}
+.art-body {
+  display: grid !important;
+  grid-template-columns: 56px minmax(0, 1fr);
+  gap: 12px;
+  padding: 12px;
+}
+.art-body .name {
+  font-size: 19px;
+  line-height: 24px;
+  font-weight: 700;
+}
+.art-body .desc {
+  font-size: 16px;
+  line-height: 22px;
+  font-weight: 500;
+}
+.locked-choice {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: var(--ink-muted);
+}
+.art-actions {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+.reroll-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 132px;
+}
+.reroll-cost {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 15px;
+  line-height: 18px;
+  font-weight: 700;
+}
+.codex-top {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 56px 16px 12px;
+}
+.codex-grid {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-auto-rows: min-content;
+  gap: 8px;
+  padding: 6px 4px;
+  margin: -6px -4px;
+}
+.codex-tile {
+  position: relative;
+}
+.codex-tile > button,
+.codex-tile.none {
+  display: block;
+  width: 100%;
+}
+.codex-tile.selected {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
+.codex-tile .tile {
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 104px;
+  padding: 8px;
+  box-sizing: border-box;
+  text-align: center;
+}
+.codex-tile .tf3 .tile {
+  height: 94px;
+}
+.codex-tile .tname {
+  font-size: 16px;
+  line-height: 18px;
+  font-weight: 700;
+}
+.codex-tile.none {
+  padding: 2px;
+  background: var(--line);
+  clip-path: var(--chamfer-sm);
+}
+.codex-tile.none .tile {
+  clip-path: var(--chamfer-sm);
+  background-color: var(--surface-200);
+  background-image: repeating-linear-gradient(
+    135deg,
+    rgba(111, 124, 150, 0.3) 0 2px,
+    transparent 2px 9px
+  );
+}
+.codex-sheet {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: var(--surface-200);
+  padding: 16px 16px 34px;
+  border-top: 1px solid var(--line);
+  clip-path: var(--chamfer-lg-top);
+}
+.codex-sheet .name {
+  font-size: 19px;
+  line-height: 24px;
+  font-weight: 700;
+}
+.codex-sheet .desc {
+  font-size: 16px;
+  line-height: 22px;
+  font-weight: 500;
+}
+.codex-row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 12px;
+  background: var(--surface-300);
+  clip-path: var(--chamfer-sm);
+}
+.codex-row.framed {
+  padding: 2px;
+}
+.codex-row.framed > .codex-row {
+  padding: 6px 10px;
+}
+.codex-sheet .craft {
+  flex: 1;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}

@@ -82,9 +82,10 @@ export function towerAt(
   t.invested = 0;
   t.targetId = -1;
   t.spec = spec;
+  t.spec2 = null;
   t.heat = 0;
   t.idle = 0;
-  refreshStats(t, sim.state.meta);
+  refreshStats(t, sim.state);
   return t;
 }
 

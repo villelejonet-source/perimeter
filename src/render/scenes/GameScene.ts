@@ -1,10 +1,11 @@
 import Phaser from 'phaser';
 import { GAME } from '../../data/game';
 import { TOWER_ORDER, TOWERS } from '../../data/towers';
-import { FixedStepDriver, Sim, type Command } from '../../sim';
+import { FixedStepDriver, Sim, type Command, type SimState } from '../../sim';
 import { bossFor, waveType } from '../../sim/waves';
 import { Alerts } from '../../ui/dom/Alerts';
 import { SpecPicker } from '../../ui/dom/SpecPicker';
+import { ArtifactPick } from '../../ui/dom/ArtifactPick';
 import { SPEC_LEVEL } from '../../data/specs';
 import { Controls } from '../../ui/dom/Controls';
 import { HudBar } from '../../ui/dom/HudBar';
@@ -15,6 +16,7 @@ import { PauseMenu } from '../../ui/dom/PauseMenu';
 import { metaFromProfile } from '../../meta/research';
 import { runRewards } from '../../meta/rewards';
 import { restoreSim, snapshotSim } from '../../sim/snapshot';
+import { canDualSpec } from '../../sim/sim';
 import { TowerPanel } from '../../ui/dom/TowerPanel';
 import { Placement } from '../input/Placement';
 import { S, T, ZONES } from '../layout';
@@ -42,6 +44,9 @@ export class GameScene extends Phaser.Scene {
   private alerts!: Alerts;
   private runEnd: RunEnd | null = null;
   private picker: SpecPicker | null = null;
+  private artPick: ArtifactPick | null = null;
+  private pausedByArtPick = false;
+  private takenOffer: SimState['offer'] = null;
   private pauseMenu: PauseMenu | null = null;
   private speeds: readonly number[] = [1, 2];
   /** Towers already offered the spec pick (LATER doesn't re-open it automatically). */
@@ -81,6 +86,8 @@ export class GameScene extends Phaser.Scene {
     this.lastBaseHp = this.sim.state.baseHp;
     this.lastWave = this.sim.state.wave;
     this.picker = null;
+    this.artPick = null;
+    this.pausedByArtPick = false;
     // A resumed run doesn't re-offer picks the player already deferred.
     this.offered = new Set(
       this.sim.state.towers.items
@@ -153,6 +160,7 @@ export class GameScene extends Phaser.Scene {
       this.input.off('pointerdown', this.onFieldDown, this);
       this.runEnd?.destroy();
       this.picker?.destroy();
+      this.artPick?.destroy();
       this.pauseMenu?.destroy();
       this.alerts.destroy();
       this.overlay.destroy();
@@ -187,7 +195,11 @@ export class GameScene extends Phaser.Scene {
     }
     this.lastBaseHp = s.baseHp;
 
-    if (!this.picker && !this.pauseMenu && !this.ended) this.offerSpecs();
+    this.artPick?.update();
+    if (!this.picker && !this.artPick && !this.pauseMenu && !this.ended) {
+      if (s.offer && s.offer !== this.takenOffer) this.openArtifactPick();
+      else this.offerSpecs();
+    }
     if (s.gameOver && !this.ended) this.endRun();
   }
 
@@ -204,7 +216,8 @@ export class GameScene extends Phaser.Scene {
   /** Spec pick screen; the run pauses while it's open (meta/README.md). */
   private openPicker(towerId: number): void {
     const t = this.sim.findTower(towerId);
-    if (!t || t.spec || this.picker) return;
+    const dual = t !== null && canDualSpec(this.sim.state, t);
+    if (!t || (t.spec && !dual) || this.picker) return;
     this.offered.add(towerId);
     if (!this.sim.state.paused) {
       this.send({ type: 'setPaused', paused: true });
@@ -218,13 +231,46 @@ export class GameScene extends Phaser.Scene {
         this.pausedByPicker = false;
       }
     };
-    this.picker = new SpecPicker(this.overlay.root, t.kind, this.sim.state, {
-      pick: (spec) => {
-        this.send({ type: 'specialize', towerId, spec });
-        getPlatform(this).haptics.play('place');
-        close();
+    this.picker = new SpecPicker(
+      this.overlay.root,
+      t.kind,
+      this.sim.state,
+      {
+        pick: (spec) => {
+          this.send({ type: 'specialize', towerId, spec });
+          getPlatform(this).haptics.play('place');
+          close();
+        },
+        later: close,
       },
-      later: close,
+      dual ? t.spec : null,
+    );
+  }
+
+  /** GDD §9: after a boss, pick 1 of 3 artifacts. The run pauses while the screen is open. */
+  private openArtifactPick(): void {
+    this.selectTower(-1);
+    if (!this.sim.state.paused) {
+      this.send({ type: 'setPaused', paused: true });
+      this.pausedByArtPick = true;
+    }
+    this.artPick = new ArtifactPick(this.overlay.root, this.sim.state, {
+      take: (index) => {
+        this.send({ type: 'pickArtifact', index });
+        getPlatform(this).haptics.play('place');
+        this.artPick?.destroy();
+        this.artPick = null;
+        if (this.pausedByArtPick) {
+          this.send({ type: 'setPaused', paused: false });
+          this.pausedByArtPick = false;
+        }
+        // The sim clears the offer on its next tick; don't re-open it meanwhile.
+        this.takenOffer = this.sim.state.offer;
+      },
+      reroll: () => {
+        this.send({ type: 'rerollArtifacts' });
+        getPlatform(this).haptics.play('tap');
+      },
     });
   }
 
@@ -314,7 +360,7 @@ export class GameScene extends Phaser.Scene {
     if (this.ended) return;
     if (!this.sim.state.paused) this.send({ type: 'setPaused', paused: true });
     this.autosave();
-    if (!this.pauseMenu && !this.picker) this.openPause();
+    if (!this.pauseMenu && !this.picker && !this.artPick) this.openPause();
   }
 
   /** Pause menu (Pause.dc.html): earned-so-far, Retreat (with confirm), Resume. */
@@ -327,7 +373,14 @@ export class GameScene extends Phaser.Scene {
     const r = runRewards(getStore(this).profile, s.wave, s.stats.bossesKilled);
     this.pauseMenu = new PauseMenu(
       this.overlay.root,
-      { wave: s.wave, baseHp: s.baseHp, maxBaseHp: s.maxBaseHp, cores: r.cores, shards: r.shards },
+      {
+        wave: s.wave,
+        baseHp: s.baseHp,
+        maxBaseHp: s.maxBaseHp,
+        cores: r.cores,
+        shards: r.shards,
+        artifacts: s.artifacts,
+      },
       {
         resume: () => {
           this.pauseMenu?.destroy();

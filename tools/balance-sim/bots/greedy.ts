@@ -5,6 +5,7 @@ import {
   effectiveDps,
   isDamageTower,
   maybeCallEarly,
+  pickArtifact,
   observe,
   specializeAll,
   towers,
@@ -25,6 +26,7 @@ export function greedyDps(override: SpecOverride = {}): Bot {
     decide(ctx: BotContext) {
       observe(ctx, threat);
       specializeAll(ctx, 'best', threat, override);
+      pickArtifact(ctx, 'best', threat);
       maybeCallEarly(ctx);
       const s = ctx.sim.state;
       const meta = s.meta;
@@ -34,7 +36,7 @@ export function greedyDps(override: SpecOverride = {}): Bot {
 
       for (const kind of TOWER_ORDER) {
         if (!s.unlocked.includes(kind) || !isDamageTower(kind)) continue;
-        const st = towerStats(kind, meta.towers[kind].startingLevel, null, meta);
+        const st = towerStats(kind, meta.towers[kind].startingLevel, null, meta, { art: s.art });
         const spot = ctx.spots.best(st.range);
         if (!spot) continue;
         const c = placeCost(kind);
@@ -47,8 +49,11 @@ export function greedyDps(override: SpecOverride = {}): Bot {
       }
       for (const t of towers(ctx)) {
         if (!isDamageTower(t.kind)) continue;
-        const next = towerStats(t.kind, t.level + 1, t.spec, meta);
-        const c = upgradeCostFor(t);
+        const next = towerStats(t.kind, t.level + 1, t.spec, meta, {
+          art: s.art,
+          spec2: t.spec2,
+        });
+        const c = upgradeCostFor(t, s.art);
         const cover = ctx.spots.coverageAt(t.x, t.y, next.range);
         const gain =
           (effectiveDps(next, threat, t.spec) - effectiveDps(t.stats, threat, t.spec)) * cover;

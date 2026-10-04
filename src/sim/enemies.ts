@@ -48,8 +48,9 @@ export function spawnEnemy(
   e.shieldRegen = e.maxShield * Math.max(def.shieldRegen, also?.shieldRegen ?? 0) * dt;
   e.shieldDelay = 0;
   e.armor = enemyArmor(baseArmor, wave) * eliteMult(ELITE.armorMult);
-  e.baseSpeed = def.speed;
-  e.speed = def.speed;
+  // Null Anchor slows bosses.
+  e.baseSpeed = def.boss ? def.speed * (1 - state.art.nullAnchor) : def.speed;
+  e.speed = e.baseSpeed;
   e.bounty = Math.round(
     bounty(def.baseBounty, wave) * eliteMult(ELITE.bountyMult) * state.meta.bountyMult,
   );

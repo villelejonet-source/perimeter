@@ -46,8 +46,8 @@ maps → `src/data/maps.ts`.
 | 6 | Research Lab: towers / base & idle / unlocks | `screens/meta/Research{Towers,Base,Unlocks}.dc.html` | `src/ui/dom/screens/ResearchLab.ts` | applied |
 | 6 | Welcome back (offline income) | `screens/meta/WelcomeBack.dc.html` | `src/ui/dom/screens/WelcomeBack.ts` | applied |
 | 6 | Pause → Retreat confirm | `screens/in-run/Pause-Retreat.dc.html` | `src/ui/dom/PauseMenu.ts` | applied |
-| 7 | Post-boss artifact pick | `screens/meta/ArtifactPick.dc.html` | none | ready |
-| 7 | Artifact codex and crafting | `screens/meta/Codex.dc.html` | none | ready |
+| 7 | Post-boss artifact pick | `screens/meta/ArtifactPick.dc.html` | `src/ui/dom/ArtifactPick.ts` | applied |
+| 7 | Artifact codex and crafting | `screens/meta/Codex.dc.html` | `src/ui/dom/screens/Codex.ts` | applied |
 | 8 | 3 maps | `maps/map-01-s-curve.json`, `map-02-switchbacks.json`, `map-03-spiral.json` | `src/data/maps.ts` | ready, not applied |
 | 8 | Tutorial overlays | none | none | missing |
 | 8 | Map select | none | none | missing |
@@ -79,6 +79,8 @@ Decided 2026-10-04:
 
 - Phase 6: the app opens on the main menu. Run reward is floor(wave² / 4) Cores, plus 1 Shard per boss and 3 Shards the first time each 10th wave is reached. Towers 4–6 unlock in order with Cores (Arc Coil → Cryo → Swarm), no wave gates. Research pace matches the 10 h / 50 h balance presets. Not-yet-built items on the mockups are shown disabled: Settings (Phase 8), sector select (Phase 8), Codex, 4th choice and free reroll (Phase 7), double-with-ad on Welcome back and Run end (Phase 9).
 
+- Phase 7: ~30 artifacts drafted from the GDD starter set and the mockup names, using the GDD names where they differ (`src/data/artifacts.ts`). 8 starters are crafted free at Common. Tiers scale the effect ×1 / 1.5 / 2.2 / 3.2 and are drawn with weight 100 / 60 / 35 / 20. Crafting costs 10 Shards, then 20 / 40 / 80 per tier. Dual Spec is Legendary-only: one specialized tower per run can take a second spec from its panel. A boss that leaks gives no pick (the pick triggers on the kill), and there's no skip button, as in the mockup. Built without a design: the Codex "craft" state (the detail sheet with a dashed icon and Craft + cost, INVENTORY request 11), the 28 artifact glyphs (same frame language as the mockup's), the artifacts row in the pause menu, and the Dual Spec card in the tower panel.
+
 Open: the remaining requests in `design/INVENTORY.md` §3.
 
 ## Applied
@@ -106,3 +108,7 @@ Log when a design has been implemented, so drift is visible later.
 | 2026-10-04 | `screens/meta/WelcomeBack.dc.html` | Offline income dial, cap chip, tamper message, Collect (`src/ui/dom/screens/WelcomeBack.ts`) |
 | 2026-10-04 | `screens/in-run/Pause.dc.html`, `Pause-Retreat.dc.html` | Pause menu with earned-this-run, retreat confirm (`src/ui/dom/PauseMenu.ts`) |
 | 2026-10-04 | `screens/in-run/RunEnd.dc.html` | Best wave, NEW BEST, Cores/Shards incl. milestones, Back to menu (`src/ui/dom/RunEnd.ts`) |
+| 2026-10-04 | `screens/meta/ArtifactPick.dc.html` | Tier-framed cards (pips, cut corners, Legendary double frame, glow), boss chip, locked 4th choice, Reroll with current and next price, Take (`src/ui/dom/ArtifactPick.ts`, `artifactArt.ts`) |
+| 2026-10-04 | `screens/meta/Codex.dc.html` | Tile grid (crafted by tier / hatched not crafted), detail sheet with Now / Next and Upgrade priced in Shards, plus a Craft state (`src/ui/dom/screens/Codex.ts`) |
+| 2026-10-04 | `screens/meta/Main.dc.html` Codex card | Enabled, with a craftable badge |
+| 2026-10-04 | `screens/meta/ResearchUnlocks.dc.html` | 4th artifact choice and free reroll are now real research |

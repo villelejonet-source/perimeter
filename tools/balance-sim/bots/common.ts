@@ -1,9 +1,11 @@
+import { artifactValue, type ArtifactId, type OwnedArtifact } from '../../../src/data/artifacts';
 import { DAMAGE } from '../../../src/data/damage';
 import { SPEC_TUNING, TOWER_SPECS, type SpecId } from '../../../src/data/specs';
 import { TOWERS, type TowerKind } from '../../../src/data/towers';
 import { placeCost, upgradeCostFor } from '../../../src/sim/economy';
 import { towerStats, type TowerStats } from '../../../src/sim/specs';
 import type { Tower } from '../../../src/sim/state';
+import { canDualSpec } from '../../../src/sim/sim';
 import type { BotContext, SpecChoice } from './types';
 
 /** Damage-dealing towers (Cryo is support and valued separately). */
@@ -120,7 +122,7 @@ export function towers(ctx: BotContext): Tower[] {
 export function tryPlace(ctx: BotContext, kind: TowerKind): boolean {
   const s = ctx.sim.state;
   if (!s.unlocked.includes(kind) || s.credits < placeCost(kind)) return false;
-  const st = towerStats(kind, s.meta.towers[kind].startingLevel, null, s.meta);
+  const st = towerStats(kind, s.meta.towers[kind].startingLevel, null, s.meta, { art: s.art });
   const spot = ctx.spots.best(st.range);
   if (!spot) return false;
   ctx.send({ type: 'placeTower', kind, x: spot.x, y: spot.y });
@@ -128,7 +130,7 @@ export function tryPlace(ctx: BotContext, kind: TowerKind): boolean {
 }
 
 export function tryUpgrade(ctx: BotContext, t: Tower): boolean {
-  if (ctx.sim.state.credits < upgradeCostFor(t)) return false;
+  if (ctx.sim.state.credits < upgradeCostFor(t, ctx.sim.state.art)) return false;
   ctx.send({ type: 'upgradeTower', towerId: t.id });
   return true;
 }
@@ -176,6 +178,24 @@ export function specializeAll(
     }
     ctx.send({ type: 'specialize', towerId: t.id, spec });
   }
+  // Dual Spec: the highest-level specialized tower takes its best remaining spec.
+  const s = ctx.sim.state;
+  const host = towers(ctx)
+    .filter((t) => canDualSpec(s, t) && isDamageTower(t.kind))
+    .sort((a, b) => b.level - a.level || a.id - b.id)[0];
+  if (host) {
+    const stats2 = (o: SpecId): TowerStats =>
+      towerStats(host.kind, host.level, host.spec, meta, { art: s.art, spec2: o });
+    const options = TOWER_SPECS[host.kind].filter(
+      (o) => o !== host.spec && keepsTypeMix(ctx, host, stats2(o)),
+    );
+    if (options.length) {
+      const spec2 = options.reduce((a, b) =>
+        value(stats2(b), host.x, host.y) > value(stats2(a), host.x, host.y) ? b : a,
+      );
+      ctx.send({ type: 'specialize', towerId: host.id, spec: spec2 });
+    }
+  }
 }
 
 /** Minimum share of team DPS each damage type should keep (shields need energy, armor kinetic). */
@@ -206,4 +226,89 @@ export function maybeCallEarly(ctx: BotContext): void {
   if (s.spawns.length > 0 || s.enemies.countAlive() > 0) return;
   if (s.baseHp < s.maxBaseHp * 0.7) return;
   ctx.send({ type: 'callEarly' });
+}
+
+/** Rough value of an artifact the bot can't measure through tower stats (fraction of power). */
+const FLAT_VALUE: Partial<
+  Record<ArtifactId, (v: number, ctx: BotContext, th: ThreatModel) => number>
+> = {
+  superconductor: (v, ctx, th) => v * th.shieldShare * typeShare(ctx, 'energy'),
+  shieldBreaker: (v, ctx, th) => v * 0.33 * th.shieldShare * typeShare(ctx, 'kinetic'),
+  penetratorRounds: (v, ctx, th) => v * Math.min(1, th.armor / 20) * typeShare(ctx, 'kinetic'),
+  ricochetMatrix: (v, ctx) => v * 0.5 * typeShare(ctx, 'kinetic'),
+  overflowReactor: (v) => v * 0.15,
+  cryoLattice: (v, ctx) => (has(ctx, 'cryoProjector') ? v * 0.6 : 0),
+  shatterPoint: (v, ctx) => (has(ctx, 'cryoProjector') ? v * 0.4 : v * 0.05),
+  priorityTargeting: (v) => v * 0.35,
+  skyguard: (v, _ctx, th) => v * th.flyingShare,
+  nullAnchor: (v) => v * 0.4,
+  lastStand: (v) => v * 0.15,
+  bountyProtocol: (v) => v * 0.8,
+  interestEngine: (v) => v * 4,
+  fieldEngineering: (v) => v,
+  salvageRights: () => 0,
+  earlyBird: (v) => v * 0.1,
+  supplyDrop: () => 0.08,
+  reinforcedHull: (v) => v * 0.03,
+  naniteRepair: (v) => v * 0.6,
+  dualSpec: () => 0.2,
+};
+
+function has(ctx: BotContext, kind: TowerKind): boolean {
+  return towers(ctx).some((t) => t.kind === kind);
+}
+
+function typeShare(ctx: BotContext, type: 'energy' | 'kinetic'): number {
+  let mine = 0;
+  let all = 0;
+  for (const t of towers(ctx)) {
+    const d = estDps(t.stats, t.spec);
+    all += d;
+    if (t.stats.damageType === type) mine += d;
+  }
+  return all > 0 ? mine / all : 0.5;
+}
+
+/** Team value (effective DPS × coverage) with this run's artifacts plus an extra one. */
+function teamValue(ctx: BotContext, extra: OwnedArtifact | null, th: ThreatModel): number {
+  const s = ctx.sim.state;
+  const art = { ...s.art };
+  if (extra) art[extra.id] += artifactValue(extra.id, extra.tier);
+  let sum = 0;
+  for (const t of towers(ctx)) {
+    const st = towerStats(t.kind, t.level, t.spec, s.meta, { art, spec2: t.spec2 });
+    sum += effectiveDps(st, th, t.spec) * ctx.spots.coverageAt(t.x, t.y, st.range);
+  }
+  return sum;
+}
+
+/** How bots take an artifact: by estimated value, or rotating through the offer ('varied'). */
+export type ArtifactChoice = 'best' | 'varied';
+
+/** Answer a pending artifact offer (bots never reroll). */
+export function pickArtifact(
+  ctx: BotContext,
+  how: ArtifactChoice,
+  threat: ThreatModel = { armor: 0, shieldShare: 0.2, flyingShare: 0.1 },
+): void {
+  const offer = ctx.sim.state.offer;
+  if (!offer) return;
+  let index = 0;
+  if (how === 'varied') {
+    index = (offer.wave / 10) % offer.choices.length;
+  } else {
+    const base = teamValue(ctx, null, threat) || 1;
+    let best = -Infinity;
+    offer.choices.forEach((c, i) => {
+      const flat = FLAT_VALUE[c.id];
+      const v = flat
+        ? flat(artifactValue(c.id, c.tier), ctx, threat)
+        : teamValue(ctx, c, threat) / base - 1;
+      if (v > best) {
+        best = v;
+        index = i;
+      }
+    });
+  }
+  ctx.send({ type: 'pickArtifact', index: Math.floor(index) });
 }

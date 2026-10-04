@@ -15,6 +15,8 @@ import { unitSvgUri } from '../../render/units';
 import { SPEC_LEVEL, SPECS, TOWER_SPECS } from '../../data/specs';
 import { towerStats, type TowerStats } from '../../sim/specs';
 import { specIcon } from './specIcons';
+import { artifactIcon } from './artifactArt';
+import { canDualSpec } from '../../sim/sim';
 import { icon, C } from './icons';
 import { fmt, h, setText, toggleClass } from './overlay';
 
@@ -87,7 +89,7 @@ export class TowerPanel {
       'panel-head',
       `<div class="panel-art"><img alt=""><img alt=""></div>
        <div style="flex:1;display:flex;flex-direction:column;gap:4px">
-         <div style="display:flex;align-items:baseline;gap:8px;min-width:0"><h2 class="panel-title"></h2><span class="label spec-name" style="color:var(--accent);white-space:nowrap"></span></div>
+         <div style="display:flex;align-items:baseline;gap:8px;min-width:0"><h2 class="panel-title" style="white-space:nowrap;flex:none"></h2><span class="label spec-name" style="color:var(--accent);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0"></span></div>
          <div style="display:flex;align-items:center;gap:10px">
            <span style="display:flex;align-items:center;gap:6px"><span class="d lvl" style="font-size:15px;font-weight:700;white-space:nowrap"></span><span class="pips">${'<span class="pip"></span>'.repeat(5)}</span></span>
            <span class="dmg-type" style="display:flex;align-items:center;gap:4px"></span>
@@ -217,11 +219,14 @@ export class TowerPanel {
       this.baseImg.src = unitSvgUri(frames.base);
       this.turretImg.src = unitSvgUri(frames.turret);
     }
-    const kindKey = `${t.kind}|${t.spec}`;
+    const kindKey = `${t.kind}|${t.spec}|${t.spec2}`;
     if (kindKey !== this.kindShown) {
       this.kindShown = kindKey;
       this.dmgType.innerHTML = damageTypeChip(t.stats.damageType);
-      setText(this.specName, t.spec ? SPECS[t.spec].name : '');
+      setText(
+        this.specName,
+        t.spec ? SPECS[t.spec].name + (t.spec2 ? ` + ${SPECS[t.spec2].name}` : '') : '',
+      );
       const atk = t.stats.attack.type;
       setText(this.statLabels.dmg, atk === 'chill' ? 'CHILL' : atk === 'aura' ? 'AURA' : 'DAMAGE');
       setText(this.statLabels.dps, atk === 'chill' || atk === 'aura' ? 'MAX SLOW' : 'DPS');
@@ -232,7 +237,10 @@ export class TowerPanel {
     this.renderSpecSlot(t);
 
     const now = t.stats;
-    const next = towerStats(t.kind, t.level + 1, t.spec, this.sim.state.meta);
+    const next = towerStats(t.kind, t.level + 1, t.spec, this.sim.state.meta, {
+      art: this.sim.state.art,
+      spec2: t.spec2,
+    });
     setText(this.stats.rate.now, now.attack.type === 'aura' ? '—' : `${now.fireRate.toFixed(1)}/s`);
     this.noChange(this.stats.rate.next);
     setText(this.stats.range.now, tiles(now.range));
@@ -267,11 +275,11 @@ export class TowerPanel {
       if (b.getAttribute('aria-pressed') !== on) b.setAttribute('aria-pressed', on);
     });
 
-    const refund = sellValue(t);
+    const refund = sellValue(t, this.sim.state.art);
     setText(this.sellAmount, `+${fmt.int(refund)}`);
     this.sellBtn.setAttribute('aria-label', `Sell for ${refund} Credits, 70 percent refund`);
 
-    const cost = upgradeCostFor(t);
+    const cost = upgradeCostFor(t, this.sim.state.art);
     const afford = this.sim.state.credits >= cost;
     setText(this.upgradeTitle, `UPGRADE TO LV ${t.level + 1}`);
     setText(this.upgradeCost, fmt.int(cost));
@@ -296,7 +304,9 @@ export class TowerPanel {
   /** LV 4: what's coming at LV 5. LV 5+ without a spec: a card that opens the pick. */
   private renderSpecSlot(t: Tower): void {
     const state = t.spec
-      ? 'done'
+      ? canDualSpec(this.sim.state, t)
+        ? 'dual'
+        : 'done'
       : t.level >= SPEC_LEVEL
         ? 'choose'
         : t.level === SPEC_LEVEL - 1
@@ -315,6 +325,11 @@ export class TowerPanel {
       this.specSlot.innerHTML = `<button class="spec-hint" style="width:100%">
         ${specIcon(SPECS_FOR_HINT(t), t.stats.damageType)}
         <div style="display:flex;flex-direction:column;gap:2px;flex:1"><span class="label" style="color:var(--accent)">CHOOSE SPECIALIZATION</span><span class="caption muted">Pick a path for this tower. Locked once chosen.</span></div>
+      </button>`;
+    } else if (state === 'dual') {
+      this.specSlot.innerHTML = `<button class="spec-hint" style="width:100%">
+        ${artifactIcon('dualSpec', 3, 48)}
+        <div style="display:flex;flex-direction:column;gap:2px;flex:1"><span class="label" style="color:var(--accent)">DUAL SPEC · SECOND PATH</span><span class="caption muted">Add a second specialization. One tower per run.</span></div>
       </button>`;
     } else {
       this.specSlot.innerHTML = '';

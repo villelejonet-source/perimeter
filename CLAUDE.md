@@ -24,7 +24,9 @@ Always check ROADMAP.md for the current phase before starting work, and DESIGN.m
 - `npm test` — unit tests (sim must stay green)
 - `npm run sim -- --strategy=greedy --runs=200` — headless balance sim, writes CSV to `tools/out/`
 - `npm run sim -- --mode=career --hours=50` — research-pace check against the meta presets
-  (`--strategy=all --preset=all` for the full matrix, `--mode=specs` for the spec matrix; results in `docs/BALANCE.md`)
+  (`--strategy=all --preset=all` for the full matrix, `--mode=specs` for the spec matrix,
+  `--mode=artifacts --preset=10h --tier=1` for the artifact matrix, `--mode=career --hours=50` for
+  research pace; results in `docs/BALANCE.md`)
 - `npm run build && npx cap sync ios` — build and sync to the iOS project
 
 ## Architecture rules (non-negotiable)

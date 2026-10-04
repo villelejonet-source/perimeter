@@ -1,4 +1,6 @@
+import type { ArtifactId } from '../data/artifacts';
 import type { ResearchId } from '../data/research';
+import { craftArtifact } from './artifacts';
 import type { Storage } from '../platform/storage';
 import type { SimSnapshot } from '../sim/snapshot';
 import type { SaveFile } from './migrations';
@@ -48,6 +50,11 @@ export class MetaStore {
     if (!this.pendingOffline) return;
     this.save.profile = collectOffline(this.save.profile, this.pendingOffline, this.clock(), mult);
     this.pendingOffline = null;
+    void this.flush();
+  }
+
+  craft(id: ArtifactId): void {
+    this.save.profile = craftArtifact(this.save.profile, id);
     void this.flush();
   }
 

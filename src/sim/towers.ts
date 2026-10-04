@@ -1,3 +1,4 @@
+import { ARTIFACT_TUNING } from '../data/artifacts';
 import { GAME } from '../data/game';
 import { SPEC_TUNING } from '../data/specs';
 import type { TowerDef } from '../data/towers';
@@ -31,6 +32,11 @@ export function towerPower(def: TowerDef, level: number): number {
 }
 
 export function updateTowers(state: SimState, path: Path, rng: Rng): void {
+  // Last Stand: every tower fires faster while the base is low.
+  const rateBoost =
+    state.art.lastStand > 0 && state.baseHp <= state.maxBaseHp * ARTIFACT_TUNING.lastStandBelow
+      ? 1 + state.art.lastStand
+      : 1;
   for (const t of state.towers.items) {
     if (!t.alive) continue;
     const st = t.stats;
@@ -43,7 +49,7 @@ export function updateTowers(state: SimState, path: Path, rng: Rng): void {
     t.targetId = target ? target.id : -1;
 
     // Overclock: fire rate ramps while it has targets, resets after a short idle.
-    if (t.spec === 'overclock') {
+    if (t.spec === 'overclock' || t.spec2 === 'overclock') {
       if (target) {
         t.idle = 0;
         t.heat = Math.min(SPEC_TUNING.overclock.maxBonus, t.heat + OVERCLOCK_RAMP_PER_TICK);
@@ -54,7 +60,7 @@ export function updateTowers(state: SimState, path: Path, rng: Rng): void {
 
     if (!target || t.cooldown > 0) continue;
     fire(state, path, rng, t, target);
-    t.cooldown = Math.max(1, Math.round(GAME.tickRate / (st.fireRate * (1 + t.heat))));
+    t.cooldown = Math.max(1, Math.round(GAME.tickRate / (st.fireRate * (1 + t.heat) * rateBoost)));
   }
 }
 
@@ -79,6 +85,7 @@ function newShot(state: SimState, t: Tower, kind: Projectile['kind'], power: num
   p.damageType = t.stats.damageType;
   p.source = t.kind;
   p.spec = t.spec;
+  p.spec2 = t.spec2;
   p.hitCount = 0;
   p.pierceLeft = 0;
   return p;
@@ -87,7 +94,7 @@ function newShot(state: SimState, t: Tower, kind: Projectile['kind'], power: num
 function fire(state: SimState, path: Path, rng: Rng, t: Tower, target: Enemy): void {
   const st = t.stats;
   const atk = st.attack;
-  const mods = hitMods(t.spec);
+  const mods = hitMods(t.spec, t.spec2);
   const aim = Math.atan2(target.y - t.y, target.x - t.x);
   switch (atk.type) {
     case 'bolt': {

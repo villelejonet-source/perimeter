@@ -4,6 +4,7 @@ import { GAME } from '../data/game';
 import { SPEC_TUNING as T, SPECS, type SpecId } from '../data/specs';
 import { FRESH_ACCOUNT, type MetaModifiers } from '../data/meta';
 import { TOWERS, type Attack, type TowerKind } from '../data/towers';
+import type { ArtifactId } from '../data/artifacts';
 
 /** A tower's effective numbers at a level, with its specialization applied. */
 export interface TowerStats {
@@ -16,28 +17,47 @@ export interface TowerStats {
   attack: Attack;
 }
 
+/** Run state that shapes a tower's stats beyond level, spec and research. */
+export interface StatExtras {
+  /** Active artifact values (missing = none). */
+  art?: Readonly<Partial<Record<ArtifactId, number>>>;
+  /** Second specialization (Dual Spec). */
+  spec2?: SpecId | null;
+  /** Targeting Uplink applies (a same-kind tower is close by). */
+  uplinked?: boolean;
+}
+
 /**
- * Base stats scaled by level, then modified by research (`meta`) and the specialization.
- * Pure: shared by the sim (cached on each tower when it's placed, upgraded or specialized)
- * and the tower panel.
+ * Base stats scaled by level, then modified by research (`meta`), the specialization(s) and
+ * the run's artifacts. Pure: shared by the sim (cached on each tower, see refreshAllStats) and
+ * the tower panel.
  */
 export function towerStats(
   kind: TowerKind,
   level: number,
   spec: SpecId | null,
   meta: MetaModifiers = FRESH_ACCOUNT,
+  extras: StatExtras = {},
 ): TowerStats {
   const def = TOWERS[kind];
   const tm = meta.towers[kind];
   const base = def.attack.type === 'chill' ? def.attack.chillPerHit : def.damage;
   const s: TowerStats = {
-    damageType: spec ? (SPECS[spec].damageType ?? def.damageType) : def.damageType,
+    damageType: def.damageType,
     power: towerDamage(base, level) * tm.damageMult,
     fireRate: def.fireRate * tm.fireRateMult,
     range: def.range * tm.rangeMult,
     canHitFlying: def.canHitFlying,
     attack: { ...def.attack },
   };
+  applySpec(s, spec);
+  if (extras.spec2) applySpec(s, extras.spec2);
+  if (extras.art) applyArtifacts(s, extras.art, spec !== null, extras.uplinked ?? false);
+  return s;
+}
+
+function applySpec(s: TowerStats, spec: SpecId | null): void {
+  if (spec && SPECS[spec].damageType) s.damageType = SPECS[spec].damageType!;
   const a = s.attack;
   switch (spec) {
     case null:
@@ -50,8 +70,11 @@ export function towerStats(
         s.attack = { type: 'slug', speed: T.flechette.speed, pierce: T.flechette.pierce };
       break;
     case 'prism':
-      if (a.type === 'bolt') a.beams = T.prism.beams;
-      s.power *= T.prism.damageShare;
+      // With Dual Spec the beam may already be a slug; then Prism changes nothing.
+      if (a.type === 'bolt') {
+        a.beams = T.prism.beams;
+        s.power *= T.prism.damageShare;
+      }
       break;
     case 'accelerator':
       if (a.type === 'rail') {
@@ -60,8 +83,10 @@ export function towerStats(
       }
       break;
     case 'ionRail':
-      if (a.type === 'rail') a.strip = T.ionRail.shieldStripMult;
-      s.power *= T.ionRail.damageMult;
+      if (a.type === 'rail') {
+        a.strip = T.ionRail.shieldStripMult;
+        s.power *= T.ionRail.damageMult;
+      }
       break;
     case 'plasmaPools':
       if (a.type === 'shell') a.pool = { ...T.plasmaPools };
@@ -103,13 +128,40 @@ export function towerStats(
       }
       break;
     case 'saturation':
-      if (a.type === 'missiles') a.count *= T.saturation.countMult;
-      s.power *= T.saturation.damageMult;
+      if (a.type === 'missiles') {
+        a.count *= T.saturation.countMult;
+        s.power *= T.saturation.damageMult;
+      }
       break;
     case 'empWarheads':
       break;
   }
-  return s;
+}
+
+/** Stat artifacts (GDD §9). Hit and economy artifacts act in damage.ts, waves.ts, economy.ts. */
+function applyArtifacts(
+  s: TowerStats,
+  art: Readonly<Partial<Record<ArtifactId, number>>>,
+  specialized: boolean,
+  uplinked: boolean,
+): void {
+  const v = (id: ArtifactId): number => art[id] ?? 0;
+  if (s.damageType === 'energy') s.power *= 1 + v('capacitorBank');
+  if (s.damageType === 'kinetic') s.power *= 1 + v('kineticPrimer');
+  if (specialized && s.damageType !== 'utility') s.power *= 1 + v('specialistDoctrine');
+  s.fireRate *= 1 + v('rapidCycling');
+  s.range *= (1 + v('longBarrels')) * (uplinked ? 1 + v('targetingUplink') : 1);
+  const a = s.attack;
+  if (a.type === 'shell') {
+    a.splashRadius *= 1 + v('widePayload');
+    if (a.cluster) a.cluster = { ...a.cluster, radius: a.cluster.radius * (1 + v('widePayload')) };
+  }
+  if (a.type === 'chain') a.falloff = 1 - (1 - a.falloff) * (1 - v('echoChamber'));
+  if (a.type === 'chill') {
+    s.power *= 1 + v('coldSnap');
+    a.freezeMult = (a.freezeMult ?? 1) * (1 + v('permafrost'));
+  }
+  if (a.type === 'aura') a.chill = Math.min(1, a.chill * (1 + v('coldSnap')));
 }
 
 /** Per-hit effects that ride on a shot from a specialized tower. */
@@ -138,6 +190,23 @@ const MODS: Partial<Record<SpecId, Readonly<HitMods>>> = {
   },
 };
 
-export function hitMods(spec: SpecId | null): Readonly<HitMods> {
-  return (spec && MODS[spec]) || NO_MODS;
+const merged = new Map<string, Readonly<HitMods>>();
+
+/** Hit modifiers for a shot's spec(s); Dual Spec combos are merged once and cached. */
+export function hitMods(spec: SpecId | null, spec2: SpecId | null = null): Readonly<HitMods> {
+  const a = (spec && MODS[spec]) || NO_MODS;
+  if (!spec2) return a;
+  const b = MODS[spec2] ?? NO_MODS;
+  const key = `${spec}|${spec2}`;
+  let m = merged.get(key);
+  if (!m) {
+    m = {
+      bossBonus: Math.max(a.bossBonus, b.bossBonus),
+      execute: Math.max(a.execute, b.execute),
+      shieldMult: a.shieldMult * b.shieldMult,
+      stunTicks: Math.max(a.stunTicks, b.stunTicks),
+    };
+    merged.set(key, m);
+  }
+  return m;
 }

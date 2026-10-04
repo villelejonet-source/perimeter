@@ -21,7 +21,14 @@ export class SpecPicker {
   private readonly cards = new Map<SpecId, HTMLButtonElement>();
   private readonly lockIn: HTMLButtonElement;
 
-  constructor(parent: HTMLElement, kind: TowerKind, state: SimState, actions: SpecPickerActions) {
+  /** `current` set = Dual Spec: pick a second spec other than this one. */
+  constructor(
+    parent: HTMLElement,
+    kind: TowerKind,
+    state: SimState,
+    actions: SpecPickerActions,
+    current: SpecId | null = null,
+  ) {
     const def = TOWERS[kind];
     this.el = h('section', 'spec-pick');
     this.el.setAttribute('aria-label', 'Specialization pick');
@@ -42,15 +49,17 @@ export class SpecPicker {
         '',
         `<div style="display:flex;align-items:center;gap:12px">${typeFrame(def.damageType, 48)}
            <div style="display:flex;flex-direction:column">
-             <span class="label" style="color:var(--accent)">${def.name} reached level 5</span>
-             <h1 class="d" style="margin:0;font-size:28px;line-height:32px;font-weight:700;letter-spacing:.04em;text-transform:uppercase">Specialize</h1>
-             <span class="caption muted">Pick one. Locked for this tower until the run ends.</span>
+             <span class="label" style="color:var(--accent)">${current ? `Dual Spec · ${def.name} · ${SPECS[current].name}` : `${def.name} reached level 5`}</span>
+             <h1 class="d" style="margin:0;font-size:28px;line-height:32px;font-weight:700;letter-spacing:.04em;text-transform:uppercase">${current ? 'Second path' : 'Specialize'}</h1>
+             <span class="caption muted">${current ? 'Both specializations apply. Locked until the run ends.' : 'Pick one. Locked for this tower until the run ends.'}</span>
            </div></div>`,
       ),
     );
 
     const cards = h('div', 'spec-cards');
-    for (const id of TOWER_SPECS[kind]) cards.appendChild(this.card(SPECS[id], def.damageType));
+    for (const id of TOWER_SPECS[kind]) {
+      if (id !== current) cards.appendChild(this.card(SPECS[id], def.damageType));
+    }
     col.appendChild(cards);
 
     const actionsEl = h('div', 'spec-actions');

@@ -66,8 +66,8 @@ export const icon = {
       2,
       '<path d="M12 2.5l8.5 4.75v9.5L12 21.5l-8.5-4.75v-9.5z"/><path d="M12 12l8.5-4.75M12 12L3.5 7.25M12 12v9.5"/>',
     ),
-  shards: (size = 20) =>
-    svg(size, C.shards, 2, '<path d="M12 2l6 8-6 12-6-12z"/><path d="M6 10h12"/>'),
+  shards: (size = 20, color: string = C.shards) =>
+    svg(size, color, 2, '<path d="M12 2l6 8-6 12-6-12z"/><path d="M6 10h12"/>'),
   gear: (size = 24) =>
     svg(
       size,

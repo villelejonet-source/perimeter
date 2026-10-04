@@ -18,10 +18,19 @@ import {
   newStats,
   newTower,
   newZone,
+  refreshAllStats,
   refreshStats,
   type SimState,
   type Tower,
 } from './state';
+import {
+  drawChoices,
+  emptyArtifactValues,
+  nextRerollCost,
+  takeArtifact,
+  updateOffers,
+} from './artifacts';
+import type { OwnedArtifact } from '../data/artifacts';
 import { updateTowers } from './towers';
 import { Pool } from './pool';
 import { callEarly, updateWaves } from './waves';
@@ -33,6 +42,8 @@ export interface SimConfig {
   meta?: MetaModifiers;
   /** Override the meta's unlocked towers (dev `?unlock=all`, tests). */
   unlockedTowers?: readonly TowerKind[];
+  /** Artifacts active from the start (balance-sim artifact matrix, tests). */
+  startArtifacts?: readonly OwnedArtifact[];
 }
 
 /**
@@ -78,8 +89,16 @@ export class Sim {
       spawns: [],
       unlocked: config.unlockedTowers ?? meta.unlockedTowers ?? STARTING_UNLOCKS,
       stats: newStats(),
+      artifacts: [],
+      art: emptyArtifactValues(),
+      offer: null,
+      offersQueued: 0,
+      rerolls: 0,
+      freeRerolls: meta.freeRerolls,
+      dualSpecUsed: false,
       lastRejection: null,
     };
+    for (const a of config.startArtifacts ?? []) takeArtifact(this.state, a);
   }
 
   enqueue(command: Command): void {
@@ -102,6 +121,7 @@ export class Sim {
     updateProjectiles(s, this.path);
     updateZones(s, this.path);
     updateFx(s);
+    updateOffers(s, this.rng);
 
     if (s.baseHp <= 0) s.gameOver = true;
     s.tick++;
@@ -149,28 +169,30 @@ export class Sim {
         t.invested = cost;
         t.targetId = -1;
         t.spec = null;
+        t.spec2 = null;
         t.heat = 0;
         t.idle = 0;
-        refreshStats(t, s.meta);
         s.credits -= cost;
+        refreshAllStats(s);
         break;
       }
       case 'upgradeTower': {
         const t = this.findTower(cmd.towerId);
         if (!t) return this.reject('noTower');
-        const cost = upgradeCostFor(t);
+        const cost = upgradeCostFor(t, s.art);
         if (s.credits < cost) return this.reject('credits');
         s.credits -= cost;
         t.invested += cost;
         t.level++;
-        refreshStats(t, s.meta);
+        refreshStats(t, s);
         break;
       }
       case 'sellTower': {
         const t = this.findTower(cmd.towerId);
         if (!t) return this.reject('noTower');
-        s.credits += sellValue(t);
+        s.credits += sellValue(t, s.art);
         t.alive = false;
+        refreshAllStats(s);
         break;
       }
       case 'setTargeting': {
@@ -183,10 +205,33 @@ export class Sim {
         const t = this.findTower(cmd.towerId);
         if (!t) return this.reject('noTower');
         if (t.level < SPEC_LEVEL) return this.reject('level');
-        if (t.spec) return this.reject('specialized');
         if (!TOWER_SPECS[t.kind].includes(cmd.spec)) return this.reject('wrongSpec');
-        t.spec = cmd.spec;
-        refreshStats(t, s.meta);
+        if (t.spec) {
+          // Dual Spec: one specialized tower per run may add a second, different spec.
+          if (!canDualSpec(s, t) || cmd.spec === t.spec) return this.reject('specialized');
+          t.spec2 = cmd.spec;
+          s.dualSpecUsed = true;
+        } else {
+          t.spec = cmd.spec;
+        }
+        refreshStats(t, s);
+        break;
+      }
+      case 'pickArtifact': {
+        const choice = s.offer?.choices[cmd.index];
+        if (!choice) return this.reject('noOffer');
+        s.offer = null;
+        takeArtifact(s, choice);
+        break;
+      }
+      case 'rerollArtifacts': {
+        if (!s.offer) return this.reject('noOffer');
+        const cost = nextRerollCost(s);
+        if (s.credits < cost) return this.reject('credits');
+        if (s.freeRerolls > 0) s.freeRerolls--;
+        else s.rerolls++;
+        s.credits -= cost;
+        s.offer = { wave: s.offer.wave, choices: drawChoices(s, this.rng) };
         break;
       }
       case 'callEarly':
@@ -195,6 +240,11 @@ export class Sim {
     }
     s.lastRejection = null;
   }
+}
+
+/** Dual Spec: active, not yet used this run, and the tower already has its first spec. */
+export function canDualSpec(s: SimState, t: Tower): boolean {
+  return s.art.dualSpec > 0 && !s.dualSpecUsed && t.spec !== null && t.spec2 === null;
 }
 
 /** Tower definition lookup re-exported for UI convenience. */

@@ -6,9 +6,20 @@
  *
  * Strategies: greedy | balanced | spec | spec:0 | spec:1 | spec:2 | spec:best | all
  * Presets: fresh | 10h | 50h | all. Writes runs + waves CSV to tools/out/ and prints a summary.
+ *
+ *   npm run sim -- --mode=specs --runs=24                    # spec matrix
+ *   npm run sim -- --mode=artifacts --preset=10h --tier=1    # artifact matrix (Phase 7)
+ *   npm run sim -- --mode=career --hours=50                  # research pace
  */
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
+import {
+  ARTIFACT_ORDER,
+  ARTIFACTS,
+  TIER_NAMES,
+  type ArtifactTier,
+  type OwnedArtifact,
+} from '../../src/data/artifacts';
 import { META_PRESETS, type MetaPresetId } from '../../src/data/meta';
 import { TOWER_SPECS } from '../../src/data/specs';
 import { TOWER_ORDER } from '../../src/data/towers';
@@ -59,19 +70,68 @@ if (mode === 'career') {
   const pts = career(hours, seed0);
   const marks = [1, 2, 5, 10, 20, 30, 40, 50].filter((h) => h <= hours);
   console.log(
-    '| play h | runs | wall | Pulse dmg | Rail dmg | Pulse rate | towers | +Credits | +Base HP | start Lv | Cores spent |',
+    '| play h | runs | wall | Pulse dmg | Rail dmg | Pulse rate | towers | +Credits | +Base HP | start Lv | Cores spent | artifacts (tier sum) |',
   );
-  console.log('|---|---|---|---|---|---|---|---|---|---|---|');
+  console.log('|---|---|---|---|---|---|---|---|---|---|---|---|');
   for (const h of marks) {
     const pt = pts.find((q) => q.hours >= h) ?? pts[pts.length - 1]!;
     console.log(
-      `| ${pt.hours.toFixed(1)} | ${pt.runs} | ${pt.wall} | ×${pt.pulseDmg.toFixed(2)} | ×${pt.railDmg.toFixed(2)} | ×${pt.rate.toFixed(2)} | ${pt.unlocked} | +${pt.startCredits} | +${pt.baseHp} | ${pt.startLevel} | ${pt.spent} |`,
+      `| ${pt.hours.toFixed(1)} | ${pt.runs} | ${pt.wall} | ×${pt.pulseDmg.toFixed(2)} | ×${pt.railDmg.toFixed(2)} | ×${pt.rate.toFixed(2)} | ${pt.unlocked} | +${pt.startCredits} | +${pt.baseHp} | ${pt.startLevel} | ${pt.spent} | ${pt.crafted} (${pt.tiers}) |`,
     );
   }
   console.log(
     '\nPresets: 10h = dmg ×1.3, rate ×1.1, 5 towers, +100 Credits, +5 HP; 50h = dmg ×2.0, rate ×1.3, 6 towers, +300, +15 HP, start Lv 3',
   );
   console.log(`${((Date.now() - t0) / 1000).toFixed(1)} s`);
+  process.exit(0);
+}
+if (mode === 'artifacts') {
+  // Artifact matrix: each artifact held from the start (no other picks) vs none, per strategy.
+  const tier = Number(arg('tier', '1')) as ArtifactTier;
+  const preset = presets[0]!;
+  const strategies: [string, () => Bot][] = [
+    ['greedy', () => greedyDps()],
+    ['balanced', () => balancedMix()],
+    ['spec-focused', () => specFocused('best')],
+  ];
+  const meanWall = (start: OwnedArtifact[]): number[] =>
+    strategies.map(([, make]) => {
+      let sum = 0;
+      for (let i = 0; i < runs; i++)
+        sum += runOne(make(), preset, seed0 + i, { startArtifacts: start, noPicks: true }).wall;
+      return sum / runs;
+    });
+  const base = meanWall([]);
+  const only = arg('only', '');
+  const ids = only ? ARTIFACT_ORDER.filter((id) => only.split(',').includes(id)) : ARTIFACT_ORDER;
+  const rows = ids.map((id) => ({ id, walls: meanWall([{ id, tier }]) }));
+  const lines = [
+    `# Artifact matrix (${preset}, ${TIER_NAMES[tier]}, ${runs} runs): mean wall, Δ vs none`,
+    '',
+    `| artifact | ${strategies.map(([n]) => n).join(' | ')} |`,
+    `|---|${strategies.map(() => '---|').join('')}`,
+    `| (none) | ${base.map((w) => w.toFixed(1)).join(' | ')} |`,
+  ];
+  const top = strategies.map(
+    (_, j) => rows.reduce((a, b) => (b.walls[j]! > a.walls[j]! ? b : a)).id,
+  );
+  for (const r of rows) {
+    const cells = r.walls.map((w, j) => {
+      const d = w - base[j]!;
+      const cell = `${w.toFixed(1)} (${d >= 0 ? '+' : ''}${d.toFixed(1)})`;
+      return top[j] === r.id ? `**${cell}**` : cell;
+    });
+    lines.push(`| ${ARTIFACTS[r.id].name} | ${cells.join(' | ')} |`);
+  }
+  const dominant = top.every((id) => id === top[0]);
+  lines.push(
+    '',
+    dominant
+      ? `DOMINANT: ${ARTIFACTS[top[0]!].name} is best in every strategy.`
+      : `No artifact is best in every strategy (best: ${top.map((id) => ARTIFACTS[id].name).join(' / ')}).`,
+  );
+  console.log(lines.join('\n'));
+  console.log(`\n${((Date.now() - t0) / 1000).toFixed(1)} s`);
   process.exit(0);
 }
 if (mode === 'specs') {
@@ -115,7 +175,7 @@ const outDir = join(import.meta.dirname, '..', 'out');
 mkdirSync(outDir, { recursive: true });
 const stamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
 const runsCsv = [
-  'strategy,preset,seed,wall,survived,seconds,kills,leaks,creditsEarned,dmgEnergy,dmgKinetic,dmgByTower,leaksByKind,build',
+  'strategy,preset,seed,wall,survived,seconds,kills,leaks,creditsEarned,dmgEnergy,dmgKinetic,dmgByTower,leaksByKind,build,artifacts',
   ...results.map((r) =>
     [
       r.strategy,
@@ -136,6 +196,7 @@ const runsCsv = [
         .map(([k, v]) => `${k}=${v}`)
         .join(';')}"`,
       `"${r.build.join(';')}"`,
+      `"${r.artifacts.join(';')}"`,
     ].join(','),
   ),
 ].join('\n');

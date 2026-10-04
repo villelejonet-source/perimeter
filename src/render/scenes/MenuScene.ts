@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { Overlay } from '../../ui/dom/overlay';
 import { MainMenu } from '../../ui/dom/screens/MainMenu';
 import { ResearchLab } from '../../ui/dom/screens/ResearchLab';
+import { Codex } from '../../ui/dom/screens/Codex';
 import { WelcomeBack } from '../../ui/dom/screens/WelcomeBack';
 import { T } from '../layout';
 import { getStore } from '../registry';
@@ -62,6 +63,7 @@ export class MenuScene extends Phaser.Scene {
       new MainMenu(this.overlay.root, store.profile, store.run?.state.wave ?? null, {
         play: () => this.scene.start('Game'),
         research: () => this.showLab(),
+        codex: () => this.show(new Codex(this.overlay.root, store, () => this.showMain())),
       }),
     );
   }

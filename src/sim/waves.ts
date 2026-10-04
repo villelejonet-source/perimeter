@@ -1,3 +1,4 @@
+import { ARTIFACT_TUNING, naniteEvery } from '../data/artifacts';
 import { CURVES, callEarlyBonus, waveEnemyCount } from '../data/curves';
 import type { EnemyKind } from '../data/enemies';
 import { GAME } from '../data/game';
@@ -73,6 +74,7 @@ export function buildWave(wave: number, rng: Rng): SpawnSpec[] {
 
 export function startWave(state: SimState, rng: Rng): void {
   state.wave++;
+  waveStartArtifacts(state);
   state.nextWaveIn = state.waveIntervalTicks;
   state.spawns.push({ wave: state.wave, queue: buildWave(state.wave, rng), next: 0, cooldown: 0 });
 }
@@ -82,11 +84,26 @@ export function callEarly(state: SimState, rng: Rng): void {
   const remainingSeconds = state.nextWaveIn / GAME.tickRate;
   const bonus = Math.floor(
     callEarlyBonus(remainingSeconds, GAME.callEarlyCreditsPerSecond, state.wave + 1) *
-      state.meta.callEarlyMult,
+      state.meta.callEarlyMult *
+      (1 + state.art.earlyBird),
   );
   state.credits += bonus;
   state.stats.creditsEarned += bonus;
   startWave(state, rng);
+}
+
+/** Interest Engine pays on banked Credits; Nanite Repair mends the base every few waves. */
+function waveStartArtifacts(state: SimState): void {
+  const art = state.art;
+  if (art.interestEngine > 0) {
+    const cap = ARTIFACT_TUNING.interestCapBase + ARTIFACT_TUNING.interestCapPerWave * state.wave;
+    const interest = Math.floor(Math.min(state.credits * art.interestEngine, cap));
+    state.credits += interest;
+    state.stats.creditsEarned += interest;
+  }
+  if (art.naniteRepair > 0 && state.wave % naniteEvery(art.naniteRepair) === 0) {
+    state.baseHp = Math.min(state.maxBaseHp, state.baseHp + 1);
+  }
 }
 
 export function updateWaves(state: SimState, path: Path, rng: Rng): void {

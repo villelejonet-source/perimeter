@@ -1,5 +1,5 @@
 import { GAME } from '../data/game';
-import { SPEC_TUNING } from '../data/specs';
+import { SPEC_TUNING, type SpecId } from '../data/specs';
 import { TOWERS } from '../data/towers';
 import { applyHit } from './damage';
 import { emitFx } from './fx';
@@ -56,7 +56,7 @@ function updateBolt(state: SimState, path: Path, p: Projectile): void {
   if (dist <= step + t.radius) {
     p.alive = false;
     p.target = null;
-    applyHit(state, path, t, p.damage, p.damageType, p.source, hitMods(p.spec));
+    applyHit(state, path, t, p.damage, p.damageType, p.source, hitMods(p.spec, p.spec2));
     return;
   }
   p.angle = Math.atan2(dy, dx);
@@ -84,7 +84,7 @@ function updateMissile(state: SimState, path: Path, p: Projectile): void {
     if (Math.hypot(dx, dy) <= step + t.radius) {
       p.alive = false;
       p.target = null;
-      applyHit(state, path, t, p.damage, p.damageType, p.source, hitMods(p.spec));
+      applyHit(state, path, t, p.damage, p.damageType, p.source, hitMods(p.spec, p.spec2));
       return;
     }
     let turn = Math.atan2(dy, dx) - p.angle;
@@ -112,7 +112,7 @@ function splash(
     if (!e.alive || e.flying || e.id >= bornAfter) continue;
     const r = radius + e.radius;
     if ((e.x - x) ** 2 + (e.y - y) ** 2 <= r * r) {
-      applyHit(state, path, e, damage, p.damageType, p.source, hitMods(p.spec));
+      applyHit(state, path, e, damage, p.damageType, p.source, hitMods(p.spec, p.spec2));
     }
   }
   emitFx(state, 'blast', x, y, x, y, FX_BLAST_TICKS, radius);
@@ -136,8 +136,7 @@ function updateShell(state: SimState, path: Path, p: Projectile): void {
   splash(state, path, p, p.tx, p.ty, p.splashRadius, p.damage);
 
   const atk = TOWERS[p.source].attack;
-  const spec = p.spec;
-  if (spec === 'plasmaPools' && atk.type === 'shell') {
+  if (hasSpec(p, 'plasmaPools') && atk.type === 'shell') {
     const pool = SPEC_POOL;
     const z = state.zones.acquire();
     z.x = p.tx;
@@ -147,8 +146,10 @@ function updateShell(state: SimState, path: Path, p: Projectile): void {
     z.ttl = Math.round(pool.seconds * GAME.tickRate);
     z.maxTtl = z.ttl;
     z.source = p.source;
-  } else if (spec === 'cluster') {
+  }
+  if (hasSpec(p, 'cluster')) {
     const c = SPEC_CLUSTER;
+    const radius = c.radius * (1 + state.art.widePayload);
     for (let i = 0; i < c.count; i++) {
       const a = (i / c.count) * Math.PI * 2;
       splash(
@@ -157,11 +158,15 @@ function updateShell(state: SimState, path: Path, p: Projectile): void {
         p,
         p.tx + Math.cos(a) * c.ringRadius,
         p.ty + Math.sin(a) * c.ringRadius,
-        c.radius,
+        radius,
         p.damage * c.damageShare,
       );
     }
   }
+}
+
+function hasSpec(p: Projectile, id: SpecId): boolean {
+  return p.spec === id || p.spec2 === id;
 }
 
 /** Flechette slug: flies straight, damaging each enemy it passes through once. */
@@ -177,7 +182,7 @@ function updateSlug(state: SimState, path: Path, p: Projectile): void {
     if ((e.x - p.x) ** 2 + (e.y - p.y) ** 2 > r * r) continue;
     for (let i = 0; i < p.hitCount; i++) if (p.hits[i] === e.id) continue outer;
     if (p.hitCount < p.hits.length) p.hits[p.hitCount++] = e.id;
-    applyHit(state, path, e, p.damage, p.damageType, p.source, hitMods(p.spec));
+    applyHit(state, path, e, p.damage, p.damageType, p.source, hitMods(p.spec, p.spec2));
     if (--p.pierceLeft <= 0) {
       p.alive = false;
       return;

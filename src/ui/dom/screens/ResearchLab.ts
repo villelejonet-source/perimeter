@@ -23,9 +23,14 @@ const TABS: { id: ResearchGroup; label: string }[] = [
 /** Later-phase systems listed on the Unlocks tab (ResearchUnlocks.dc.html), not buyable yet. */
 const COMING: { name: string; note: string }[] = [
   { name: 'More sectors', note: 'Arrives with new maps' },
-  { name: '4th artifact choice', note: 'Arrives with artifacts' },
-  { name: 'Free reroll', note: 'Arrives with artifacts' },
 ];
+
+/** Sub-line for the non-tower unlocks. */
+const SYSTEM_NOTE: Partial<Record<ResearchDef['id'], string>> = {
+  speed3x: 'Adds 3x to the speed toggle',
+  artifactChoice4: 'Artifact picks offer 4 instead of 3',
+  freeReroll: 'One free artifact reroll per run',
+};
 
 /**
  * Research Lab (meta/ResearchTowers, ResearchBase, ResearchUnlocks .dc.html). Rows show
@@ -181,7 +186,7 @@ export class ResearchLab {
     const req = d.requires ? RESEARCH_BY_ID.get(d.requires) : undefined;
     const sub = d.tower
       ? `Tower ${TOWER_ORDER.indexOf(d.tower) + 1} · ${TYPE_LABEL[TOWERS[d.tower].damageType]}${block === 'requires' && req ? ` · Unlock ${req.name} first` : ''}`
-      : 'Adds 3x to the speed toggle';
+      : (SYSTEM_NOTE[d.id] ?? '');
     const art = d.tower
       ? `<span style="position:relative;width:44px;height:44px;flex:none;${block === 'requires' ? 'opacity:.35' : ''}"><img alt="" src="${unitSvgUri(towerFrames(d.tower, 1).base)}" style="position:absolute;inset:0;width:44px"><img alt="" src="${unitSvgUri(towerFrames(d.tower, 1).turret)}" style="position:absolute;inset:0;width:44px"></span>`
       : `<span style="width:44px;height:44px;display:flex;align-items:center;justify-content:center;flex:none">${icon.next(28)}</span>`;

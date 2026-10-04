@@ -7,6 +7,8 @@ import {
   type ResearchId,
 } from '../data/research';
 import { STARTING_UNLOCKS, TOWER_ORDER, type TowerKind } from '../data/towers';
+import { ARTIFACT_TUNING } from '../data/artifacts';
+import { artifactPool } from './artifacts';
 import type { Profile } from './profile';
 
 export function researchLevel(p: Profile, id: ResearchId): number {
@@ -77,5 +79,8 @@ export function metaFromProfile(p: Profile): MetaModifiers {
     bountyMult: 1 + per('bounty'),
     callEarlyMult: 1 + per('callEarly'),
     speed3x: lvl('speed3x') > 0,
+    artifactPool: artifactPool(p),
+    artifactChoices: ARTIFACT_TUNING.choices + lvl('artifactChoice4'),
+    freeRerolls: lvl('freeReroll'),
   };
 }

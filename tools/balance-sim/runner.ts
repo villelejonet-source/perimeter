@@ -3,6 +3,7 @@ import { GAME } from '../../src/data/game';
 import { META_PRESETS, type MetaPresetId } from '../../src/data/meta';
 import type { EnemyKind } from '../../src/data/enemies';
 import type { TowerKind } from '../../src/data/towers';
+import type { OwnedArtifact } from '../../src/data/artifacts';
 import { Sim } from '../../src/sim/sim';
 import type { Bot } from './bots/types';
 import { SpotIndex } from './spots';
@@ -38,11 +39,30 @@ export interface RunResult {
   leaksByKind: Partial<Record<EnemyKind, number>>;
   /** "kind:spec" for every tower alive at the end. */
   build: string[];
+  /** Artifacts held at the end, "id:tier". */
+  artifacts: string[];
   waves: WaveRow[];
 }
 
-export function runOne(bot: Bot, preset: MetaPresetId, seed: number): RunResult {
-  const sim = new Sim({ seed, meta: META_PRESETS[preset] });
+export interface RunOptions {
+  /** Artifacts active from the start (artifact matrix). */
+  startArtifacts?: OwnedArtifact[];
+  /** Empty the draw pool, so the run gets no post-boss picks. */
+  noPicks?: boolean;
+}
+
+export function runOne(
+  bot: Bot,
+  preset: MetaPresetId,
+  seed: number,
+  opts: RunOptions = {},
+): RunResult {
+  const meta = META_PRESETS[preset];
+  const sim = new Sim({
+    seed,
+    meta: opts.noPicks ? { ...meta, artifactPool: [] } : meta,
+    startArtifacts: opts.startArtifacts,
+  });
   const s = sim.state;
   const ctx = {
     sim,
@@ -85,7 +105,8 @@ export function runOne(bot: Bot, preset: MetaPresetId, seed: number): RunResult 
     leaksByKind: { ...s.stats.leaksByKind },
     build: s.towers.items
       .filter((t) => t.alive)
-      .map((t) => `${t.kind}:${t.spec ?? '-'}:L${t.level}`),
+      .map((t) => `${t.kind}:${t.spec ?? '-'}${t.spec2 ? `+${t.spec2}` : ''}:L${t.level}`),
+    artifacts: s.artifacts.map((a) => `${a.id}:${a.tier}`),
     waves,
   };
 }
