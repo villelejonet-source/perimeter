@@ -25,12 +25,13 @@ export function spawnAt(sim: Sim, dist: number, hp = 100): Enemy {
 /** First valid snapped tower spot near the path point at `dist`. */
 export function spotNear(sim: Sim, dist: number): { x: number; y: number } {
   const p = sim.path.positionAt(dist, { x: 0, y: 0 });
-  for (let r = GAME.pathBuffer; r < 120; r += GAME.gridSize / 2) {
+  const minR = sim.map.pathWidth / 2 + sim.map.buildBuffer;
+  for (let r = minR; r < minR + 120; r += GAME.gridSize / 2) {
     for (let a = 0; a < 16; a++) {
       const ang = (a / 16) * Math.PI * 2;
       const x = snapToGrid(p.x + Math.cos(ang) * r);
       const y = snapToGrid(p.y + Math.sin(ang) * r);
-      if (placementError(sim.state, sim.path, x, y) === null) return { x, y };
+      if (placementError(sim.state, sim.path, sim.map, x, y) === null) return { x, y };
     }
   }
   throw new Error(`No valid spot near dist ${dist}`);

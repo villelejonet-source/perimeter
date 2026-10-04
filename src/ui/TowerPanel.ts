@@ -31,8 +31,9 @@ export class TowerPanel {
     private readonly send: (cmd: Command) => void,
     private readonly onClose: () => void,
   ) {
-    const gap = 16;
-    const widths = [192, 160, 192, 96]; // + 5 gaps of 16 = 720
+    const k = VIEW_WIDTH / 720; // pre-design layout was authored for a 720-px canvas
+    const gap = 16 * k;
+    const widths = [192, 160, 192, 96].map((w) => w * k); // + 5 gaps of 16 = 720 at k = 1
     const xs: number[] = [];
     let x = gap;
     for (const w of widths) {

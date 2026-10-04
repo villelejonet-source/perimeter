@@ -3,7 +3,7 @@ import { upgradeCost } from '../data/curves';
 import { GAME } from '../data/game';
 import { TOWERS } from '../data/towers';
 import { sellValue, upgradeCostFor } from './economy';
-import { snapToGrid } from './placement';
+import { buildAreaBottom, placementError, snapToGrid } from './placement';
 import { Sim } from './sim';
 import { freezeWaves, spotNear } from './testUtils';
 
@@ -22,7 +22,9 @@ describe('economy and placement', () => {
     const t = sim.state.towers.items.find((x) => x.alive)!;
     expect(sim.state.credits).toBe(GAME.startCredits - TOWERS.pulseLaser.cost);
     expect(t.x).toBe(snapToGrid(spot.x + 3));
-    expect(t.x % GAME.gridSize).toBe(GAME.gridSize / 2);
+    // 2 × 2 footprint: centre on a grid intersection.
+    expect(t.x % GAME.gridSize).toBe(0);
+    expect(t.y % GAME.gridSize).toBe(0);
   });
 
   it('rejects placement without enough Credits', () => {
@@ -32,6 +34,33 @@ describe('economy and placement', () => {
     sim.step();
     expect(sim.state.towers.countAlive()).toBe(0);
     expect(sim.state.lastRejection).toBe('credits');
+  });
+
+  it('rejects placement in the no-build buffer beside the path', () => {
+    const sim = setup();
+    const p = sim.path.positionAt(sim.path.length / 2, { x: 0, y: 0 });
+    // Footprint edge 8 units outside the path band: inside the 16-unit buffer.
+    const half = GAME.towerFootprint / 2;
+    const offset = sim.map.pathWidth / 2 + 8 + half;
+    let rejected: string | null = null;
+    for (const [dx, dy] of [
+      [0, offset],
+      [0, -offset],
+      [offset, 0],
+      [-offset, 0],
+    ] as const) {
+      const x = snapToGrid(p.x + dx);
+      const y = snapToGrid(p.y + dy);
+      const err = placementError(sim.state, sim.path, sim.map, x, y);
+      if (err === 'nearPath') rejected = err;
+    }
+    expect(rejected).toBe('nearPath');
+  });
+
+  it('never allows building under the control row', () => {
+    const sim = setup();
+    expect(buildAreaBottom(sim.map)).toBeLessThanOrEqual(GAME.buildAreaMaxBottom);
+    expect(placementError(sim.state, sim.path, sim.map, 48, 704)).toBe('outOfBounds');
   });
 
   it('rejects placement on the path, overlapping, or out of bounds', () => {

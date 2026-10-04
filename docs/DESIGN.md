@@ -72,3 +72,8 @@ Log when a design has been implemented, so drift is visible later.
 
 | Date | Design | Applied to |
 |---|---|---|
+| 2026-10-04 | `maps/map-01-s-curve.json` | Loaded via `src/data/maps.ts` (copied by `npm run sync:design`); world is now 390 × 844 |
+| 2026-10-04 | `units/glow/` Drone, Pulse Laser L1/L5, base ×3, laser beam | Baked into one atlas at boot (`src/render/units.ts`), single ADD layer |
+| 2026-10-04 | `screens/in-run/Battlefield.dc.html` | Grid, path band, buffer hatch, spawn label, hull bars, selection brackets (`src/render/WorldView.ts`) |
+| 2026-10-04 | `screens/in-run/Place-*.dc.html` | Ghost lift, local grid, valid/invalid footprint + range, overlap outline (`src/render/input/Placement.ts`). Chip label pending the HUD decision |
+| 2026-10-04 | `design-system/` fonts | Oxanium + Barlow Semi Condensed bundled from `@fontsource` (OFL) |

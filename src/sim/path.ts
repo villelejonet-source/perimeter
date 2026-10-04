@@ -76,6 +76,22 @@ export class Path {
     return out;
   }
 
+  /**
+   * Shortest distance from the path centreline to an axis-aligned square of half-size `half`
+   * centred at (cx, cy). Uses the arc-length samples (~1-2 units apart), which is well within
+   * placement tolerance.
+   */
+  distanceToBox(cx: number, cy: number, half: number): number {
+    let bestSq = Infinity;
+    for (let i = 0; i < this.xs.length; i++) {
+      const dx = Math.max(Math.abs(this.xs[i]! - cx) - half, 0);
+      const dy = Math.max(Math.abs(this.ys[i]! - cy) - half, 0);
+      const dSq = dx * dx + dy * dy;
+      if (dSq < bestSq) bestSq = dSq;
+    }
+    return Math.sqrt(bestSq);
+  }
+
   /** Shortest distance from (x, y) to the path polyline. */
   distanceTo(x: number, y: number): number {
     let best = Infinity;

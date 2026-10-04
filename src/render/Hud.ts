@@ -51,8 +51,9 @@ export class Hud {
     this.barY = VIEW_HEIGHT - insets.bottom - BUTTON_H / 2 - 16;
     this.bar = scene.add.container(0, 0);
 
-    const gap = 16;
-    const widths = [200, 200, 120, 120]; // + 5 gaps of 16 = 720
+    const k = VIEW_WIDTH / 720; // pre-design layout was authored for a 720-px canvas
+    const gap = 16 * k;
+    const widths = [200, 200, 120, 120].map((w) => w * k); // + 5 gaps of 16 = 720 at k = 1
     const xs: number[] = [];
     let x = gap;
     for (const w of widths) {

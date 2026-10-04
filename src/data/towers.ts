@@ -26,7 +26,7 @@ export const TOWERS: Record<TowerKind, TowerDef> = {
     upgradeBaseCost: 40, // TODO(balance)
     damage: 6, // TODO(balance)
     fireRate: 2.5, // TODO(balance)
-    range: 72, // TODO(balance)
+    range: 80, // TODO(balance): matches the Place-Valid mock (160 px circle); was 72 before the design build buffer
     projectileSpeed: 420,
     canHitFlying: true,
   },

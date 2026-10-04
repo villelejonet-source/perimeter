@@ -1,5 +1,5 @@
 import { GAME } from '../data/game';
-import { MAPS, type MapDef } from '../data/maps';
+import { DEFAULT_MAP_ID, MAPS, type MapDef } from '../data/maps';
 import { TOWERS } from '../data/towers';
 import { moveEnemies, updateProjectiles, updateTowers } from './combat';
 import type { Command } from './commands';
@@ -28,7 +28,7 @@ export class Sim {
   private readonly queue: Command[] = [];
 
   constructor(config: SimConfig) {
-    const map = MAPS[config.mapId ?? 'serpent'];
+    const map = MAPS[config.mapId ?? DEFAULT_MAP_ID];
     if (!map) throw new Error(`Unknown map: ${config.mapId}`);
     this.map = map;
     this.path = new Path(map.path);
@@ -97,7 +97,7 @@ export class Sim {
         if (s.credits < cost) return this.reject('credits');
         const x = snapToGrid(cmd.x);
         const y = snapToGrid(cmd.y);
-        const err = placementError(s, this.path, x, y);
+        const err = placementError(s, this.path, this.map, x, y);
         if (err) return this.reject(err);
         const t = s.towers.acquire();
         t.id = s.nextId++;

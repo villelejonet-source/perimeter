@@ -1,9 +1,17 @@
 import Phaser from 'phaser';
 import { GAME } from '../../data/game';
 import { TOWERS, type TowerKind } from '../../data/towers';
-import { placeCost, placementError, snapToGrid, type PlacementError, type Sim } from '../../sim';
-import { COLORS, S } from '../layout';
-import { ATLAS, FRAME } from '../textures';
+import {
+  blockingTower,
+  placeCost,
+  placementError,
+  snapToGrid,
+  type PlacementError,
+  type Sim,
+} from '../../sim';
+import { dashedCircle, dashedRect, hatchRect } from '../draw';
+import { S, T, ZONES } from '../layout';
+import { UNIT_ATLAS } from '../units';
 
 export type PlacementRejection = PlacementError | 'credits';
 
@@ -13,32 +21,38 @@ export interface PlacementActions {
   dragChanged(dragging: boolean): void;
 }
 
-/** Lift the ghost above the finger on touch so it stays visible. World units. */
-const TOUCH_LIFT = 36;
+/** HANDOFF.md "Placement drag": ghost floats 72 px above the finger on touch. */
+const TOUCH_LIFT = 72;
+/** Local grid brightened around the snap cell, 96 × 96 px. */
+const LOCAL_GRID = 96;
 
 /**
- * Drag-to-place: ghost tower snapped to the grid, range preview, red when invalid.
- * Validity uses the same pure `placementError` the sim enforces.
+ * Drag-to-place, following docs/design/screens/in-run/Place-*.dc.html. Validity uses the
+ * same pure `placementError` the sim enforces, so the preview never disagrees with the result.
  */
 export class Placement {
   private kind: TowerKind | null = null;
   private x = 0;
   private y = 0;
   private overField = false;
-  private readonly ghost: Phaser.GameObjects.Image;
-  private readonly ring: Phaser.GameObjects.Graphics;
+  private readonly g: Phaser.GameObjects.Graphics;
+  private readonly ghostBase: Phaser.GameObjects.Image;
+  private readonly ghostTurret: Phaser.GameObjects.Image;
 
   constructor(
     private readonly scene: Phaser.Scene,
     private readonly sim: Sim,
     private readonly actions: PlacementActions,
   ) {
-    this.ring = scene.add.graphics().setDepth(5);
-    this.ghost = scene.add
-      .image(0, 0, ATLAS, FRAME.hex)
-      .setScale(1.3)
-      .setDepth(6)
-      .setVisible(false);
+    this.g = scene.add.graphics().setDepth(5);
+    const ghost = (frame: string): Phaser.GameObjects.Image =>
+      scene.add
+        .image(0, 0, UNIT_ATLAS, frame)
+        .setBlendMode(Phaser.BlendModes.ADD)
+        .setDepth(6)
+        .setVisible(false);
+    this.ghostBase = ghost('tower-pulse-laser-l1-base');
+    this.ghostTurret = ghost('tower-pulse-laser-l1-turret');
     scene.input.on('pointermove', this.onMove, this);
     scene.input.on('pointerup', this.onUp, this);
     scene.input.on('pointerupoutside', this.onUp, this);
@@ -56,36 +70,72 @@ export class Placement {
 
   private error(): PlacementRejection | null {
     if (!this.kind) return null;
+    const err = placementError(this.sim.state, this.sim.path, this.sim.map, this.x, this.y);
+    if (err) return err;
     if (this.sim.state.credits < placeCost(this.kind)) return 'credits';
-    return placementError(this.sim.state, this.sim.path, this.x, this.y);
+    return null;
   }
 
   private onMove(pointer: Phaser.Input.Pointer): void {
     if (!this.kind) return;
+    const fingerY = pointer.worldY / S;
+    // Dragging back onto the control row / build bar cancels ("DROP HERE TO CANCEL").
+    this.overField = fingerY < ZONES.controlRowTop;
     const lift = pointer.wasTouch ? TOUCH_LIFT : 0;
-    const wy = pointer.worldY / S - lift;
-    this.overField = wy < GAME.playfieldBottom;
     this.x = snapToGrid(pointer.worldX / S);
-    this.y = snapToGrid(wy);
+    this.y = snapToGrid(fingerY - lift);
     this.draw();
   }
 
   private draw(): void {
-    const g = this.ring;
+    const g = this.g;
     g.clear();
     if (!this.kind || !this.overField) {
-      this.ghost.setVisible(false);
+      this.ghostBase.setVisible(false);
+      this.ghostTurret.setVisible(false);
       return;
     }
-    const color = this.error() ? COLORS.invalid : COLORS.tower;
+    const err = this.error();
+    const valid = err === null;
     const sx = this.x * S;
     const sy = this.y * S;
+    const half = (GAME.towerFootprint / 2) * S;
     const r = TOWERS[this.kind].range * S;
-    g.fillStyle(color, 0.08);
-    g.fillCircle(sx, sy, r);
-    g.lineStyle(2, color, 0.7);
-    g.strokeCircle(sx, sy, r);
-    this.ghost.setVisible(true).setPosition(sx, sy).setTint(color).setAlpha(0.85);
+
+    // Local grid around the snap cell, brightened in `line`.
+    const lg = (LOCAL_GRID / 2) * S;
+    const step = GAME.gridSize * S;
+    g.lineStyle(1 * S, T.line, 1);
+    for (let o = -lg; o <= lg; o += step) {
+      g.lineBetween(sx + o, sy - lg, sx + o, sy + lg);
+      g.lineBetween(sx - lg, sy + o, sx + lg, sy + o);
+    }
+
+    if (valid) {
+      g.fillStyle(T.accent, 0.07);
+      g.fillCircle(sx, sy, r);
+      g.lineStyle(2 * S, T.accent, 1);
+      g.strokeCircle(sx, sy, r);
+      g.strokeRect(sx - half, sy - half, half * 2, half * 2);
+    } else {
+      g.lineStyle(2 * S, T.danger, 1);
+      dashedCircle(g, sx, sy, r, 6 * S, 5 * S);
+      g.lineStyle(3 * S, T.danger, 0.45);
+      hatchRect(g, sx - half, sy - half, half * 2, half * 2, 8 * S);
+      g.lineStyle(2 * S, T.danger, 1);
+      dashedRect(g, sx - half, sy - half, half * 2, half * 2, 5 * S, 4 * S);
+      if (err === 'overlap') {
+        const t = blockingTower(this.sim.state, this.x, this.y);
+        if (t) {
+          const bh = 20 * S;
+          dashedRect(g, t.x * S - bh, t.y * S - bh, bh * 2, bh * 2, 5 * S, 4 * S);
+        }
+      }
+    }
+
+    const alpha = valid ? 0.85 : 0.45;
+    this.ghostBase.setVisible(true).setPosition(sx, sy).setAlpha(alpha);
+    this.ghostTurret.setVisible(true).setPosition(sx, sy).setAlpha(alpha);
   }
 
   private onUp(): void {
@@ -97,8 +147,9 @@ export class Placement {
       else this.actions.place(kind, this.x, this.y);
     }
     this.kind = null;
-    this.ring.clear();
-    this.ghost.setVisible(false);
+    this.g.clear();
+    this.ghostBase.setVisible(false);
+    this.ghostTurret.setVisible(false);
     this.actions.dragChanged(false);
   }
 

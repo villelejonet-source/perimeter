@@ -5,19 +5,20 @@ import { TowerPanel } from '../../ui/TowerPanel';
 import type { RunEndData } from '../../ui/RunEndScene';
 import { Hud } from '../Hud';
 import { Placement, type PlacementRejection } from '../input/Placement';
-import { COLORS, S } from '../layout';
+import { S, T, ZONES } from '../layout';
 import { getPlatform } from '../registry';
 import { readSafeArea } from '../safeArea';
-import { bakeTextures } from '../textures';
 import { WorldView } from '../WorldView';
 
 const SPEEDS = [1, 2] as const; // 3x unlocks via research (Phase 6).
 
+/** Copy from docs/design/screens/in-run/Place-*.dc.html. */
 const REJECTION_TEXT: Record<PlacementRejection, string> = {
-  credits: 'Not enough Credits',
-  onPath: "Can't build on the path",
-  overlap: 'Too close to another tower',
-  outOfBounds: "Can't build there",
+  credits: 'NOT ENOUGH CREDITS',
+  onPath: "CAN'T BUILD ON THE PATH",
+  nearPath: 'TOO CLOSE TO THE PATH',
+  overlap: 'SPACE TAKEN BY PULSE LASER',
+  outOfBounds: "CAN'T BUILD THERE",
 };
 
 /** One run. Owns the Sim; input becomes commands, rendering only reads sim state. */
@@ -37,8 +38,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   create(): void {
-    bakeTextures(this);
-    this.cameras.main.setBackgroundColor(COLORS.bg);
+    this.cameras.main.setBackgroundColor(T.void);
     this.sim = new Sim({ seed: (Date.now() ^ (performance.now() * 1000)) >>> 0 });
     this.driver = new FixedStepDriver();
     this.speedIndex = 0;
@@ -69,7 +69,7 @@ export class GameScene extends Phaser.Scene {
         getPlatform(this).haptics.play('place');
       },
       reject: (reason) => this.hud.showToast(REJECTION_TEXT[reason]),
-      dragChanged: (dragging) => this.world.setGridEmphasis(dragging),
+      dragChanged: (dragging) => this.world.setDragging(dragging),
     });
 
     this.input.on('pointerdown', this.onFieldDown, this);
@@ -115,12 +115,13 @@ export class GameScene extends Phaser.Scene {
     if (over.length > 0 || this.placement.active || this.ended) return;
     const wx = pointer.worldX / S;
     const wy = pointer.worldY / S;
-    if (wy > GAME.playfieldBottom) return;
-    const reach = GAME.towerRadius * 1.6;
+    if (wy >= ZONES.controlRowTop) return;
+    // Hit the 32 × 32 footprint with a little slack for fingers.
+    const reach = GAME.towerFootprint / 2 + 6;
     let best = -1;
-    let bestSq = reach * reach;
+    let bestSq = Infinity;
     for (const t of this.sim.state.towers.items) {
-      if (!t.alive) continue;
+      if (!t.alive || Math.abs(t.x - wx) > reach || Math.abs(t.y - wy) > reach) continue;
       const dSq = (t.x - wx) ** 2 + (t.y - wy) ** 2;
       if (dSq < bestSq) {
         best = t.id;

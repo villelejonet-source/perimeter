@@ -59,8 +59,10 @@ docs/
 ```
 
 ## Art approach
+
 Designs in `docs/design/` are **visual reference, not code to drop in**. The `.dc.html` screens
 are layout specs (390 × 844 logical px). Rebuild them; never ship their markup.
+
 - **Design system:** `docs/design/design-system/` (README rules + `tokens.json`) is the source of
   truth for colour, type, spacing, chamfers, strokes and glow.
 - **Units:** textures are baked at boot from the unit SVGs in `docs/design/units/` and packed into
